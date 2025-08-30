@@ -230,567 +230,7 @@
 
         .passenger-item {
             display: flex;
-            justify-content: between;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #e2e8f0;
-            transition: background-color 0.3s ease;
-        }
-
-        .passenger-item:hover {
-            background-color: #f7fafc;
-        }
-
-        .passenger-item:last-child {
-            border-bottom: none;
-        }
-
-        .violation-form {
-            background: #fff5f5;
-            border: 2px solid #feb2b2;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background: #c6f6d5;
-            color: #22543d;
-            border: 1px solid #9ae6b4;
-        }
-
-        .alert-error {
-            background: #fed7d7;
-            color: #742a2a;
-            border: 1px solid #fc8181;
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 20px;
-                padding: 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <div class="header">
-        <h1>🎫 Ticket Verification System</h1>
-        <p>Digital verification for Ticket Checking Officers</p>
-    </div>
-
-    <div class="main-content">
-        <!-- Ticket Verification Panel -->
-        <div class="verification-panel">
-            <h2 class="panel-title">
-                🔍 Ticket Verification
-            </h2>
-
-            <!-- Ticket Search -->
-            <div class="search-section">
-                <form th:action="@{/verify-ticket}" method="post">
-                    <div class="form-group">
-                        <label for="ticketId">Ticket ID / Booking Reference</label>
-                        <input type="text" id="ticketId" name="ticketId" class="form-control"
-                               th:value="${ticketId}" placeholder="Enter ticket ID or booking reference">
-                    </div>
-                    <button type="submit" class="btn btn-primary">🔍 Search Ticket</button>
-                </form>
-            </div>
-
-            <!-- Ticket Information Display -->
-            <div class="ticket-info" th:if="${ticket}">
-                <h3 style="margin-bottom: 15px; color: #2d3748;">Ticket Details</h3>
-                <div class="info-row">
-                    <span class="info-label">Booking ID:</span>
-                    <span class="info-value" th:text="${ticket.bookingId}">#12345</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Passenger Name:</span>
-                    <span class="info-value" th:text="${ticket.passengerName}">John Doe</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Train Number:</span>
-                    <span class="info-value" th:text="${ticket.trainNumber}">T-101</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Route:</span>
-                    <span class="info-value" th:text="${ticket.route}">Colombo - Kandy</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Seat Assignment:</span>
-                    <span class="info-value" th:text="${ticket.seatNumber}">A1, A2</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Class:</span>
-                    <span class="info-value" th:text="${ticket.ticketClass}">First Class</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Date:</span>
-                    <span class="info-value" th:text="${ticket.travelDate}">2025-08-25</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Status:</span>
-                    <span class="status-badge"
-                          th:class="${ticket.status == 'CONFIRMED' ? 'status-badge status-valid' :
-                                        ticket.status == 'CANCELLED' ? 'status-badge status-invalid' :
-                                        'status-badge status-pending'}"
-                          th:text="${ticket.status}">CONFIRMED</span>
-                </div>
-            </div>
-
-            <!-- Verification Checklist -->
-            <div class="verification-checklist" th:if="${ticket}">
-                <h3 style="margin-bottom: 15px; color: #2d3748;">Verification Checklist</h3>
-                <form th:action="@{/complete-verification}" method="post">
-                    <input type="hidden" name="ticketId" th:value="${ticket.bookingId}">
-
-                    <div class="checklist-item">
-                        <input type="checkbox" id="idCheck" name="verificationChecks" value="ID_VERIFIED">
-                        <label for="idCheck">Passenger ID matches booking details</label>
-                    </div>
-
-                    <div class="checklist-item">
-                        <input type="checkbox" id="seatCheck" name="verificationChecks" value="SEAT_VERIFIED">
-                        <label for="seatCheck">Passenger is in correct seat assignment</label>
-                    </div>
-
-                    <div class="checklist-item">
-                        <input type="checkbox" id="ticketValidCheck" name="verificationChecks" value="TICKET_VALID">
-                        <label for="ticketValidCheck">Ticket is valid and not expired</label>
-                    </div>
-
-                    <div class="checklist-item">
-                        <input type="checkbox" id="paymentCheck" name="verificationChecks" value="PAYMENT_CONFIRMED">
-                        <label for="paymentCheck">Payment status confirmed</label>
-                    </div>
-
-                    <div class="checklist-item">
-                        <input type="checkbox" id="noViolationsCheck" name="verificationChecks" value="NO_VIOLATIONS">
-                        <label for="noViolationsCheck">No apparent violations detected</label>
-                    </div>
-
-                    <div style="margin-top: 20px; display: flex; gap: 10px;">
-                        <button type="submit" name="action" value="approve" class="btn btn-success">✅ Approve Ticket</button>
-                        <button type="button" class="btn btn-warning" onclick="showViolationForm()">⚠️ Report Violation</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Violation Reporting Form -->
-            <div class="violation-form" id="violationForm" style="display: none;">
-                <h3 style="margin-bottom: 15px; color: #742a2a;">Report Ticket Violation</h3>
-                <form th:action="@{/report-violation}" method="post">
-                    <input type="hidden" name="ticketId" th:value="${ticket?.bookingId}">
-                    <input type="hidden" name="passengerName" th:value="${ticket?.passengerName}">
-
-                    <div class="form-group">
-                        <label for="violationType">Violation Type</label>
-                        <select id="violationType" name="violationType" class="form-control" required>
-                            <option value="">Select violation type</option>
-                            <option value="NO_TICKET">No valid ticket</option>
-                            <option value="WRONG_SEAT">Wrong seat assignment</option>
-                            <option value="EXPIRED_TICKET">Expired ticket</option>
-                            <option value="FRAUDULENT_TICKET">Fraudulent ticket</option>
-                            <option value="UNPAID_TICKET">Unpaid ticket</option>
-                            <option value="OTHER">Other violation</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="violationDescription">Description</label>
-                        <textarea id="violationDescription" name="violationDescription"
-                                  class="form-control" rows="4"
-                                  placeholder="Provide detailed description of the violation..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="penaltyAmount">Penalty Amount (LKR)</label>
-                        <input type="number" id="penaltyAmount" name="penaltyAmount"
-                               class="form-control" min="0" step="0.01">
-                    </div>
-
-                    <div style="display: flex; gap: 10px;">
-                        <button type="submit" class="btn btn-danger">📝 Submit Violation Report</button>
-                        <button type="button" class="btn btn-primary" onclick="hideViolationForm()">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Passenger List Panel -->
-        <div class="passenger-panel">
-            <h2 class="panel-title">
-                👥 Passenger Manifest
-            </h2>
-
-            <!-- Train Selection -->
-            <div class="form-group">
-                <label for="trainSelect">Select Train</label>
-                <select id="trainSelect" name="trainNumber" class="form-control"
-                        onchange="loadPassengerList(this.value)">
-                    <option value="">Choose train...</option>
-                    <option value="T-101" th:selected="${selectedTrain == 'T-101'}">T-101 (Colombo - Kandy)</option>
-                    <option value="T-102" th:selected="${selectedTrain == 'T-102'}">T-102 (Kandy - Colombo)</option>
-                    <option value="T-201" th:selected="${selectedTrain == 'T-201'}">T-201 (Colombo - Galle)</option>
-                </select>
-            </div>
-
-            <!-- Passenger List -->
-            <div class="passenger-list" th:if="${passengers}">
-                <div class="passenger-item" th:each="passenger : ${passengers}">
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600; margin-bottom: 5px;" th:text="${passenger.name}">John Doe</div>
-                        <div style="font-size: 14px; color: #718096;">
-                            Seat: <span th:text="${passenger.seatNumber}">A1</span> |
-                            Booking: <span th:text="${passenger.bookingId}">#12345</span>
-                        </div>
-                    </div>
-                    <div>
-                            <span class="status-badge"
-                                  th:class="${passenger.verified ? 'status-badge status-valid' : 'status-badge status-pending'}"
-                                  th:text="${passenger.verified ? 'Verified' : 'Pending'}">Pending</span>
-                    </div>
-                </div>
-            </div>
-
-            <div th:if="${passengers == null or passengers.isEmpty()}"
-                 style="text-align: center; color: #718096; padding: 40px;">
-                Select a train to view passenger manifest
-            </div>
-
-            <!-- Quick Actions -->
-            <div style="margin-top: 25px;">
-                <h3 style="margin-bottom: 15px; color: #2d3748;">Quick Actions</h3>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                    <button class="btn btn-primary" onclick="markAllVerified()">✅ Mark All Verified</button>
-                    <button class="btn btn-warning" onclick="exportViolations()">📋 Export Violations</button>
-                    <a th:href="@{/passenger-reports}" class="btn btn-primary">📊 View Reports</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Success/Error Messages -->
-    <div th:if="${successMessage}" class="alert alert-success" style="margin: 20px 30px;">
-        <span th:text="${successMessage}">Ticket verified successfully!</span>
-    </div>
-
-    <div th:if="${errorMessage}" class="alert alert-error" style="margin: 20px 30px;">
-        <span th:text="${errorMessage}">Error occurred during verification.</span>
-    </div>
-</div>
-
-<script>
-    function showViolationForm() {
-        document.getElementById('violationForm').style.display = 'block';
-        document.getElementById('violationForm').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function hideViolationForm() {
-        document.getElementById('violationForm').style.display = 'none';
-    }
-
-    function loadPassengerList(trainNumber) {
-        if (trainNumber) {
-            window.location.href = `/verification?train=${trainNumber}`;
-        }
-    }
-
-    function markAllVerified() {
-        if (confirm('Mark all passengers as verified? This action cannot be undone.')) {
-            // Submit form to mark all passengers as verified
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/mark-all-verified';
-
-            const trainInput = document.createElement('input');
-            trainInput.type = 'hidden';
-            trainInput.name = 'trainNumber';
-            trainInput.value = document.getElementById('trainSelect').value;
-            form.appendChild(trainInput);
-
-            document.body.appendChild(form);
-            form.submit();
-        }
-    }
-
-    function exportViolations() {
-        const trainNumber = document.getElementById('trainSelect').value;
-        if (trainNumber) {
-            window.open(`/export-violations?train=${trainNumber}`, '_blank');
-        } else {
-            alert('Please select a train first.');
-        }
-    }
-
-    // Auto-hide alerts after 5 seconds
-    setTimeout(() => {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-            alert.style.opacity = '0';
-            setTimeout(() => alert.remove(), 300);
-        });
-    }, 5000);
-
-    // Enable form validation
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            const requiredFields = this.querySelectorAll('[required]');
-            for (let field of requiredFields) {
-                if (!field.value.trim()) {
-                    e.preventDefault();
-                    field.focus();
-                    field.style.borderColor = '#e53e3e';
-                    setTimeout(() => field.style.borderColor = '#e2e8f0', 3000);
-                    break;
-                }
-            }
-        });
-    });
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Verification - Train Booking System</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 25px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1rem;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            padding: 30px;
-        }
-
-        .verification-panel {
-            background: #f8f9ff;
-            border-radius: 12px;
-            padding: 25px;
-            border: 2px solid #e3e8ff;
-        }
-
-        .passenger-panel {
-            background: #fff5f5;
-            border-radius: 12px;
-            padding: 25px;
-            border: 2px solid #fed7d7;
-        }
-
-        .panel-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #2d3748;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .search-section {
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #4a5568;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-            color: white;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #ffd43b 0%, #fab005 100%);
-            color: #2d3748;
-        }
-
-        .ticket-info {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            border-left: 5px solid #4facfe;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .info-row {
-            display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #edf2f7;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: #4a5568;
-        }
-
-        .info-value {
-            color: #2d3748;
-        }
-
-        .verification-checklist {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        .checklist-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-
-        .checklist-item:hover {
-            background-color: #f7fafc;
-        }
-
-        .checklist-item input[type="checkbox"] {
-            margin-right: 12px;
-            transform: scale(1.2);
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .status-valid {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-
-        .status-invalid {
-            background: #fed7d7;
-            color: #742a2a;
-        }
-
-        .status-pending {
-            background: #feebc8;
-            color: #744210;
-        }
-
-        .passenger-list {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-        }
-
-        .passenger-item {
-            display: flex;
-            justify-content: between;
             align-items: center;
             padding: 15px;
             border-bottom: 1px solid #e2e8f0;
@@ -867,80 +307,77 @@
             </div>
 
             <!-- Ticket Information Display -->
-            <div class="ticket-info" th:if="${ticket}">
+            <div class="ticket-info" th:if="${ticket != null}">
                 <h3 style="margin-bottom: 15px; color: #2d3748;">Ticket Details</h3>
                 <div class="info-row">
                     <span class="info-label">Booking ID:</span>
-                    <span class="info-value" th:text="${ticket.bookingId}">#12345</span>
+                    <span class="info-value" th:text="${ticket.bookingId ?: '#12345'}">#12345</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Passenger Name:</span>
-                    <span class="info-value" th:text="${ticket.passengerName}">John Doe</span>
+                    <span class="info-value" th:text="${ticket.passengerName ?: 'John Doe'}">John Doe</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Train Number:</span>
-                    <span class="info-value" th:text="${ticket.trainNumber}">T-101</span>
+                    <span class="info-value" th:text="${ticket.trainNumber ?: 'T-101'}">T-101</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Route:</span>
-                    <span class="info-value" th:text="${ticket.route}">Colombo - Kandy</span>
+                    <span class="info-value" th:text="${ticket.route ?: 'Colombo - Kandy'}">Colombo - Kandy</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Seat Assignment:</span>
-                    <span class="info-value" th:text="${ticket.seatNumber}">A1, A2</span>
+                    <span class="info-value" th:text="${ticket.seatNumber ?: 'A1, A2'}">A1, A2</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Class:</span>
-                    <span class="info-value" th:text="${ticket.ticketClass}">First Class</span>
+                    <span class="info-value" th:text="${ticket.ticketClass ?: 'First Class'}">First Class</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Date:</span>
-                    <span class="info-value" th:text="${ticket.travelDate}">2025-08-25</span>
+                    <span class="info-value" th:text="${ticket.travelDate ?: '2025-08-25'}">2025-08-25</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Status:</span>
-                    <span class="status-badge"
-                          th:class="${ticket.status == 'CONFIRMED' ? 'status-badge status-valid' :
-                                        ticket.status == 'CANCELLED' ? 'status-badge status-invalid' :
-                                        'status-badge status-pending'}"
-                          th:text="${ticket.status}">CONFIRMED</span>
+                    <span th:class="'status-badge ' + (${ticket.status == 'CONFIRMED'} ? 'status-valid' : (${ticket.status == 'CANCELLED'} ? 'status-invalid' : 'status-pending'))"
+                          th:text="${ticket.status ?: 'CONFIRMED'}">CONFIRMED</span>
                 </div>
             </div>
 
             <!-- Verification Checklist -->
-            <div class="verification-checklist" th:if="${ticket}">
+            <div class="verification-checklist" th:if="${ticket != null}">
                 <h3 style="margin-bottom: 15px; color: #2d3748;">Verification Checklist</h3>
                 <form th:action="@{/complete-verification}" method="post">
-                    <input type="hidden" name="ticketId" th:value="${ticket.bookingId}">
+                    <input type="hidden" name="ticketId" th:value="${ticket.bookingId ?: ''}">
 
                     <div class="checklist-item">
-                        <input type="checkbox" id="idCheck" name="verificationChecks" value="ID_VERIFIED">
-                        <label for="idCheck">Passenger ID matches booking details</label>
+                        <input type="checkbox" id="idCheckbox" name="verificationChecks" value="ID_VERIFIED">
+                        <label for="idCheckbox">Passenger ID matches booking details</label>
                     </div>
 
                     <div class="checklist-item">
-                        <input type="checkbox" id="seatCheck" name="verificationChecks" value="SEAT_VERIFIED">
-                        <label for="seatCheck">Passenger is in correct seat assignment</label>
+                        <input type="checkbox" id="seatCheckbox" name="verificationChecks" value="SEAT_VERIFIED">
+                        <label for="seatCheckbox">Passenger is in correct seat assignment</label>
                     </div>
 
                     <div class="checklist-item">
-                        <input type="checkbox" id="ticketValidCheck" name="verificationChecks" value="TICKET_VALID">
-                        <label for="ticketValidCheck">Ticket is valid and not expired</label>
+                        <input type="checkbox" id="ticketValidCheckbox" name="verificationChecks" value="TICKET_VALID">
+                        <label for="ticketValidCheckbox">Ticket is valid and not expired</label>
                     </div>
 
                     <div class="checklist-item">
-                        <input type="checkbox" id="paymentCheck" name="verificationChecks" value="PAYMENT_CONFIRMED">
-                        <label for="paymentCheck">Payment status confirmed</label>
+                        <input type="checkbox" id="paymentCheckbox" name="verificationChecks" value="PAYMENT_CONFIRMED">
+                        <label for="paymentCheckbox">Payment status confirmed</label>
                     </div>
 
                     <div class="checklist-item">
-                        <input type="checkbox" id="noViolationsCheck" name="verificationChecks" value="NO_VIOLATIONS">
-                        <label for="noViolationsCheck">No apparent violations detected</label>
+                        <input type="checkbox" id="noViolationsCheckbox" name="verificationChecks" value="NO_VIOLATIONS">
+                        <label for="noViolationsCheckbox">No apparent violations detected</label>
                     </div>
 
                     <div style="margin-top: 20px; display: flex; gap: 10px;">
-                        <button type="submit" name="action" value="approve" class="btn btn-success">✅ Approve Ticket</button>
-                        <button type="button" class="btn btn-warning" onclick="showViolationForm()">⚠️ Report Violation</button>
+                        <button type="submit" name="action" value="approve" class="btn btn-success">Approve Ticket</button>
+                        <button type="button" class="btn btn-warning" onclick="showViolationForm()">Report Violation</button>
                     </div>
                 </form>
             </div>
@@ -1005,18 +442,17 @@
             </div>
 
             <!-- Passenger List -->
-            <div class="passenger-list" th:if="${passengers}">
+            <div class="passenger-list" th:if="${passengers != null and !passengers.isEmpty()}">
                 <div class="passenger-item" th:each="passenger : ${passengers}">
                     <div style="flex: 1;">
-                        <div style="font-weight: 600; margin-bottom: 5px;" th:text="${passenger.name}">John Doe</div>
+                        <div style="font-weight: 600; margin-bottom: 5px;" th:text="${passenger.name ?: 'John Doe'}">John Doe</div>
                         <div style="font-size: 14px; color: #718096;">
-                            Seat: <span th:text="${passenger.seatNumber}">A1</span> |
-                            Booking: <span th:text="${passenger.bookingId}">#12345</span>
+                            Seat: <span th:text="${passenger.seatNumber ?: 'A1'}">A1</span> |
+                            Booking: <span th:text="${passenger.bookingId ?: '#12345'}">#12345</span>
                         </div>
                     </div>
                     <div>
-                            <span class="status-badge"
-                                  th:class="${passenger.verified ? 'status-badge status-valid' : 'status-badge status-pending'}"
+                            <span th:class="'status-badge ' + (${passenger.verified} ? 'status-valid' : 'status-pending')"
                                   th:text="${passenger.verified ? 'Verified' : 'Pending'}">Pending</span>
                     </div>
                 </div>
@@ -1025,6 +461,13 @@
             <div th:if="${passengers == null or passengers.isEmpty()}"
                  style="text-align: center; color: #718096; padding: 40px;">
                 Select a train to view passenger manifest
+            </div>
+
+            <!-- Sample status indicators to ensure CSS classes are used -->
+            <div style="display: none;">
+                <span class="status-badge status-valid">Valid</span>
+                <span class="status-badge status-invalid">Invalid</span>
+                <span class="status-badge status-pending">Pending</span>
             </div>
 
             <!-- Quick Actions -->
