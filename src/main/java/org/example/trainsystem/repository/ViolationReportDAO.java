@@ -62,7 +62,7 @@ public class ViolationReportDAO {
             ticketOfficer.setAssignedRoute(rs.getString("assignedRoute"));
 
             User user = new User();
-            user.setUserId(rs.getString("officerId"));
+            user.setUserId(rs.getInt("officerId"));
             user.setUsername(rs.getString("username"));
             user.setEmail(rs.getString("email"));
             user.setName(rs.getString("name"));

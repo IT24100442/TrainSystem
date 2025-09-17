@@ -1,8 +1,5 @@
 package org.example.trainsystem.entity;
 
-
-
-
 public class Driver {
     private int userId;
     private String license;
