@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Dashboard - Sri Lanka Railways</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f39c12, #e74c3c, #9b59b6, #3498db);
+        }
+
+        header h2 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .driver-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .driver-info p {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 30px;
+            text-align: center;
+        }
+
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .route-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .route-detail {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            align-items: center;
+        }
+
+        .route-detail strong {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .route-detail span {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .location-btn {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.2s ease;
+        }
+
+        .location-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .no-route, .no-messages {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .messages-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .message-item {
+            background: white;
+            border-left: 4px solid #3498db;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .message-item:hover {
+            transform: translateX(5px);
+        }
+
+        .message-sender {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .message-text {
+            color: #34495e;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .message-time {
+            color: #7f8c8d;
+            font-size: 0.85em;
+            font-style: italic;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-active {
+            background: #27ae60;
+            box-shadow: 0 0 10px rgba(39, 174, 96, 0.5);
+        }
+
+        .status-inactive {
+            background: #e74c3c;
+        }
+
+        .message-form {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.2s ease;
+        }
+
+        .clear-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.3em;
+        }
+
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #f1c40f;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .driver-info {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            header h2 {
+                font-size: 2em;
+            }
+
+            .button-group {
+                justify-content: center;
+            }
+
+            .form-actions {
+                justify-content: center;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Driver Header -->
+    <header>
+        <h2>🚂 Driver Dashboard</h2>
+        <div class="driver-info">
+            <p><strong>Welcome:</strong> <span th:text="${driver.user != null ? driver.user.name : driver.name}">Driver Name</span></p>
+            <p><strong>ID:</strong> <span th:text="${driver.userId}">Driver ID</span></p>
+            <p><strong>License:</strong> <span th:text="${driver.license}">License Number</span></p>
+        </div>
+    </header>
+
+    <!-- Error Message -->
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+    <!-- Success Message -->
+    <div id="successMessage" class="success-message"></div>
+
+    <div class="dashboard-content">
+        <!-- Current Route Section -->
+        <div class="section">
+            <h3>🛤️ Assigned Route</h3>
+            <div id="routeSection">
+                <div th:if="${route != null}" class="route-card">
+                    <div class="route-detail">
+                        <strong>Route:</strong>
+                        <span th:text="${route.routeName}">Route Name</span>
+                    </div>
+                    <div class="route-detail">
+                        <strong>From:</strong>
+                        <span th:text="${route.routeStart}">Start Station</span>
+                    </div>
+                    <div class="route-detail">
+                        <strong>To:</strong>
+                        <span th:text="${route.routeDestination}">End Station</span>
+                    </div>
+                    <div class="route-detail">
+                        <strong>Duration:</strong>
+                        <span th:text="${route.duration + ' minutes'}">Duration</span>
+                    </div>
+                    <div class="route-detail">
+                        <strong>Status:</strong>
+                        <span><span class="status-indicator status-active"></span>Active</span>
+                    </div>
+                    <div class="route-detail">
+                        <strong>Current Location:</strong>
+                        <span id="currentLocation" th:text="${currentLocation != null ? currentLocation.currentLocation : 'Not updated'}">Current Location</span>
+                    </div>
+                </div>
+                <div th:if="${route == null}" class="no-route">
+                    No active route assigned.
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="refresh-btn" onclick="refreshRoute()">🔄 Refresh Route</button>
+                <button class="location-btn" onclick="updateLocation()" th:if="${route != null}">📍 Update Location</button>
+            </div>
+        </div>
+
+        <!-- Messages Section -->
+        <div class="section">
+            <h3>📨 Recent Messages</h3>
+            <div class="loading" id="messagesLoading">
+                <div class="spinner"></div>
+                <p>Loading messages...</p>
+            </div>
+            <div id="messagesSection" class="messages-list">
+                <div th:if="${messages != null and !messages.isEmpty()}">
+                    <div th:each="msg : ${messages}" class="message-item">
+                        <div class="message-sender">From: <span th:text="${msg.senderId}">Sender</span></div>
+                        <div class="message-text" th:text="${msg.msgText}">Message text</div>
+                        <div class="message-time" th:text="${#temporals.format(msg.msgTime, 'dd-MM-yyyy HH:mm')}">Time</div>
+                    </div>
+                </div>
+                <div th:if="${messages == null or messages.isEmpty()}" class="no-messages">
+                    No recent messages.
+                </div>
+            </div>
+            <button class="refresh-btn" onclick="refreshMessages()">🔄 Refresh Messages</button>
+        </div>
+
+        <!-- Send Message Section -->
+        <div class="section full-width">
+            <h3>📤 Send Message to Operations</h3>
+            <div class="message-form">
+                <form id="messageForm">
+                    <div class="form-group">
+                        <label for="recipientSelect">Send to:</label>
+                        <select id="recipientSelect" class="form-control" required>
+                            <option value="">Select Operations Manager...</option>
+                            <option th:each="opManager : ${operationsManagers}"
+                                    th:value="${opManager.userId}"
+                                    th:text="${opManager.name + ' (' + opManager.userId + ')'}">Operations Manager</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="messageText">Message:</label>
+                        <textarea id="messageText" class="form-control" placeholder="Type your message here..." rows="4" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="send-btn">🚀 Send Message</button>
+                        <button type="button" class="clear-btn" onclick="clearMessage()">🗑️ Clear</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Update Modal -->
+    <div id="locationModal" class="modal" th:if="${route != null}">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📍 Update Current Location</h3>
+                <span class="close" onclick="closeLocationModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="locationForm">
+                    <div class="form-group">
+                        <label for="locationSelect">Current Station/Location:</label>
+                        <select id="locationSelect" class="form-control" required>
+                            <option value="">Select location...</option>
+                            <option value="Colombo Fort">Colombo Fort</option>
+                            <option value="Maradana">Maradana</option>
+                            <option value="Kelaniya">Kelaniya</option>
+                            <option value="Ragama">Ragama</option>
+                            <option value="Veyangoda">Veyangoda</option>
+                            <option value="Mirigama">Mirigama</option>
+                            <option value="Polgahawela">Polgahawela</option>
+                            <option value="Rambukkana">Rambukkana</option>
+                            <option value="Peradeniya Junction">Peradeniya Junction</option>
+                            <option value="Kandy">Kandy</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="statusSelect">Train Status:</label>
+                        <select id="statusSelect" class="form-control" required>
+                            <option value="On Schedule">On Schedule</option>
+                            <option value="Delayed">Delayed</option>
+                            <option value="Ahead of Schedule">Ahead of Schedule</option>
+                            <option value="Stopped">Stopped</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="remarks">Additional Remarks (Optional):</label>
+                        <textarea id="remarks" class="form-control" placeholder="Any additional information..." rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="send-btn" onclick="confirmLocationUpdate()">✅ Update Location</button>
+                <button class="clear-btn" onclick="closeLocationModal()">❌ Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+
+    function refreshRoute() {
+        // Reload the page to get updated route info
+        location.reload();
+    }
+
+    function refreshMessages() {
+        const messagesSection = document.getElementById('messagesSection');
+        const loadingElement = document.getElementById('messagesLoading');
+
+        messagesSection.style.display = 'none';
+        loadingElement.style.display = 'block';
+
+        fetch('/driver/messages/refresh', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                messagesSection.innerHTML = '';
+                if (data && data.length > 0) {
+                    data.forEach(msg => {
+                        const messageItem = document.createElement('div');
+                        messageItem.className = 'message-item';
+                        messageItem.innerHTML = `
+                            <div class="message-sender">From: ${msg.senderId}</div>
+                            <div class="message-text">${msg.msgText}</div>
+                            <div class="message-time">${formatDateTime(new Date(msg.msgTime))}</div>
+                        `;
+                        messagesSection.appendChild(messageItem);
+                    });
+                } else {
+                    messagesSection.innerHTML = '<div class="no-messages">No recent messages.</div>';
+                }
+                messagesSection.style.display = 'block';
+                loadingElement.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error refreshing messages:', error);
+                messagesSection.style.display = 'block';
+                loadingElement.style.display = 'none';
+                showMessage('Error refreshing messages', 'error');
+            });
+    }
+
+    // Location update functions
+    function updateLocation() {
+        document.getElementById('locationModal').style.display = 'block';
+    }
+
+    function closeLocationModal() {
+        document.getElementById('locationModal').style.display = 'none';
+        document.getElementById('locationForm').reset();
+    }
+
+    function confirmLocationUpdate() {
+        const location = document.getElementById('locationSelect').value;
+        const status = document.getElementById('statusSelect').value;
+        const remarks = document.getElementById('remarks').value;
+
+        if (!location || !status) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
+        const requestData = {
+            location: location,
+            status: status,
+            remarks: remarks
+        };
+
+        fetch('/driver/update-location', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+
+            },
+            body: JSON.stringify(requestData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the current location display
+                    document.getElementById('currentLocation').textContent = location;
+                    showMessage(data.message, 'success');
+                    closeLocationModal();
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating location:', error);
+                showMessage('Error updating location', 'error');
+            });
+    }
+
+    // Message sending functionality
+    document.getElementById('messageForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        sendMessage();
+    });
+
+    function sendMessage() {
+        const recipient = document.getElementById('recipientSelect').value;
+        const messageText = document.getElementById('messageText').value.trim();
+
+        if (!recipient || !messageText) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        const requestData = {
+            receiverId: recipient,
+            messageText: messageText
+        };
+
+        fetch('/driver/send-message', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+
+            },
+            body: JSON.stringify(requestData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    clearMessage();
+                    // Refresh messages to show the sent message
+                    setTimeout(refreshMessages, 1000);
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+                showMessage('Error sending message', 'error');
+            });
+    }
+
+    function clearMessage() {
+        document.getElementById('messageForm').reset();
+    }
+
+    function showMessage(text, type) {
+        const messageElement = document.getElementById('successMessage');
+        messageElement.textContent = text;
+        messageElement.className = type === 'error' ? 'error-message' : 'success-message';
+        messageElement.style.display = 'block';
+
+        setTimeout(() => {
+            messageElement.style.display = 'none';
+        }, 5000);
+    }
+
+    function formatDateTime(date) {
+        return date.toLocaleString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('locationModal');
+        if (event.target === modal) {
+            closeLocationModal();
+        }
+    }
+
+    // Auto-refresh messages every 30 seconds
+    setInterval(refreshMessages, 30000);
+</script>
+</body>
+</html>
