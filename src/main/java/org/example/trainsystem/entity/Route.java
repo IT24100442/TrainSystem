@@ -1,5 +1,6 @@
 package org.example.trainsystem.entity;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,4 +25,5 @@ public class Route {
 
     public List<Stop> getStops() { return stops; }  // always initialize!
     public void setStops(List<Stop> stops) { this.stops = stops; }
+
 }
