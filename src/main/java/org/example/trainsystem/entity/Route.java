@@ -1,42 +1,27 @@
 package org.example.trainsystem.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Route {
-    private String rid;
+    private int routeId;
     private String routeName;
-    private Integer duration;
-    private String routeStart;
-    private String routeDestination;
-    private String driverId;
+    private int durationMinutes;
+    private Integer driverId;
+    private List<Stop> stops = new ArrayList<>();
 
-    // Constructors
-    public Route() {}
-
-    public Route(String rid, String routeName, Integer duration, String routeStart, String routeDestination, String driverId) {
-        this.rid = rid;
-        this.routeName = routeName;
-        this.duration = duration;
-        this.routeStart = routeStart;
-        this.routeDestination = routeDestination;
-        this.driverId = driverId;
-    }
-
-    // Getters and Setters
-    public String getRid() { return rid; }
-    public void setRid(String rid) { this.rid = rid; }
+    public int getRouteId() { return routeId; }
+    public void setRouteId(int routeId) { this.routeId = routeId; }
 
     public String getRouteName() { return routeName; }
     public void setRouteName(String routeName) { this.routeName = routeName; }
 
-    public Integer getDuration() { return duration; }
-    public void setDuration(Integer duration) { this.duration = duration; }
+    public int getDurationMinutes() { return durationMinutes; }   // <- fix getter
+    public void setDurationMinutes(int durationMinutes) { this.durationMinutes = durationMinutes; }
 
-    public String getRouteStart() { return routeStart; }
-    public void setRouteStart(String routeStart) { this.routeStart = routeStart; }
+    public Integer getDriverId() { return driverId; }
+    public void setDriverId(Integer driverId) { this.driverId = driverId; }
 
-    public String getRouteDestination() { return routeDestination; }
-    public void setRouteDestination(String routeDestination) { this.routeDestination = routeDestination; }
-
-    public String getDriverId() { return driverId; }
-    public void setDriverId(String driverId) { this.driverId = driverId; }
-
+    public List<Stop> getStops() { return stops; }  // always initialize!
+    public void setStops(List<Stop> stops) { this.stops = stops; }
 }

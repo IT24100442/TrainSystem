@@ -17,64 +17,88 @@ public class StatusUpdateDAO {
     @Autowired
     private static JdbcTemplate jdbcTemplate;
 
-    private static final class LocationUpdateRowMapper implements RowMapper<StatusUpdate> {
+    private static final class StatusUpdateRowMapper implements RowMapper<StatusUpdate> {
         @Override
         public StatusUpdate mapRow(ResultSet rs, int rowNum) throws SQLException {
-            StatusUpdate locationUpdate = new StatusUpdate();
-            locationUpdate.setId(rs.getLong("id"));
-            locationUpdate.setTrainId(rs.getString("trainId"));
-            locationUpdate.setCurrentLocation(rs.getString("currentLocation"));
-            locationUpdate.setStatus(rs.getString("status"));
-            locationUpdate.setRemarks(rs.getString("remarks"));
+            StatusUpdate update = new StatusUpdate();
+            update.setId(rs.getLong("id"));
+            update.setTrainId(rs.getInt("trainId"));
+            update.setCurrentLocation(rs.getString("currentLocation"));
+            update.setStatus(rs.getString("status"));
+            update.setRemarks(rs.getString("remarks"));
 
             Timestamp timestamp = rs.getTimestamp("updateTime");
             if (timestamp != null) {
-                locationUpdate.setUpdateTime(timestamp.toLocalDateTime());
+                update.setUpdateTime(timestamp.toLocalDateTime());
             }
 
-            return locationUpdate;
+            return update;
         }
     }
 
-    public StatusUpdate findById(Long id) {
-        String sql = "SELECT id, trainId, currentLocation, status, remarks, updateTime FROM LocationUpdates WHERE id = ?";
+    public StatusUpdate findById(long id) {
+        String sql = "SELECT id, trainId, currentLocation, status, remarks, updateTime FROM StatusUpdates WHERE id = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new LocationUpdateRowMapper(), id);
+            return jdbcTemplate.queryForObject(sql, new StatusUpdateRowMapper(), id);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public static StatusUpdate findLatestByTrainId(String trainId) {
-        String sql = "SELECT TOP 1 id, trainId, currentLocation, status, remarks, updateTime FROM LocationUpdates WHERE trainId = ? ORDER BY updateTime DESC";
+    public static StatusUpdate findLatestByTrainId(int trainId) {
+        String sql = """
+            SELECT TOP 1 id, trainId, currentLocation, status, remarks, updateTime
+            FROM StatusUpdates
+            WHERE trainId = ?
+            ORDER BY updateTime DESC
+            """;
         try {
-            return jdbcTemplate.queryForObject(sql, new LocationUpdateRowMapper(), trainId);
+            return jdbcTemplate.queryForObject(sql, new StatusUpdateRowMapper(), trainId);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public List<StatusUpdate> findByTrainId(String trainId) {
-        String sql = "SELECT id, trainId, currentLocation, status, remarks, updateTime FROM LocationUpdates WHERE trainId = ? ORDER BY updateTime DESC";
-        return jdbcTemplate.query(sql, new LocationUpdateRowMapper(), trainId);
+    public List<StatusUpdate> findByTrainId(int trainId) {
+        String sql = """
+            SELECT id, trainId, currentLocation, status, remarks, updateTime
+            FROM StatusUpdates
+            WHERE trainId = ?
+            ORDER BY updateTime DESC
+            """;
+        return jdbcTemplate.query(sql, new StatusUpdateRowMapper(), trainId);
     }
 
-    public static int save(StatusUpdate locationUpdate) {
-        String sql = "INSERT INTO LocationUpdates (trainId, currentLocation, status, remarks, updateTime) VALUES (?, ?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, locationUpdate.getTrainId(), locationUpdate.getCurrentLocation(),
-                locationUpdate.getStatus(), locationUpdate.getRemarks(),
-                Timestamp.valueOf(locationUpdate.getUpdateTime()));
+    public static int save(StatusUpdate update) {
+        String sql = """
+            INSERT INTO StatusUpdates (trainId, currentLocation, status, remarks, updateTime)
+            VALUES (?, ?, ?, ?, ?)
+            """;
+        return jdbcTemplate.update(sql,
+                update.getTrainId(),
+                update.getCurrentLocation(),
+                update.getStatus(),
+                update.getRemarks(),
+                Timestamp.valueOf(update.getUpdateTime()));
     }
 
-    public int update(StatusUpdate locationUpdate) {
-        String sql = "UPDATE LocationUpdates SET trainId = ?, currentLocation = ?, status = ?, remarks = ?, updateTime = ? WHERE id = ?";
-        return jdbcTemplate.update(sql, locationUpdate.getTrainId(), locationUpdate.getCurrentLocation(),
-                locationUpdate.getStatus(), locationUpdate.getRemarks(),
-                Timestamp.valueOf(locationUpdate.getUpdateTime()), locationUpdate.getId());
+    public int update(StatusUpdate update) {
+        String sql = """
+            UPDATE StatusUpdates
+            SET trainId = ?, currentLocation = ?, status = ?, remarks = ?, updateTime = ?
+            WHERE id = ?
+            """;
+        return jdbcTemplate.update(sql,
+                update.getTrainId(),
+                update.getCurrentLocation(),
+                update.getStatus(),
+                update.getRemarks(),
+                Timestamp.valueOf(update.getUpdateTime()),
+                update.getId());
     }
 
-    public int delete(Long id) {
-        String sql = "DELETE FROM LocationUpdates WHERE id = ?";
+    public int delete(long id) {
+        String sql = "DELETE FROM StatusUpdates WHERE id = ?";
         return jdbcTemplate.update(sql, id);
     }
 }

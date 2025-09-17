@@ -9,6 +9,7 @@ import org.example.trainsystem.entity.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 public class DriverDAO {
@@ -20,8 +21,10 @@ public class DriverDAO {
         @Override
         public Driver mapRow(ResultSet rs, int rowNum) throws SQLException {
             Driver driver = new Driver();
-            driver.setUserId(rs.getString("userId"));
+            driver.setUserId(rs.getInt("userId"));
             driver.setLicense(rs.getString("license"));
+            driver.setTrainId(rs.getInt("trainId"));
+
             return driver;
         }
     }
@@ -30,11 +33,11 @@ public class DriverDAO {
         @Override
         public Driver mapRow(ResultSet rs, int rowNum) throws SQLException {
             Driver driver = new Driver();
-            driver.setUserId(rs.getString("userId"));
+            driver.setUserId(rs.getInt("userId"));
             driver.setLicense(rs.getString("license"));
 
             User user = new User();
-            user.setUserId(rs.getString("userId"));
+            user.setUserId(rs.getInt("userId"));
             user.setUsername(rs.getString("username"));
             user.setPassword(rs.getString("password"));
             user.setEmail(rs.getString("email"));
@@ -46,8 +49,8 @@ public class DriverDAO {
         }
     }
 
-    public Driver findById(String userId) {
-        String sql = "SELECT userId, license FROM Driver WHERE userId = ?";
+    public Driver findById(int userId) {
+        String sql = "SELECT userId, license, trainId FROM Driver WHERE userId = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new DriverRowMapper(), userId);
         } catch (Exception e) {
@@ -61,8 +64,7 @@ public class DriverDAO {
         FROM Driver d
         INNER JOIN Users u ON d.userId = u.userId
         WHERE u.username = ?;
-        
-    """;
+        """;
         try {
             return jdbcTemplate.queryForObject(sql, new DriverWithUserRowMapper(), username);
         } catch (Exception e) {
@@ -70,10 +72,9 @@ public class DriverDAO {
         }
     }
 
-
     public int save(Driver driver) {
-        String sql = "INSERT INTO Driver (userId, license) VALUES (?, ?)";
-        return jdbcTemplate.update(sql, driver.getUserId(), driver.getLicense());
+        String sql = "INSERT INTO Driver (userId, license, trainId) VALUES (?, ?, ?)";
+        return jdbcTemplate.update(sql, driver.getUserId(), driver.getLicense(), driver.getTrainId());
     }
 
     public int update(Driver driver) {
@@ -81,8 +82,22 @@ public class DriverDAO {
         return jdbcTemplate.update(sql, driver.getLicense(), driver.getUserId());
     }
 
-    public int delete(String userId) {
+    public int delete(int userId) {
         String sql = "DELETE FROM Driver WHERE userId = ?";
         return jdbcTemplate.update(sql, userId);
+    }
+
+    // Fetch all drivers
+    public List<Driver> findAllDrivers() {
+        String sql = "SELECT userId, license, trainId FROM Driver";
+        return jdbcTemplate.query(sql, new DriverRowMapper());
+    }
+    public Driver findDriverById(int userId) {
+        String sql = "SELECT userId, name, license FROM Driver WHERE userId = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new DriverRowMapper(), userId);
+        } catch (Exception e) {
+            return null; // Return null if not found
+        }
     }
 }

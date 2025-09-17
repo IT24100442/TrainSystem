@@ -22,8 +22,8 @@ public class MessageDAO {
         public Message mapRow(ResultSet rs, int rowNum) throws SQLException {
             Message message = new Message();
             message.setMsgId(rs.getInt("msgId"));
-            message.setSenderId(rs.getString("senderId"));
-            message.setReceiverId(rs.getString("receiverId"));
+            message.setSenderId(rs.getInt("senderId"));
+            message.setReceiverId(rs.getInt("receiverId"));
             message.setMsgText(rs.getString("msgText"));
 
             Timestamp timestamp = rs.getTimestamp("msgTime");
@@ -44,7 +44,7 @@ public class MessageDAO {
         }
     }
 
-    public List<Message> findRecentMessagesByReceiverId(String receiverId, int limit) {
+    public List<Message> findRecentMessagesByReceiverId(int receiverId, int limit) {
         String sql = "SELECT msgId, senderId, receiverId, msgText, msgTime " +
                 "FROM Msgs " +
                 "WHERE receiverId = ? " +
@@ -53,24 +53,24 @@ public class MessageDAO {
         return jdbcTemplate.query(sql, new MessageRowMapper(), receiverId, limit);
     }
 
-
-    public List<Message> findByReceiverId(String receiverId) {
+    public List<Message> findByReceiverId(int receiverId) {
         String sql = "SELECT msgId, senderId, receiverId, msgText, msgTime FROM Msgs WHERE receiverId = ? ORDER BY msgTime DESC";
         return jdbcTemplate.query(sql, new MessageRowMapper(), receiverId);
     }
 
-    public List<Message> findBySenderId(String senderId) {
+    public List<Message> findBySenderId(int senderId) {
         String sql = "SELECT msgId, senderId, receiverId, msgText, msgTime FROM Msgs WHERE senderId = ? ORDER BY msgTime DESC";
         return jdbcTemplate.query(sql, new MessageRowMapper(), senderId);
     }
 
+    // Save message without specifying msgTime; database default GETDATE() will be used
     public int save(Message message) {
-        String sql = "INSERT INTO Msgs (senderId, receiverId, msgText, msgTime) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Msgs (senderId, receiverId, msgText) VALUES (?, ?, ?)";
         return jdbcTemplate.update(sql, message.getSenderId(), message.getReceiverId(),
-                message.getMsgText(), Timestamp.valueOf(message.getMsgTime()));
+                message.getMsgText());
     }
 
-    public int delete(Integer msgId) {
+    public int delete(int msgId) {
         String sql = "DELETE FROM Msgs WHERE msgId = ?";
         return jdbcTemplate.update(sql, msgId);
     }

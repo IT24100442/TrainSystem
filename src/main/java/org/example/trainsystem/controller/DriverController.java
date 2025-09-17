@@ -1,5 +1,7 @@
 package org.example.trainsystem.controller;
 
+import org.example.trainsystem.service.RouteService;
+import org.example.trainsystem.service.StatusUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,12 @@ public class DriverController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RouteService routeService;
+
+    @Autowired
+    StatusUpdateService statusUpdateService;
+
     // Utility method to get the authenticated username
     private String getAuthenticatedUsername() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -54,7 +62,11 @@ public class DriverController {
         Driver driver = driverService.getDriverWithUser(username);
         model.addAttribute("driver", driver);
 
-        Route route = driverService.getDriverRoute(driver.getUserId());
+        Route route = routeService.getRouteByDriverId(driver.getUserId());
+
+        if(route == null){
+            System.out.println("Route not found");
+        }
         model.addAttribute("route", route);
 
         List<Message> messages = driverService.getRecentMessages(driver.getUserId(), 10);
@@ -93,6 +105,45 @@ public class DriverController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+    @PostMapping("/next-stop")
+    @ResponseBody
+    public Map<String, Object> updateNextStop() {
+        Map<String, Object> response = new HashMap<>();
+        String username = getAuthenticatedUsername();
+        if (username == null) {
+            response.put("success", false);
+            response.put("message", "Not authenticated");
+            return response;
+        }
+
+        Driver driver = driverService.getDriverWithUser(username);
+        Route route = routeService.getRouteByDriverId(driver.getUserId());
+
+        List<Stop> stops = route.getStops();
+        String currentLocation = driverService.getLatestLocation(driver.getUserId()).getCurrentLocation();
+        String nextStop = null;
+
+        for (int i = 0; i < stops.size(); i++) {
+            if (stops.get(i).getStopName().equalsIgnoreCase(currentLocation) && i + 1 < stops.size()) {
+                nextStop = stops.get(i + 1).getStopName();
+                break;
+            }
+        }
+
+        // If current stop is last, stay there
+        if (nextStop == null && !stops.isEmpty()) {
+            nextStop = stops.get(stops.size() - 1).getStopName();
+        }
+
+        // Save location update
+        statusUpdateService.save(new StatusUpdate(driver.getTrainId(), nextStop, "On Schedule"));
+
+        response.put("success", true);
+        response.put("nextStop", nextStop);
+        return response;
+    }
+
+
 
     @PostMapping("/send-message")
     @ResponseBody
@@ -127,7 +178,7 @@ public class DriverController {
 
         try {
             Driver driver = driverService.getDriverWithUser(username);
-            List<Message> messages = driverService.getRecentMessages(driver.getUserId(), 10);
+            List<Message> messages = driverService.getRecentMessages((driver.getUserId()), 10);
             return ResponseEntity.ok(messages);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

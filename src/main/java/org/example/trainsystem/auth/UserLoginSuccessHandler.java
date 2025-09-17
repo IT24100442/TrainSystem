@@ -39,7 +39,7 @@ public class UserLoginSuccessHandler implements AuthenticationSuccessHandler {
                     redirectURL = "/driver/dashboard";
                     break;
                 case "ROLE_OPMANAGER":
-                    redirectURL = "/manager/dashboard";
+                    redirectURL = "/opmanager/dashboard";
                     break;
                 default:
                     redirectURL = "/";

@@ -1,23 +1,23 @@
 package org.example.trainsystem.entity;
 
 public class Train {
-    private String tid;
+    private int tid;
     private String name;
 
 
     public Train() {
     }
 
-    public Train(String tid, String name) {
+    public Train(int tid, String name) {
         this.tid = tid;
         this.name = name;
     }
 
-    public String getTid() {
+    public int getTid() {
         return tid;
     }
 
-    public void setTid(String tid) {
+    public void setTid(int tid) {
         this.tid = tid;
     }
 

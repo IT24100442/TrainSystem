@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 public class StatusUpdate {
 
     private Long id;
-    private String trainId;
+    private int trainId;
     private String currentLocation;
     private String status;
     private String remarks;
@@ -13,7 +13,7 @@ public class StatusUpdate {
     // Constructors
     public StatusUpdate() {}
 
-    public StatusUpdate(String trainId, String currentLocation, String status, String remarks, LocalDateTime updateTime) {
+    public StatusUpdate(int trainId, String currentLocation, String status, String remarks, LocalDateTime updateTime) {
         this.trainId = trainId;
         this.currentLocation = currentLocation;
         this.status = status;
@@ -21,12 +21,19 @@ public class StatusUpdate {
         this.updateTime = updateTime;
     }
 
+    public StatusUpdate(int trainId, String nextStop, String onSchedule) {
+        this.trainId = trainId;
+        this.currentLocation = nextStop;
+        this.status = onSchedule;
+    }
+
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getTrainId() { return trainId; }
-    public void setTrainId(String trainId) { this.trainId = trainId; }
+    public int getTrainId() { return trainId; }
+    public void setTrainId(int trainId) { this.trainId = trainId; }
 
     public String getCurrentLocation() { return currentLocation; }
     public void setCurrentLocation(String currentLocation) { this.currentLocation = currentLocation; }

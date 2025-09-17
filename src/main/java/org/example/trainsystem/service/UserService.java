@@ -17,8 +17,12 @@ public class UserService {
         return userDAO.findByUserType("OpManager");
     }
 
-    public User getUserById(String userId) {
+    public User getUserById(int userId) {
         return userDAO.findById(userId);
+    }
+
+    public User getUserByUsername(String username) {
+        return userDAO.findByUsername(username);
     }
 
     public void createUser(User user) {
@@ -35,7 +39,7 @@ public class UserService {
         }
     }
 
-    public void deleteUser(String userId) {
+    public void deleteUser(int userId) {
         int result = userDAO.delete(userId);
         if (result == 0) {
             throw new RuntimeException("Failed to delete user");

@@ -1,7 +1,7 @@
 package org.example.trainsystem.entity;
 
 public class User {
-    private String userId;
+    private int userId;
     private String username;
     private String password;
     private String email;
@@ -11,7 +11,7 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String userId, String username, String password, String email, String name, String userType) {
+    public User(int userId, String username, String password, String email, String name, String userType) {
         this.userId = userId;
         this.username = username;
         this.password = password;
@@ -21,8 +21,8 @@ public class User {
     }
 
     // Getters and Setters
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
