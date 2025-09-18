@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Verification - Train Booking System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .controls-section {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid #e3e8ff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-control {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .verification-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .verification-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 2px solid #5a67d8;
+        }
+
+        .verification-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        .verification-table tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .verification-table tr:nth-child(even) {
+            background-color: #f8f9ff;
+        }
+
+        .verification-table tr:nth-child(even):hover {
+            background-color: #edf2f7;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .status-verified {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-pending {
+            background: #feebc8;
+            color: #744210;
+        }
+
+        .checkbox-cell {
+            text-align: center;
+        }
+
+        .verification-checkbox {
+            transform: scale(1.5);
+            cursor: pointer;
+        }
+
+        .verification-checkbox:checked {
+            accent-color: #4facfe;
+        }
+
+        .officer-info {
+            background: #e6fffa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #38b2ac;
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-top: 4px solid #4facfe;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        @media (max-width: 1200px) {
+            .verification-table {
+                font-size: 12px;
+            }
+
+            .verification-table th,
+            .verification-table td {
+                padding: 10px 8px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+
+            .verification-table {
+                font-size: 11px;
+            }
+
+            .btn {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🎫 Ticket Verification System</h1>
+        <p>Digital verification for Ticket Checking Officers</p>
+    </div>
+
+    <div class="main-content">
+        <!-- Officer Information -->
+        <div class="officer-info">
+            <strong>👮‍♂️ Officer:</strong> <span th:text="${officerName ?: 'Officer Smith'}">Officer Smith</span> |
+            <strong>📅 Date:</strong> <span th:text="${currentDate ?: '2025-09-18'}">2025-09-18</span> |
+            <strong>🕐 Time:</strong> <span id="currentTime">--:--</span>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${totalPassengers ?: '24'}">24</div>
+                <div class="stat-label">Total Passengers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${verifiedCount ?: '18'}">18</div>
+                <div class="stat-label">Verified</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${pendingCount ?: '6'}">6</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${violationCount ?: '2'}">2</div>
+                <div class="stat-label">Violations</div>
+            </div>
+        </div>
+
+        <!-- Controls Section -->
+        <div class="controls-section">
+            <div class="form-group">
+                <label for="trainSelect">Select Train for Verification</label>
+                <select id="trainSelect" name="trainNumber" class="form-control" onchange="loadPassengerData(this.value)">
+                    <option value="">Choose train...</option>
+                    <option value="T-101" th:selected="${selectedTrain == 'T-101'}">T-101 (Colombo - Kandy)</option>
+                    <option value="T-102" th:selected="${selectedTrain == 'T-102'}">T-102 (Kandy - Colombo)</option>
+                    <option value="T-201" th:selected="${selectedTrain == 'T-201'}">T-201 (Colombo - Galle)</option>
+                    <option value="T-301" th:selected="${selectedTrain == 'T-301'}">T-301 (Colombo - Jaffna)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Verification Table -->
+        <div style="overflow-x: auto;">
+            <table class="verification-table">
+                <thead>
+                <tr>
+                    <th>Passenger Name</th>
+                    <th>Booking ID</th>
+                    <th>Officer Name</th>
+                    <th>Train No</th>
+                    <th>Seat Assignment</th>
+                    <th>Class</th>
+                    <th>Date</th>
+                    <th>Verified</th>
+                    <th>Report Violation</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Sample Data Row 1 -->
+                <tr>
+                    <td>John Doe</td>
+                    <td>#BK12345</td>
+                    <td th:text="${officerName ?: 'Officer Smith'}">Officer Smith</td>
+                    <td>T-101</td>
+                    <td>A1</td>
+                    <td>First Class</td>
+                    <td>2025-09-18</td>
+                    <td class="checkbox-cell">
+                        <input type="checkbox" class="verification-checkbox" onchange="updateVerificationStatus(this, '#BK12345')">
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="reportViolation('#BK12345', 'John Doe', 'T-101', 'A1')">
+                            🚨 Report
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Sample Data Row 2 -->
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>#BK12346</td>
+                    <td th:text="${officerName ?: 'Officer Smith'}">Officer Smith</td>
+                    <td>T-101</td>
+                    <td>A2</td>
+                    <td>First Class</td>
+                    <td>2025-09-18</td>
+                    <td class="checkbox-cell">
+                        <input type="checkbox" class="verification-checkbox" checked onchange="updateVerificationStatus(this, '#BK12346')">
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="reportViolation('#BK12346', 'Jane Smith', 'T-101', 'A2')">
+                            🚨 Report
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Sample Data Row 3 -->
+                <tr>
+                    <td>Michael Johnson</td>
+                    <td>#BK12347</td>
+                    <td th:text="${officerName ?: 'Officer Smith'}">Officer Smith</td>
+                    <td>T-101</td>
+                    <td>B1</td>
+                    <td>Second Class</td>
+                    <td>2025-09-18</td>
+                    <td class="checkbox-cell">
+                        <input type="checkbox" class="verification-checkbox" onchange="updateVerificationStatus(this, '#BK12347')">
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="reportViolation('#BK12347', 'Michael Johnson', 'T-101', 'B1')">
+                            🚨 Report
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Sample Data Row 4 -->
+                <tr>
+                    <td>Sarah Wilson</td>
+                    <td>#BK12348</td>
+                    <td th:text="${officerName ?: 'Officer Smith'}">Officer Smith</td>
+                    <td>T-101</td>
+                    <td>B2</td>
+                    <td>Second Class</td>
+                    <td>2025-09-18</td>
+                    <td class="checkbox-cell">
+                        <input type="checkbox" class="verification-checkbox" checked onchange="updateVerificationStatus(this, '#BK12348')">
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="reportViolation('#BK12348', 'Sarah Wilson', 'T-101', 'B2')">
+                            🚨 Report
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Dynamic rows would be generated here with Thymeleaf -->
+                <tr th:each="passenger : ${passengers}" th:if="${passengers != null}">
+                    <td th:text="${passenger.name}"></td>
+                    <td th:text="${passenger.bookingId}"></td>
+                    <td th:text="${officerName}"></td>
+                    <td th:text="${passenger.trainNumber}"></td>
+                    <td th:text="${passenger.seatNumber}"></td>
+                    <td th:text="${passenger.ticketClass}"></td>
+                    <td th:text="${passenger.travelDate}"></td>
+                    <td class="checkbox-cell">
+                        <input type="checkbox" class="verification-checkbox"
+                               th:checked="${passenger.verified}"
+                               th:onchange="'updateVerificationStatus(this, \'' + ${passenger.bookingId} + '\')'">
+                    </td>
+                    <td>
+                        <button class="btn btn-danger"
+                                th:onclick="'reportViolation(\'' + ${passenger.bookingId} + '\', \'' + ${passenger.name} + '\', \'' + ${passenger.trainNumber} + '\', \'' + ${passenger.seatNumber} + '\')'">
+                            🚨 Report
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="margin-top: 30px; text-align: center;">
+            <button class="btn btn-primary" onclick="saveVerificationData()">💾 Save Verification Data</button>
+            <button class="btn btn-primary" onclick="exportReport()" style="margin-left: 10px;">📊 Export Report</button>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div th:if="${successMessage}" class="alert alert-success" style="margin: 20px 30px;">
+        <span th:text="${successMessage}">Verification data saved successfully!</span>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-error" style="margin: 20px 30px;">
+        <span th:text="${errorMessage}">Error occurred during verification.</span>
+    </div>
+</div>
+
+<script>
+    // Update current time
+    function updateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', {
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        document.getElementById('currentTime').textContent = timeString;
+    }
+
+    // Update time every second
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    function loadPassengerData(trainNumber) {
+        if (trainNumber) {
+            window.location.href = `/verification?train=${trainNumber}`;
+        }
+    }
+
+    function updateVerificationStatus(checkbox, bookingId) {
+        const isVerified = checkbox.checked;
+
+        // Send AJAX request to update verification status
+        fetch('/update-verification-status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                bookingId: bookingId,
+                verified: isVerified,
+                officerName: document.querySelector('.officer-info span').textContent
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update statistics
+                    updateStats();
+                    showMessage('Verification status updated successfully!', 'success');
+                } else {
+                    // Revert checkbox if update failed
+                    checkbox.checked = !isVerified;
+                    showMessage('Failed to update verification status.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                checkbox.checked = !isVerified;
+                showMessage('Network error occurred.', 'error');
+            });
+    }
+
+    function reportViolation(bookingId, passengerName, trainNumber, seatNumber) {
+        // Store data in localStorage for the violation page
+        const violationData = {
+            bookingId: bookingId,
+            passengerName: passengerName,
+            trainNumber: trainNumber,
+            seatNumber: seatNumber,
+            officerName: document.querySelector('.officer-info span').textContent,
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toLocaleTimeString('en-US', { hour12: false })
+        };
+
+        localStorage.setItem('violationData', JSON.stringify(violationData));
+
+        // Redirect to violation page
+        window.location.href = 'violation-report.html';
+    }
+
+    function saveVerificationData() {
+        const verifiedPassengers = [];
+        const checkboxes = document.querySelectorAll('.verification-checkbox:checked');
+
+        checkboxes.forEach(checkbox => {
+            const row = checkbox.closest('tr');
+            const bookingId = row.cells[1].textContent;
+            verifiedPassengers.push(bookingId);
+        });
+
+        // Send data to server
+        fetch('/save-verification-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                verifiedPassengers: verifiedPassengers,
+                officerName: document.querySelector('.officer-info span').textContent,
+                trainNumber: document.getElementById('trainSelect').value,
+                date: new Date().toISOString().split('T')[0]
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('Verification data saved successfully!', 'success');
+                } else {
+                    showMessage('Failed to save verification data.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Network error occurred.', 'error');
+            });
+    }
+
+    function exportReport() {
+        const trainNumber = document.getElementById('trainSelect').value;
+        if (trainNumber) {
+            window.open(`/export-verification-report?train=${trainNumber}`, '_blank');
+        } else {
+            alert('Please select a train first.');
+        }
+    }
+
+    function updateStats() {
+        const checkboxes = document.querySelectorAll('.verification-checkbox');
+        const verifiedCount = document.querySelectorAll('.verification-checkbox:checked').length;
+        const pendingCount = checkboxes.length - verifiedCount;
+
+        document.querySelector('.stats-section .stat-card:nth-child(2) .stat-number').textContent = verifiedCount;
+        document.querySelector('.stats-section .stat-card:nth-child(3) .stat-number').textContent = pendingCount;
+    }
+
+    function showMessage(message, type) {
+        // Remove existing alerts
+        const existingAlerts = document.querySelectorAll('.alert');
+        existingAlerts.forEach(alert => alert.remove());
+
+        // Create new alert
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type === 'success' ? 'success' : 'error'}`;
+        alert.style.margin = '20px 30px';
+        alert.innerHTML = `<span>${message}</span>`;
+
+        document.querySelector('.container').appendChild(alert);
+
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        }, 3000);
+    }
+
+    // Auto-hide alerts after 5 seconds
+    setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        });
+    }, 5000);
+</script>
+</body>
+</html>
