@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Route {
-    private int routeId;
+    private Integer routeId;
     private String routeName;
     private int durationMinutes;
     private Integer driverId;
     private List<Stop> stops = new ArrayList<>();
 
-    public int getRouteId() { return routeId; }
-    public void setRouteId(int routeId) { this.routeId = routeId; }
+    public Integer getRouteId() { return routeId; }
+    public void setRouteId(Integer routeId) { this.routeId = routeId; }
 
     public String getRouteName() { return routeName; }
     public void setRouteName(String routeName) { this.routeName = routeName; }

@@ -72,4 +72,9 @@ public class StopDAO {
         String sql = "DELETE FROM Stops WHERE stopId = ?";
         return jdbcTemplate.update(sql, stopId);
     }
+
+    public List<Stop> findAll() {
+        String sql = "SELECT stopId, routeId, stopName, stopOrder FROM Stops";
+        return jdbcTemplate.query(sql, new StopRowMapper());
+    }
 }
