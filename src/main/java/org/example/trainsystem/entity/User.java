@@ -1,6 +1,8 @@
 package org.example.trainsystem.entity;
 
-public class User {
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+
+public class User extends SecurityProperties.User {
 
     private int userId;
     private String username;

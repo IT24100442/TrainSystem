@@ -17,7 +17,7 @@ public class ViolationReportResponse {
     private LocalDateTime resolutionTime;
 
     private String officerName;
-    private String officerBadgeNumber;
+
     private String officerAssignedRoute;
 
     // Constructors
@@ -60,8 +60,6 @@ public class ViolationReportResponse {
     public String getOfficerName() { return officerName; }
     public void setOfficerName(String officerName) { this.officerName = officerName; }
 
-    public String getOfficerBadgeNumber() { return officerBadgeNumber; }
-    public void setOfficerBadgeNumber(String officerBadgeNumber) { this.officerBadgeNumber = officerBadgeNumber; }
 
     public String getOfficerAssignedRoute() { return officerAssignedRoute; }
     public void setOfficerAssignedRoute(String officerAssignedRoute) { this.officerAssignedRoute = officerAssignedRoute; }

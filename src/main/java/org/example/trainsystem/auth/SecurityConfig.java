@@ -38,8 +38,14 @@ public class SecurityConfig {
                         // 🔹 Public pages like login/register
                         .requestMatchers("/", "/login", "/register", "/css/**", "/js/**").permitAll()
 
+                        //TicketCheckingOfficer
+                        .requestMatchers("/Ticket_Officer/**").hasRole("TICKETOFFICER")
+
                         // everything else requires login
                         .anyRequest().authenticated()
+
+
+
                 )
                 .csrf(csrf -> csrf.disable()) // ❗ disable CSRF for now (you can enable later)
 

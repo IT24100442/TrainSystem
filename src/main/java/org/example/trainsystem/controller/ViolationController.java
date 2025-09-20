@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -26,7 +27,7 @@ public class ViolationController {
                     request.getPassengerId(),
                     request.getViolationType(),
                     request.getViolationDescription(),
-                    request.getPenaltyAmount()
+                    BigDecimal.valueOf(request.getPenaltyAmount())
             );
             return ResponseEntity.ok("Violation reported successfully");
         } catch (RuntimeException e) {

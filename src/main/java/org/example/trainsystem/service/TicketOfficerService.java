@@ -5,6 +5,7 @@ import org.example.trainsystem.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class TicketOfficerService {
                                 String passengerId,
                                 String violationType,
                                 String violationDescription,
-                                Double penaltyAmount) {
+                                BigDecimal penaltyAmount) {
 
         ViolationReport violationReport = new ViolationReport(
                 officerId,

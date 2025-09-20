@@ -58,7 +58,7 @@ public class ViolationReportDAO {
 
             TicketOfficer ticketOfficer = new TicketOfficer();
             ticketOfficer.setUserId(rs.getString("officerId"));
-            ticketOfficer.setBadgeNumber(rs.getString("badgeNumber"));
+
             ticketOfficer.setAssignedRoute(rs.getString("assignedRoute"));
 
             User user = new User();
@@ -110,7 +110,7 @@ public class ViolationReportDAO {
             SELECT vr.violationId, vr.officerId, vr.trainId, vr.passengerId, vr.violationType,
                    vr.violationDescription, vr.violationTime, vr.reportStatus, vr.penaltyAmount,
                    vr.resolvedBy, vr.resolutionTime,
-                   t.badgeNumber, t.assignedRoute,
+                    , t.assignedRoute,
                    u.username, u.email, u.name, u.userType
             FROM ViolationReport vr
             INNER JOIN TicketOfficer t ON vr.officerId = t.userId

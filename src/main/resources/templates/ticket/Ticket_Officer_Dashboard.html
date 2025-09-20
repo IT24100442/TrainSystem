@@ -279,9 +279,9 @@
     <div class="main-content">
         <!-- Officer Information -->
         <div class="officer-info">
-            <strong>👮‍♂️ Officer:</strong> <span th:text="${officerName ?: 'Officer Smith'}">Officer Smith</span> |
-            <strong>📅 Date:</strong> <span th:text="${currentDate ?: '2025-09-18'}">2025-09-18</span> |
-            <strong>🕐 Time:</strong> <span id="currentTime">--:--</span>
+            <strong>👮‍♂️ Officer:</strong> <span th:text="${officerName}">Officer Smith</span> |
+            <strong>📅 Date:</strong> <span th:text="${date}">2025-09-18</span> |
+            <strong>🕐 Time:</strong> <span id="currentTime" th:text="${time}">12:45</span>
         </div>
 
         <!-- Statistics Section -->
@@ -411,7 +411,7 @@
                     </td>
                 </tr>
 
-                <!-- Dynamic rows would be generated here with Thymeleaf -->
+                <!-- Dynamic rows generated with Thymeleaf -->
                 <tr th:each="passenger : ${passengers}" th:if="${passengers != null}">
                     <td th:text="${passenger.name}"></td>
                     <td th:text="${passenger.bookingId}"></td>
@@ -462,7 +462,10 @@
             hour: '2-digit',
             minute: '2-digit'
         });
-        document.getElementById('currentTime').textContent = timeString;
+        const timeElement = document.getElementById('currentTime');
+        if (timeElement) {
+            timeElement.textContent = timeString;
+        }
     }
 
     // Update time every second
@@ -471,7 +474,9 @@
 
     function loadPassengerData(trainNumber) {
         if (trainNumber) {
+            // For Spring Boot controller
             window.location.href = `/verification?train=${trainNumber}`;
+            // Alternative for static files: window.location.href = `ticket-verification.html?train=${trainNumber}`;
         }
     }
 
@@ -510,7 +515,7 @@
     }
 
     function reportViolation(bookingId, passengerName, trainNumber, seatNumber) {
-        // Store data in localStorage for the violation page
+        // Store data for the violation page
         const violationData = {
             bookingId: bookingId,
             passengerName: passengerName,
@@ -521,10 +526,22 @@
             time: new Date().toLocaleTimeString('en-US', { hour12: false })
         };
 
-        localStorage.setItem('violationData', JSON.stringify(violationData));
+        // Store in memory (since we can't use localStorage in artifacts)
+        window.violationData = violationData;
 
-        // Redirect to violation page
-        window.location.href = 'violation-report.html';
+        // For Spring Boot application - redirect to controller endpoint
+        const params = new URLSearchParams({
+            bookingId: bookingId,
+            passengerName: passengerName,
+            trainNumber: trainNumber,
+            seatNumber: seatNumber,
+            officerName: document.querySelector('.officer-info span').textContent
+        });
+
+        window.location.href = `/Ticket_Officer/violation-report?${params.toString()}`;
+
+        // Alternative for static files:
+        // window.location.href = `violation-report.html?${params.toString()}`;
     }
 
     function saveVerificationData() {
@@ -578,8 +595,11 @@
         const verifiedCount = document.querySelectorAll('.verification-checkbox:checked').length;
         const pendingCount = checkboxes.length - verifiedCount;
 
-        document.querySelector('.stats-section .stat-card:nth-child(2) .stat-number').textContent = verifiedCount;
-        document.querySelector('.stats-section .stat-card:nth-child(3) .stat-number').textContent = pendingCount;
+        const verifiedElement = document.querySelector('.stats-section .stat-card:nth-child(2) .stat-number');
+        const pendingElement = document.querySelector('.stats-section .stat-card:nth-child(3) .stat-number');
+
+        if (verifiedElement) verifiedElement.textContent = verifiedCount;
+        if (pendingElement) pendingElement.textContent = pendingCount;
     }
 
     function showMessage(message, type) {

@@ -21,6 +21,9 @@ public class RouteDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    public Route findByOfficerId(String officerId) {
+     return null;}
+
     private static final class RouteRowMapper implements RowMapper<Route> {
         @Override
         public Route mapRow(ResultSet rs, int rowNum) throws SQLException {
