@@ -4,90 +4,47 @@
   <meta charset="UTF-8">
   <title>Override Train Status</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    h1 {
-      color: #333;
-    }
-    .status-form {
-      border: 1px solid #ccc;
-      padding: 20px;
-      width: 400px;
-      border-radius: 10px;
-    }
-    .status-form label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    .status-form select, .status-form input, .status-form textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-    }
-    .status-form button {
-      margin-top: 15px;
-      padding: 10px;
-      background-color: #007bff;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .status-form button:hover {
-      background-color: #0056b3;
-    }
+    <style>
     table {
-      margin-top: 30px;
-      width: 80%;
+      width: 100%;
       border-collapse: collapse;
+      margin-top: 20px;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
+      padding: 8px 12px;
+      text-align: left;
     }
     th {
-      background-color: #f4f4f4;
+      background-color: #f2f2f2;
     }
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+    form button {
+      padding: 5px 10px;
+      background-color: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    form button:hover {
+      background-color: #1565c0;
+    }
+    select {
+      padding: 4px;
+      border-radius: 3px;
+      border: 1px solid #ccc;
+    }
+  </style>
+
   </style>
 </head>
 <body>
 <h1>Override Train Status</h1>
 
-<div class="status-form">
-  <form th:action="@{/train-status/override}" method="post" th:object="${trainStatus}">
-    <label for="trainRouteId">Train Route:</label>
-    <select id="trainRouteId" th:field="*{trainRouteId}" required>
-      <option th:each="route : ${routes}"
-              th:value="${route.routeId}"
-              th:text="${route.routeName}">
-      </option>
-    </select>
-
-    <label for="stopId">Stop:</label>
-    <select id="stopId" th:field="*{stopId}" required>
-      <option th:each="stop : ${stops}"
-              th:value="${stop.stopOrder}"
-              th:text="${stop.stopName}">
-      </option>
-    </select>
-
-
-    <label for="status">Status:</label>
-    <select id="status" th:field="*{status}">
-      <option value="ON_TIME">On Time</option>
-      <option value="DELAYED">Delayed</option>
-      <option value="CANCELLED">Cancelled</option>
-    </select>
-
-    <button type="submit">Override Status</button>
-  </form>
-</div>
-
-<!-- Show existing statuses -->
+<!-- Table of existing statuses with status change form per row -->
 <h2>Existing Status Updates</h2>
 <table>
   <thead>
@@ -97,6 +54,7 @@
     <th>Stop</th>
     <th>Status</th>
     <th>Timestamp</th>
+    <th>Change Status</th>
   </tr>
   </thead>
   <tbody>
@@ -106,6 +64,17 @@
     <td th:text="${status.stopName}"></td>
     <td th:text="${status.status}"></td>
     <td th:text="${status.timestamp}"></td>
+    <td>
+      <form th:action="@{/train-status/override}" method="post">
+        <input type="hidden" name="statusId" th:value="${status.statusId}" />
+        <select name="status" required>
+          <option th:selected="${status.status == 'ON_TIME'}" value="ON_TIME">On Time</option>
+          <option th:selected="${status.status == 'DELAYED'}" value="DELAYED">Delayed</option>
+          <option th:selected="${status.status == 'CANCELLED'}" value="CANCELLED">Cancelled</option>
+        </select>
+        <button type="submit">Update</button>
+      </form>
+    </td>
   </tr>
   </tbody>
 </table>

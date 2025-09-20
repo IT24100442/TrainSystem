@@ -23,21 +23,11 @@ public class TrainStatusDAO {
             ts.setStatusId(rs.getInt("statusId"));
             ts.setTrainRouteId(rs.getInt("trainRouteId"));
             ts.setStopId(rs.getInt("stopId"));
-
-            // Stop name may not be in all queries
             try {
                 ts.setStopName(rs.getString("stopName"));
             } catch (SQLException e) {
                 ts.setStopName(null);
             }
-
-            // Route name may not be in all queries
-            try {
-                ts.setRouteName(rs.getString("routeName"));
-            } catch (SQLException e) {
-                ts.setRouteName(null);
-            }
-
             ts.setStatus(rs.getString("status"));
             ts.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
             return ts;
@@ -45,11 +35,12 @@ public class TrainStatusDAO {
     }
 
     public int save(TrainStatus status) {
-        String sql = "INSERT INTO TrainStatus (trainRouteId, stopId, status) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO TrainStatus (trainRouteId, stopId, status, timestamp) VALUES (?, ?, ?, ?)";
         return jdbcTemplate.update(sql,
                 status.getTrainRouteId(),
                 status.getStopId(),
-                status.getStatus());
+                status.getStatus(),
+                status.getTimestamp());
     }
 
     public List<TrainStatus> findByTrainRoute(int trainRouteId) {
@@ -58,7 +49,6 @@ public class TrainStatusDAO {
                    ts.trainRouteId,
                    ts.stopId,
                    s.stopName,
-                   r.routeName,
                    ts.status,
                    ts.timestamp
             FROM TrainStatus ts
@@ -72,12 +62,17 @@ public class TrainStatusDAO {
     }
 
     public int updateStatus(int statusId, String newStatus) {
-        String sql = "UPDATE TrainStatus SET status = ? WHERE statusId = ?";
-        return jdbcTemplate.update(sql, newStatus, statusId);
+        try {
+            String sql = "UPDATE TrainStatus SET status = ?, timestamp = ? WHERE statusId = ?";
+            System.out.println("Updating statusId " + statusId + " to new status: " + newStatus);
+            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+            return jdbcTemplate.update(sql, newStatus, now,  statusId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<TrainStatus> findAll() {
-        // Make this consistent with findAllWithDetails
         String sql = """
             SELECT ts.statusId,
                    ts.trainRouteId,
@@ -96,6 +91,22 @@ public class TrainStatusDAO {
     }
 
     public List<TrainStatus> findAllWithDetails() {
-        return findAll(); // no need to duplicate
+        return findAll();
     }
+    public TrainStatus findById(int statusId) {
+        String sql = """
+        SELECT ts.statusId,
+               ts.trainRouteId,
+               ts.stopId,
+               s.stopName,
+               ts.status,
+               ts.timestamp
+        FROM TrainStatus ts
+        JOIN Stops s ON ts.stopId = s.stopId
+        WHERE ts.statusId = ?
+    """;
+        List<TrainStatus> results = jdbcTemplate.query(sql, new TrainStatusRowMapper(), statusId);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
 }

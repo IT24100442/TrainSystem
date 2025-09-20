@@ -50,8 +50,8 @@ public class DriverService {
         return StatusUpdateDAO.findLatestByTrainId(trainId);
     }
 
-    public void updateLocation(int trainId, String location, String status, String remarks) {
-        StatusUpdate statusUpdate = new StatusUpdate(trainId, location, status, remarks, LocalDateTime.now());
+    public void updateLocation(int trainId, String location, String status) {
+        StatusUpdate statusUpdate = new StatusUpdate(trainId, location, status, LocalDateTime.now());
         int result = StatusUpdateDAO.save(statusUpdate);
         if (result == 0) {
             throw new RuntimeException("Failed to update statusUpdate");
