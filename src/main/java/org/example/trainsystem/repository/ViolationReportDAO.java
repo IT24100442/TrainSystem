@@ -20,6 +20,20 @@ public class ViolationReportDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    public List<ViolationReport> findByReportStatus(String status) {
+        {
+            String sql = """
+        SELECT violationId, officerId, trainId, passengerId, violationType,
+               violationDescription, violationTime, reportStatus, penaltyAmount,
+               resolvedBy, resolutionTime
+        FROM ViolationReport
+        WHERE reportStatus = ?
+    """;
+            return jdbcTemplate.query(sql, new ViolationReportRowMapper(), status);
+        }
+    }
+
+
     // ---------- RowMappers ----------
     private static final class ViolationReportRowMapper implements RowMapper<ViolationReport> {
         @Override
@@ -109,7 +123,7 @@ public class ViolationReportDAO {
         String sql = """
             SELECT vr.violationId, vr.officerId, vr.trainId, vr.passengerId, vr.violationType,
                    vr.violationDescription, vr.violationTime, vr.reportStatus, vr.penaltyAmount,
-                   vr.resolvedBy, vr.resolutionTime,
+                   vr.resolvedBy, vr.resolutionTime
                     , t.assignedRoute,
                    u.username, u.email, u.name, u.userType
             FROM ViolationReport vr

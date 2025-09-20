@@ -21,7 +21,9 @@ public class ViolationService {
     public List<ViolationReport> getViolationsByOfficer(String officerId) {
         return violationReportDAO.findByOfficerId(officerId);
     }
-
+    public List<ViolationReport> getPendingViolations() {
+        return violationReportDAO.findByReportStatus("PENDING");
+    }
     public Optional<ViolationReport> getViolationWithDetails(Integer violationId) {
         return violationReportDAO.findViolationReportWithDetails(violationId);
     }
