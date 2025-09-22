@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>IT Officer Registration</title>
+</head>
+<body>
+<h2>IT Officer Additional Details</h2>
+
+<form th:action="@{/it/register}" method="post">
+    <!-- Hidden field to carry userId -->
+    <input type="hidden" name="userId" th:value="${userId}"/>
+
+    <label for="accessLevel">Access Level:</label>
+    <select id="accessLevel" name="accessLevel">
+        <option value="Admin">Admin</option>
+        <option value="Manager">Manager</option>
+        <option value="Support">Support</option>
+    </select>
+
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>

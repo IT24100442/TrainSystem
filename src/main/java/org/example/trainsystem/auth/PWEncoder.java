@@ -2,6 +2,7 @@ package org.example.trainsystem.auth;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+
 public class PWEncoder {
 
     public static String encode(String password){
