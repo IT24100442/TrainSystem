@@ -33,8 +33,16 @@ public class StopDAO {
      * Get all stops for a given route
      */
     public List<Stop> findByRouteId(int routeId) {
-        String sql = "SELECT  stopId, routeId, stopName, stopOrder FROM Stops WHERE routeId = ? ORDER BY stopOrder ASC";
-        return jdbcTemplate.query(sql, new StopRowMapper(), routeId);
+        String sql = "SELECT  * FROM Stops WHERE routeId = ? ORDER BY stopOrder ASC";
+
+        try {
+            List<Stop> result = jdbcTemplate.query(sql, new Object[]{routeId}, new StopRowMapper());
+            System.out.println("Found " + result.size() + " stops"); // Debug log
+            return result;
+        } catch (Exception e) {
+            System.err.println("Error in findByRouteId: " + e.getMessage());
+            throw e;
+        }
     }
 
     /**
@@ -44,6 +52,15 @@ public class StopDAO {
         String sql = "SELECT stopId, routeId, stopName, stopOrder FROM Stops WHERE stopId = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new StopRowMapper(), stopId);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Stop findByName(String stopName) {
+        String sql = "SELECT stopId, routeId, stopName, stopOrder FROM Stops WHERE stopName = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new StopRowMapper(), stopName);
         } catch (Exception e) {
             return null;
         }

@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,10 +83,21 @@ public class DriverController {
     }
 
     @PostMapping("/update-location")
-    public String updateLocation(@RequestParam int trainRouteId, @RequestParam String stopName) {
-        trainStatusService.updateDriverLocation(trainRouteId, stopName);
-        return "redirect:/driver/dashboard";
+    @ResponseBody
+    public Map<String, Object> updateLocation(@RequestBody Map<String, String> payload) {
+        String currentStop = payload.get("currentStop");
+        Integer routeId = Integer.valueOf(payload.get("routeId"));
+
+        String nextStop = trainStatusService.getNextStop(routeId, currentStop);
+        trainStatusService.updateStop(routeId, nextStop, LocalDateTime.now());
+
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("nextStop", nextStop);
+        return response;
     }
+
 
     @PostMapping("/next-stop")
     @ResponseBody

@@ -1,5 +1,6 @@
 package org.example.trainsystem.repository;
 
+import jdk.jshell.Snippet;
 import org.example.trainsystem.entity.TrainStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -61,6 +62,16 @@ public class TrainStatusDAO {
         return jdbcTemplate.query(sql, new TrainStatusRowMapper(), trainRouteId);
     }
 
+
+    public int find1ByTrainRoute(int trainRouteId){
+        String sql = "SELECT statusId FROM TrainStatus WHERE trainRouteId = ?";
+       try{
+           return jdbcTemplate.queryForObject(sql, Integer.class, trainRouteId);
+       } catch (Exception e){
+           return -1;
+       }
+    }
+
     public int updateStatus(int statusId, String newStatus) {
         try {
             String sql = "UPDATE TrainStatus SET status = ?, timestamp = ? WHERE statusId = ?";
@@ -71,6 +82,18 @@ public class TrainStatusDAO {
             throw new RuntimeException(e);
         }
     }
+
+    public int updateStop(int statusId, int stopId) {
+        try {
+            String sql = "UPDATE TrainStatus SET stopId = ?, timestamp = ? WHERE statusId = ?";
+            System.out.println("Updating ststusId " + statusId + " to new stop: " + stopId);
+            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+            return jdbcTemplate.update(sql, stopId, now,  statusId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public List<TrainStatus> findAll() {
         String sql = """

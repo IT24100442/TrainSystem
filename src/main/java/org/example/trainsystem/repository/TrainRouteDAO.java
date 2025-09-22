@@ -39,6 +39,14 @@ public class TrainRouteDAO {
         String sql = "SELECT * FROM TrainRoute WHERE trainRouteId = ?";
         return jdbcTemplate.queryForObject(sql, rowMapper, id);
     }
+    public TrainRoute findbyRouteId(int routeId) {
+        String sql = "SELECT * FROM TrainRoute WHERE routeId = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, rowMapper, routeId);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 /*
     public int save(TrainRoute route) {
         String sql = "INSERT INTO TrainRoute (name) VALUES (?)";
@@ -53,5 +61,14 @@ public class TrainRouteDAO {
     public int delete(int id) {
         String sql = "DELETE FROM TrainRoute WHERE trainRouteId = ?";
         return jdbcTemplate.update(sql, id);
+    }
+
+    public TrainRoute findByTrainId(int trainId) {
+        String sql = "SELECT * FROM TrainRoute WHERE trainId = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, rowMapper, trainId);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

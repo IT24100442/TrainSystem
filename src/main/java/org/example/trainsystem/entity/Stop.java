@@ -37,4 +37,6 @@ public class Stop {
 
     public int getStopOrder() { return stopOrder; }
     public void setStopOrder(int stopOrder) { this.stopOrder = stopOrder; }
+
+
 }
