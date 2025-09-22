@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operations Manager Dashboard - Sri Lanka Railways</title>
+
+    <link href="/css/driver_dashboard.css" rel="stylesheet">
+</head>
+<body>
+<div class="container-fluid">
+    <!-- Manager Header -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="header-content">
+                        <div>
+                            <h4>
+                                <i class="fas fa-cog"></i>Operations Manager Dashboard
+                            </h4>
+                            <small>Station Operations Control Center</small>
+                        </div>
+                        <div class="header-info">
+                            <div>Station Manager Portal</div>
+                            <div>Real-time Operations</div>
+                            <span class="badge status-on-duty">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Row -->
+    <div class="row">
+        <!-- Left Column - Drivers List & Message -->
+        <div class="col-lg-6">
+            <!-- Drivers Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-users"></i>All Drivers</h5>
+                </div>
+                <div class="card-body">
+                    <div class="drivers-list">
+                        <div th:each="driver : ${drivers}" class="driver-item">
+                            <div>
+                                <strong th:text="${driver.fullName}">A. Perera</strong>
+                                <span class="badge" th:text="${driver.status}">Active</span>
+                                <div class="small text-muted" th:text="'Username: ' + ${driver.username}"></div>
+                            </div>
+                            <div class="driver-actions">
+                                <a th:href="@{|/operations/driver/${driver.userId}|}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <button class="btn btn-sm btn-success send-message-btn"
+                                        th:data-driver-id="${driver.userId}">
+                                    <i class="fas fa-envelope"></i> Message
+                                </button>
+                            </div>
+                        </div>
+
+                        <div th:if="${#lists.isEmpty(drivers)}" class="no-communications">
+                            No drivers available
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Messages -->
+        <div class="col-lg-6">
+            <!-- Messages Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-comments"></i>Driver Messages</h5>
+                </div>
+                <div class="card-body">
+                    <div class="communications-container">
+                        <div th:if="${driverMessages != null and !driverMessages.isEmpty()}">
+                            <div th:each="msg : ${driverMessages}" class="communication-item">
+                                <div class="communication-header">
+                                    <div>
+                                        <strong th:text="${msg.driverName}">A. Perera</strong>
+                                        <span class="badge"
+                                              th:classappend="${msg.severity == 'High'} ? 'status-upcoming' : (${msg.severity == 'Medium'} ? 'status-current' : 'status-departed')"
+                                              th:text="${msg.severity}">Medium</span>
+                                    </div>
+                                    <small th:text="${#temporals.format(msg.timestamp,'HH:mm')}">14:42</small>
+                                </div>
+                                <div th:text="${msg.content}">Message content</div>
+                            </div>
+                        </div>
+                        <div th:if="${driverMessages == null or driverMessages.isEmpty()}" class="no-communications">
+                            No messages received from drivers
+                        </div>
+                    </div>
+
+                    <!-- Message Form -->
+                    <div class="message-form mt-3">
+                        <label>Send Message to Driver</label>
+                        <form id="sendMessageForm">
+                            <input type="hidden" id="senderId" th:value="${opManager.userId}"/>
+                            <select id="driverSelect" class="form-select" required>
+                                <option value="">Select driver...</option>
+                                <option th:each="d : ${drivers}" th:value="${d.userId}" th:text="${d.fullName}"></option>
+                            </select>
+                            <textarea id="messageText" class="form-control mt-2" placeholder="Type your message" required></textarea>
+                            <button type="submit" class="btn btn-send-update mt-2">
+                                <i class="fas fa-paper-plane"></i> Send
+                            </button>
+                        </form>
+                        <div id="messageStatus" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Send message via AJAX
+    const form = document.getElementById('sendMessageForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const senderId = document.getElementById('senderId').value;
+        const driverId = document.getElementById('driverSelect').value;
+        const messageText = document.getElementById('messageText').value;
+
+        fetch('/operations/send-message', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ senderId: senderId, driverId: driverId, messageText: messageText })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const statusDiv = document.getElementById('messageStatus');
+                if (data.success) {
+                    statusDiv.innerHTML = '<span class="text-success">Message sent successfully!</span>';
+                    form.reset();
+                } else {
+                    statusDiv.innerHTML = '<span class="text-danger">' + data.message + '</span>';
+                }
+            })
+            .catch(err => {
+                document.getElementById('messageStatus').innerHTML = '<span class="text-danger">Error sending message</span>';
+            });
+    });
+</script>
+</body>
+</html>
