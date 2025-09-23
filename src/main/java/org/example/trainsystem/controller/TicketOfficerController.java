@@ -17,7 +17,7 @@ public class TicketOfficerController {
 
     @GetMapping("/dashboard")
     public String showDashboard() {
-        return "ticket_officer_dashboard"; // Thymeleaf template
+        return "ticket/Ticket_Officer_Dashboard"; // Thymeleaf template
     }
 
     @GetMapping("/violation-report")  // Fixed: removed duplicate path

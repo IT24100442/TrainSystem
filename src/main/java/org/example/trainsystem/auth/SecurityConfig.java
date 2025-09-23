@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login", "/register", "/css/**", "/js/**").permitAll()
 
                         //TicketCheckingOfficer
-                        .requestMatchers("/Ticket_Officer/**").hasRole("TICKETOFFICER")
+                        .requestMatchers("/ticket/**").hasRole("TICKETOFFICER")
 
                         // everything else requires login
                         .anyRequest().authenticated()
