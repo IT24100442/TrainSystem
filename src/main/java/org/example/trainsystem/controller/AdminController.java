@@ -31,18 +31,4 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    // ✅ Edit user (GET form)
-    @GetMapping("/edit/{id}")
-    public String editUserForm(@PathVariable("id") int userId, Model model) {
-        User user = userService.getUserById(userId);
-        model.addAttribute("user", user);
-        return "admin/edit-user"; // maps to admin/edit-user.html
-    }
-
-    // ✅ Save edited user
-    @PostMapping("/update")
-    public String updateUser(@ModelAttribute("user") User user) {
-        userService.updateUser(user);
-        return "redirect:/admin/users";
-    }
 }
