@@ -35,6 +35,9 @@ public class SecurityConfig {
                         // 🔹 Drivers dashboard & routes
                         .requestMatchers("/driver/**").hasRole("DRIVER")
 
+                        // 🔹 passenger
+                        .requestMatchers("/passenger/**").hasRole("PASSENGER")
+
                         // 🔹 Public pages like login/register
                         .requestMatchers("/", "/login", "/register", "/css/**", "/js/**").permitAll()
 

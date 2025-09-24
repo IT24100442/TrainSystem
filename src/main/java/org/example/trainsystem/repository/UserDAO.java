@@ -97,4 +97,9 @@ public class UserDAO {
         return jdbcTemplate.update(sql, userId);
     }
 
+    public List<User> findAll() {
+        String sql = "SELECT * FROM users";
+        return jdbcTemplate.query(sql, new UserRowMapper());
+    }
+
 }

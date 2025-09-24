@@ -45,4 +45,9 @@ public class UserService {
             throw new RuntimeException("Failed to delete user");
         }
     }
+
+    // New method to get all users
+    public List<User> getAllUsers() {
+        return userDAO.findAll();
+    }
 }

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> User Management</title>
+</head>
+<body>
+<h2>User Management</h2>
+<table border="1">
+  <tr>
+    <th>ID</th><th>Username</th><th>Email</th><th>Name</th><th>Type</th><th>Actions</th>
+  </tr>
+  <tr th:each="user : ${users}">
+    <td th:text="${user.userId}"></td>
+    <td th:text="${user.username}"></td>
+    <td th:text="${user.email}"></td>
+    <td th:text="${user.name}"></td>
+    <td th:text="${user.userType}"></td>
+    <td>
+      <a th:href="@{'/admin/edit/' + ${user.userId}}">Edit</a> |
+      <a th:href="@{'/admin/delete/' + ${user.userId}}">Delete</a>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
