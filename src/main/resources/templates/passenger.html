@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Passenger Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .sidebar { background-color: white; min-height: 100vh; border-right: 1px solid #dee2e6; }
+        .sidebar .nav-link { color: #6c757d; padding: 12px 20px; border-radius: 8px; margin: 2px 0; transition: all 0.3s ease; }
+        .sidebar .nav-link:hover { background-color: #f8f9fa; color: #495057; }
+        .sidebar .nav-link.active { background-color: #e3f2fd; color: #1976d2; border-left: 3px solid #1976d2; }
+        .header-gradient { background: linear-gradient(135deg, #007bff 0%, #6f42c1 100%); }
+        .card { border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: box-shadow 0.3s ease; }
+        .card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .status-badge { font-size: 0.875rem; padding: 4px 12px; }
+        .notification-item { border-left: 4px solid #007bff; background-color: #f8f9fa; }
+        .user-avatar { width: 40px; height: 40px; background-color: #007bff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+    </style>
+</head>
+<body>
+<header class="bg-white border-bottom">
+    <div class="container-fluid px-4 py-3 d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-train-front text-primary me-3" style="font-size: 2rem;"></i>
+            <h1 class="h4 mb-0 text-dark">Train Booking System</h1>
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="text-muted me-3">Welcome, <span id="userName">Rizquan</span></span>
+            <div class="user-avatar" id="userAvatar">R</div>
+        </div>
+    </div>
+</header>
+
+<div class="container-fluid">
+    <div class="row">
+        <aside class="col-md-3 col-lg-2 sidebar p-0">
+            <nav class="nav flex-column p-3">
+                <a class="nav-link active" href="#" onclick="showSection(event, 'home')"><i class="bi bi-house me-2"></i>Home</a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'book')"><i class="bi bi-ticket me-2"></i>Book Ticket</a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'tickets')"><i class="bi bi-eye me-2"></i>My Tickets</a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'history')"><i class="bi bi-clock-history me-2"></i>Travel History</a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'track')"><i class="bi bi-geo-alt me-2"></i>Track Location</a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'updates')"><i class="bi bi-bell me-2"></i>Updates</a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'complaints')"><i class="bi bi-exclamation-circle me-2"></i>Complaints</a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'account')"><i class="bi bi-person me-2"></i>Account</a>
+            </nav>
+        </aside>
+
+        <main class="col-md-9 col-lg-10 p-4">
+
+            <div id="home" class="content-section active">
+                <div class="header-gradient text-white p-4 rounded mb-4">
+                    <h2 class="mb-2">Welcome back, <span id="homeName">Rizquan</span>!</h2>
+                    <p class="mb-0 opacity-75">Ready for your next journey?</p>
+                </div>
+            </div>
+
+            <div id="account" class="content-section">
+                <h2 class="mb-4">Account Management</h2>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Personal Information</h5>
+                        <form id="accountForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="fullName">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Address</label>
+                                    <input type="text" class="form-control" id="address">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3"><i class="bi bi-check-circle me-1"></i>Update Profile</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    function showSection(event, sectionId) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+
+        if(sectionId === 'account') loadPassengerDetails();
+    }
+
+    function loadPassengerDetails() {
+        fetch('/api/passengers/current')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('fullName').value = data.fullName || '';
+                document.getElementById('email').value = data.email || '';
+                document.getElementById('address').value = data.address || '';
+                document.getElementById('userName').textContent = data.fullName || '';
+                document.getElementById('homeName').textContent = data.fullName || '';
+                document.getElementById('userAvatar').textContent = (data.fullName ? data.fullName.charAt(0).toUpperCase() : 'U');
+            })
+            .catch(err => console.error("Failed to fetch passenger info", err));
+    }
+
+    document.getElementById('accountForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const payload = {
+            fullName: document.getElementById('fullName').value,
+            email: document.getElementById('email').value,
+            address: document.getElementById('address').value
+        };
+        fetch('/api/passengers/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+            .then(res => res.text())
+            .then(msg => alert(msg))
+            .catch(err => console.error(err));
+    });
+</script>
+</body>
+</html>
