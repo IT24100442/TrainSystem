@@ -36,6 +36,29 @@ public class PassengerController {
         return "passenger/dashboard"; // maps to passenger dashboard view
     }
 
+    // ================== REGISTER ADDRESS (AFTER REGISTRATION) ==================
+    @GetMapping("/register/address")
+    public String showAddressForm() {
+        // Show a page where the user can enter their address
+        return "passenger/register-address"; // create this template
+    }
+
+    @PostMapping("/register/address")
+    public String handleAddress(@RequestParam String address, HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            // If somehow session is null, redirect to login
+            return "redirect:/login";
+        }
+
+        // Save the address to the passenger
+        passengerService.updatePassengerDetails((loggedInUser.getUserId()), address);
+
+        // Redirect to dashboard
+        return "redirect:/passenger/dashboard";
+    }
+
+
     // ================== VIEW PASSENGER DETAILS ==================
     @GetMapping("/view")
     public String viewPassengerDetails(HttpSession session, Model model) {
