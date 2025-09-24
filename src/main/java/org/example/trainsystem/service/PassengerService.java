@@ -28,7 +28,7 @@ public class PassengerService {
 
     // Get passenger by ID
     public Passenger getPassengerById(int userId) {
-        Passenger passenger = passengerDAO.findPassengerById(String.valueOf(userId));
+        Passenger passenger = passengerDAO.findPassengerById(Integer.parseInt(String.valueOf(userId)));
         if (passenger == null) {
             throw new RuntimeException("Passenger not found with userId: " + userId);
         }
@@ -50,8 +50,9 @@ public class PassengerService {
     }
 
     // Update passenger details (address)
-    public void updatePassengerDetails(String userId, String address) {
-        Passenger passenger = passengerDAO.findPassengerById(userId);
+    public void updatePassengerDetails(int userId, String address) {
+        // Find passenger by int userId directly
+        Passenger passenger = passengerDAO.findPassengerById(userId);  // Use the updated DAO method
         if (passenger == null) {
             throw new RuntimeException("Passenger not found with userId: " + userId);
         }
@@ -63,12 +64,14 @@ public class PassengerService {
         }
     }
 
+
+
     // Create new passenger
     // NOTE: This method assumes passengerDAO.save(...) will insert both user (users table)
     // and passenger (passengers table) rows as needed. If your DAO only writes the passengers
     // table, you must insert a user row first (via userDAO).
     public void createPassenger(String userId, String address) {
-        Passenger existing = passengerDAO.findPassengerById(userId);
+        Passenger existing = passengerDAO.findPassengerById(Integer.parseInt(userId));
         if (existing != null) {
             throw new RuntimeException("Passenger already exists with userId: " + userId);
         }
@@ -86,12 +89,12 @@ public class PassengerService {
 
     // Delete passenger
     public void deletePassenger(String userId) {
-        Passenger passenger = passengerDAO.findPassengerById(userId);
+        Passenger passenger = passengerDAO.findPassengerById(Integer.parseInt(userId));
         if (passenger == null) {
             throw new RuntimeException("Passenger not found with userId: " + userId);
         }
 
-        int result = passengerDAO.delete(userId);
+        int result = passengerDAO.delete(Integer.parseInt(userId));
         if (result == 0) {
             throw new RuntimeException("Failed to delete passenger");
         }
@@ -104,7 +107,7 @@ public class PassengerService {
 
     // Check existence
     public boolean passengerExists(String userId) {
-        Passenger passenger = passengerDAO.findPassengerById(userId);
+        Passenger passenger = passengerDAO.findPassengerById(Integer.parseInt(userId));
         return passenger != null;
     }
 }
