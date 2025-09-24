@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Registration</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="form-container">
+    <h2>User Registration</h2>
+
+    <form th:action="@{/register}" th:object="${user}" method="post">
+        <!-- Username -->
+        <label for="username">Username:</label>
+        <input type="text" id="username" th:field="*{username}" required>
+
+        <!-- Password -->
+        <label for="password">Password:</label>
+        <input type="password" id="password" th:field="*{password}" required>
+
+        <!-- Confirm Password -->
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" th:field="*{confirmPassword}" required>
+
+        <!-- Name -->
+        <label for="name">Name:</label>
+        <input type="text" id="name" th:field="*{name}" required>
+
+        <!-- Email -->
+        <label for="email">Email:</label>
+        <input type="email" id="email" th:field="*{email}" required>
+
+        <!-- User Type Dropdown -->
+        <label for="userType">User Type:</label>
+        <select id="userType" th:field="*{userType}">
+            <option value="">-- Select User Type --</option>
+            <option value="Admin">Admin</option>
+            <option value="ItOfficer">IT Officer</option>
+            <option value="Customer">Customer</option>
+        </select>
+
+        <!-- Submit Button -->
+        <button type="submit">Register</button>
+    </form>
+</div>
+</body>
+</html>

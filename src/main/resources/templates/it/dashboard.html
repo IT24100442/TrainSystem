@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+<h2>Welcome to your Dashboard!</h2>
+
+<p>Here you can see your information and perform actions.</p>
+
+<!-- Example: display username if passed via model -->
+<p th:text="'Logged in as: ' + ${username}"></p>
+<a th:href="@{/register}" class="btn">Register</a>
+    Go to Register
+
+</body>
+</html>

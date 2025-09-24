@@ -41,6 +41,13 @@ public class UserLoginSuccessHandler implements AuthenticationSuccessHandler {
                 case "ROLE_OPMANAGER":
                     redirectURL = "/opmanager/dashboard";
                     break;
+                case "ROLE_ITOFFICER":
+                    redirectURL = "/it/dashboard";
+                    break;
+
+                 case "ROLE_STAFF":
+                    redirectURL = "/staff/dashboard";
+                    break;
                 default:
                     redirectURL = "/";
                     break;
