@@ -16,8 +16,7 @@
     <td th:text="${user.email}"></td>
     <td th:text="${user.name}"></td>
     <td th:text="${user.userType}"></td>
-    <td>
-      <a th:href="@{'/admin/edit/' + ${user.userId}}">Edit</a> |
+    <td>|
       <a th:href="@{'/admin/delete/' + ${user.userId}}">Delete</a>
     </td>
   </tr>
