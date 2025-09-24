@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,9 +20,11 @@
         .status-badge { font-size: 0.875rem; padding: 4px 12px; }
         .notification-item { border-left: 4px solid #007bff; background-color: #f8f9fa; }
         .user-avatar { width: 40px; height: 40px; background-color: #007bff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .stat-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
     </style>
 </head>
 <body>
+<!-- Header -->
 <header class="bg-white border-bottom">
     <div class="container-fluid px-4 py-3 d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
@@ -30,58 +32,361 @@
             <h1 class="h4 mb-0 text-dark">Train Booking System</h1>
         </div>
         <div class="d-flex align-items-center">
-            <span class="text-muted me-3">Welcome, <span id="userName">Rizquan</span></span>
-            <div class="user-avatar" id="userAvatar">R</div>
+            <span class="text-muted me-3">Welcome, <span th:text="${passenger.fullName ?: 'Guest'}">Guest</span></span>
+            <div class="user-avatar" th:text="${passenger.fullName != null ? passenger.fullName.substring(0,1).toUpperCase() : 'G'}">G</div>
         </div>
     </div>
 </header>
 
 <div class="container-fluid">
     <div class="row">
+        <!-- Sidebar Navigation -->
         <aside class="col-md-3 col-lg-2 sidebar p-0">
             <nav class="nav flex-column p-3">
-                <a class="nav-link active" href="#" onclick="showSection(event, 'home')"><i class="bi bi-house me-2"></i>Home</a>
-                <a class="nav-link" href="#" onclick="showSection(event, 'book')"><i class="bi bi-ticket me-2"></i>Book Ticket</a>
-                <a class="nav-link" href="#" onclick="showSection(event, 'tickets')"><i class="bi bi-eye me-2"></i>My Tickets</a>
-                <a class="nav-link" href="#" onclick="showSection(event, 'history')"><i class="bi bi-clock-history me-2"></i>Travel History</a>
-                <a class="nav-link" href="#" onclick="showSection(event, 'track')"><i class="bi bi-geo-alt me-2"></i>Track Location</a>
-                <a class="nav-link" href="#" onclick="showSection(event, 'updates')"><i class="bi bi-bell me-2"></i>Updates</a>
-                <a class="nav-link" href="#" onclick="showSection(event, 'complaints')"><i class="bi bi-exclamation-circle me-2"></i>Complaints</a>
-                <a class="nav-link" href="#" onclick="showSection(event, 'account')"><i class="bi bi-person me-2"></i>Account</a>
+                <a class="nav-link active" href="#" onclick="showSection(event, 'home')">
+                    <i class="bi bi-house me-2"></i>Home
+                </a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'book')">
+                    <i class="bi bi-ticket me-2"></i>Book Ticket
+                </a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'tickets')">
+                    <i class="bi bi-eye me-2"></i>My Tickets
+                </a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'history')">
+                    <i class="bi bi-clock-history me-2"></i>Travel History
+                </a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'track')">
+                    <i class="bi bi-geo-alt me-2"></i>Track Location
+                </a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'updates')">
+                    <i class="bi bi-bell me-2"></i>Updates
+                </a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'complaints')">
+                    <i class="bi bi-exclamation-circle me-2"></i>Complaints
+                </a>
+                <a class="nav-link" href="#" onclick="showSection(event, 'account')">
+                    <i class="bi bi-person me-2"></i>Account
+                </a>
             </nav>
         </aside>
 
+        <!-- Main Content -->
         <main class="col-md-9 col-lg-10 p-4">
 
+            <!-- Home Section -->
             <div id="home" class="content-section active">
                 <div class="header-gradient text-white p-4 rounded mb-4">
-                    <h2 class="mb-2">Welcome back, <span id="homeName">Rizquan</span>!</h2>
+                    <h2 class="mb-2">Welcome back, <span th:text="${passenger.fullName ?: 'Guest'}">Guest</span>!</h2>
                     <p class="mb-0 opacity-75">Ready for your next journey?</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3">
+                                        <i class="bi bi-ticket"></i>
+                                    </div>
+                                    <h6 class="mb-0">Active Tickets</h6>
+                                </div>
+                                <h3 class="text-dark mb-0" th:text="${activeTicketsCount ?: 0}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="stat-icon bg-success bg-opacity-10 text-success me-3">
+                                        <i class="bi bi-check-circle"></i>
+                                    </div>
+                                    <h6 class="mb-0">Completed Trips</h6>
+                                </div>
+                                <h3 class="text-dark mb-0" th:text="${completedTripsCount ?: 0}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="stat-icon bg-warning bg-opacity-10 text-warning me-3">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </div>
+                                    <h6 class="mb-0">Open Complaints</h6>
+                                </div>
+                                <h3 class="text-dark mb-0" th:text="${openComplaintsCount ?: 0}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Book -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Quick Book</h5>
+                        <form th:action="@{/passenger/search-trains}" method="post">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" placeholder="From" name="fromStation" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" placeholder="To" name="toStation" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="date" class="form-control" name="travelDate" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bi bi-search me-1"></i>Search Trains
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 
+            <!-- Book Ticket Section -->
+            <div id="book" class="content-section">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title mb-4">Book a Ticket</h2>
+                        <form th:action="@{/passenger/book-ticket}" method="post" th:object="${bookingForm}">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">From Station</label>
+                                    <input type="text" class="form-control" th:field="*{fromStation}" placeholder="Enter departure station" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">To Station</label>
+                                    <input type="text" class="form-control" th:field="*{toStation}" placeholder="Enter destination station" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Travel Date</label>
+                                    <input type="date" class="form-control" th:field="*{travelDate}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Passengers</label>
+                                    <select class="form-select" th:field="*{passengerCount}">
+                                        <option value="1">1 Passenger</option>
+                                        <option value="2">2 Passengers</option>
+                                        <option value="3">3 Passengers</option>
+                                        <option value="4">4 Passengers</option>
+                                        <option value="5">5 Passengers</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Class</label>
+                                    <select class="form-select" th:field="*{ticketClass}">
+                                        <option value="economy">Economy</option>
+                                        <option value="business">Business</option>
+                                        <option value="first">First Class</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-4">
+                                <i class="bi bi-search me-2"></i>Search Available Trains
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Tickets Section -->
+            <div id="tickets" class="content-section">
+                <h2 class="mb-4">My Tickets</h2>
+
+                <!-- Check if tickets exist -->
+                <div th:if="${#lists.isEmpty(tickets)}">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>No tickets found. <a href="#" onclick="showSection(event, 'book')">Book your first ticket</a>!
+                    </div>
+                </div>
+
+                <!-- Display tickets -->
+                <div th:each="ticket : ${tickets}" class="card mb-3">
+                    <div class="card-body">
+                        <div class="row align-items-start">
+                            <div class="col-md-8">
+                                <h5 class="card-title" th:text="${ticket.fromStation} + ' → ' + ${ticket.toStation}">Route</h5>
+                                <div class="d-flex flex-wrap gap-3 text-muted small">
+                                    <span><i class="bi bi-calendar me-1"></i><span th:text="${#temporals.format(ticket.travelDate, 'yyyy-MM-dd')}">Date</span></span>
+                                    <span><i class="bi bi-clock me-1"></i><span th:text="${ticket.departureTime}">Time</span></span>
+                                    <span><i class="bi bi-geo-alt me-1"></i>Seat <span th:text="${ticket.seatNumber}">-</span></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-md-end">
+                                    <span th:class="'badge status-badge ' + (${ticket.status == 'CONFIRMED'} ? 'bg-success' : 'bg-secondary')"
+                                          th:text="${ticket.status}">Status</span>
+                                <p class="small text-muted mb-0 mt-1" th:text="${ticket.ticketId}">Ticket ID</p>
+                            </div>
+                        </div>
+
+                        <!-- Action buttons for confirmed tickets -->
+                        <div th:if="${ticket.status == 'CONFIRMED'}" class="mt-3">
+                            <a th:href="@{/passenger/ticket/{id}/view(id=${ticket.id})}" class="btn btn-primary btn-sm me-2">
+                                <i class="bi bi-eye me-1"></i>View Digital Ticket
+                            </a>
+                            <a th:href="@{/passenger/ticket/{id}/cancel(id=${ticket.id})}"
+                               class="btn btn-secondary btn-sm"
+                               onclick="return confirm('Are you sure you want to cancel this ticket?')">
+                                <i class="bi bi-x-circle me-1"></i>Cancel Ticket
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Travel History Section -->
+            <div id="history" class="content-section">
+                <h2 class="mb-4">Travel History</h2>
+
+                <div th:if="${#lists.isEmpty(travelHistory)}">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>No travel history found.
+                    </div>
+                </div>
+
+                <div th:each="trip : ${travelHistory}" class="card mb-3">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h5 class="mb-1" th:text="${trip.fromStation} + ' → ' + ${trip.toStation}">Route</h5>
+                                <p class="text-muted mb-0" th:text="${#temporals.format(trip.travelDate, 'yyyy-MM-dd')} + ' at ' + ${trip.departureTime}">Date and Time</p>
+                            </div>
+                            <div class="col-auto">
+                                <span class="badge bg-secondary">Completed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Track Location Section -->
+            <div id="track" class="content-section">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title mb-4">Track Train Location</h2>
+                        <form th:action="@{/passenger/track-train}" method="post">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" placeholder="Enter Train Number or Ticket ID"
+                                       name="trackingId" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary mb-4">
+                                <i class="bi bi-search me-2"></i>Track Location
+                            </button>
+                        </form>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Enter a train number or ticket ID to track real-time location
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Updates Section -->
+            <div id="updates" class="content-section">
+                <h2 class="mb-4">Updates & Notifications</h2>
+
+                <div th:if="${#lists.isEmpty(notifications)}">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>No new notifications.
+                    </div>
+                </div>
+
+                <div th:each="notification : ${notifications}" class="card mb-3">
+                    <div class="card-body notification-item">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-bell-fill text-primary me-3 mt-1"></i>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1" th:text="${notification.title}">Notification Title</h6>
+                                <p class="mb-1 text-muted small" th:text="${notification.message}">Notification message</p>
+                                <p class="mb-0 text-muted small" th:text="${#temporals.format(notification.createdAt, 'yyyy-MM-dd HH:mm')}">Time</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complaints Section -->
+            <div id="complaints" class="content-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Complaints & Issues</h2>
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#newComplaintModal">
+                        <i class="bi bi-plus-circle me-1"></i>New Complaint
+                    </button>
+                </div>
+
+                <div th:if="${#lists.isEmpty(complaints)}">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>No complaints submitted.
+                    </div>
+                </div>
+
+                <div th:each="complaint : ${complaints}" class="card mb-3">
+                    <div class="card-body">
+                        <div class="row align-items-start">
+                            <div class="col">
+                                <h6 class="mb-1" th:text="${complaint.subject}">Complaint Subject</h6>
+                                <p class="small text-muted mb-1">ID: <span th:text="${complaint.complaintId}">ID</span></p>
+                                <p class="small text-muted mb-0">Submitted on <span th:text="${#temporals.format(complaint.submittedDate, 'yyyy-MM-dd')}">Date</span></p>
+                            </div>
+                            <div class="col-auto">
+                                    <span th:class="'badge ' + (${complaint.status == 'IN_PROGRESS'} ? 'bg-warning' : 'bg-success')"
+                                          th:text="${complaint.status}">Status</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Section -->
             <div id="account" class="content-section">
                 <h2 class="mb-4">Account Management</h2>
+
                 <div class="card mb-4">
                     <div class="card-body">
                         <h5 class="card-title mb-4">Personal Information</h5>
-                        <form id="accountForm">
+                        <form th:action="@{/passenger/update-profile}" method="post" th:object="${passenger}">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="fullName">
+                                    <input type="text" class="form-control" th:field="*{fullName}" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email">
+                                    <input type="email" class="form-control" th:field="*{email}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" th:field="*{phone}">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Address</label>
-                                    <input type="text" class="form-control" id="address">
+                                    <input type="text" class="form-control" th:field="*{address}">
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary mt-3"><i class="bi bi-check-circle me-1"></i>Update Profile</button>
+                            <button type="submit" class="btn btn-primary mt-3">
+                                <i class="bi bi-check-circle me-1"></i>Update Profile
+                            </button>
                         </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Customer Service</h5>
+                        <div class="d-flex gap-3">
+                            <a href="tel:+1234567890" class="btn btn-success">
+                                <i class="bi bi-telephone me-2"></i>Call Support
+                            </a>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#queryModal">
+                                <i class="bi bi-chat-dots me-2"></i>Submit Query
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -90,46 +395,98 @@
     </div>
 </div>
 
+<!-- New Complaint Modal -->
+<div class="modal fade" id="newComplaintModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Submit New Complaint</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form th:action="@{/passenger/submit-complaint}" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <input type="text" class="form-control" name="subject" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" rows="4" name="description" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ticket ID (if applicable)</label>
+                        <input type="text" class="form-control" name="ticketId">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Submit Complaint</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Query Modal -->
+<div class="modal fade" id="queryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Submit Query</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form th:action="@{/passenger/submit-query}" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Query Type</label>
+                        <select class="form-select" name="queryType" required>
+                            <option value="">Select query type</option>
+                            <option value="booking">Booking Related</option>
+                            <option value="refund">Refund Request</option>
+                            <option value="technical">Technical Issue</option>
+                            <option value="general">General Inquiry</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-control" rows="4" name="message" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Query</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script>
     function showSection(event, sectionId) {
-        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        // Prevent default link behavior
+        event.preventDefault();
+
+        // Hide all sections
+        document.querySelectorAll('.content-section').forEach(function(section) {
+            section.classList.remove('active');
+        });
+
+        // Show selected section
         document.getElementById(sectionId).classList.add('active');
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+
+        // Update navigation
+        document.querySelectorAll('.nav-link').forEach(function(link) {
+            link.classList.remove('active');
+        });
         event.currentTarget.classList.add('active');
-
-        if(sectionId === 'account') loadPassengerDetails();
     }
 
-    function loadPassengerDetails() {
-        fetch('/api/passengers/current')
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('fullName').value = data.fullName || '';
-                document.getElementById('email').value = data.email || '';
-                document.getElementById('address').value = data.address || '';
-                document.getElementById('userName').textContent = data.fullName || '';
-                document.getElementById('homeName').textContent = data.fullName || '';
-                document.getElementById('userAvatar').textContent = (data.fullName ? data.fullName.charAt(0).toUpperCase() : 'U');
-            })
-            .catch(err => console.error("Failed to fetch passenger info", err));
-    }
-
-    document.getElementById('accountForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const payload = {
-            fullName: document.getElementById('fullName').value,
-            email: document.getElementById('email').value,
-            address: document.getElementById('address').value
-        };
-        fetch('/api/passengers/update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-            .then(res => res.text())
-            .then(msg => alert(msg))
-            .catch(err => console.error(err));
+    // Set minimum date to today for date inputs
+    var today = new Date().toISOString().split('T')[0];
+    var dateInputs = document.querySelectorAll('input[type="date"]');
+    dateInputs.forEach(function(input) {
+        input.min = today;
     });
 </script>
 </body>
