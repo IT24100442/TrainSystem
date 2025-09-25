@@ -34,7 +34,7 @@ public class RouteDAO {
     }
 
     public Route findById(int rid) {
-        String sql = "SELECT routeId, routeName, durationMinutes, driverId FROM Route WHERE rid = ?";
+        String sql = "SELECT routeId, routeName, durationMinutes, driverId FROM Route WHERE routeId = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new RouteRowMapper(), rid);
         } catch (Exception e) {
@@ -89,7 +89,7 @@ public class RouteDAO {
     }
 
     public int update(Route route) {
-        String sql = "UPDATE Route SET routeName = ?, durationMinutes = ?, driverId = ? WHERE rid = ?";
+        String sql = "UPDATE Route SET routeName = ?, durationMinutes = ?, driverId = ? WHERE routeId = ?";
         return jdbcTemplate.update(sql,
                 route.getRouteName(),
                 route.getDurationMinutes(),
