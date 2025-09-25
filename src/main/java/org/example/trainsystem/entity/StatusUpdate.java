@@ -7,17 +7,15 @@ public class StatusUpdate {
     private int trainId;
     private String currentLocation;
     private String status;
-    private String remarks;
     private LocalDateTime updateTime;
 
     // Constructors
     public StatusUpdate() {}
 
-    public StatusUpdate(int trainId, String currentLocation, String status, String remarks, LocalDateTime updateTime) {
+    public StatusUpdate(int trainId, String currentLocation, String status, LocalDateTime updateTime) {
         this.trainId = trainId;
         this.currentLocation = currentLocation;
         this.status = status;
-        this.remarks = remarks;
         this.updateTime = updateTime;
     }
 
@@ -40,9 +38,6 @@ public class StatusUpdate {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
-
-    public String getRemarks() { return remarks; }
-    public void setRemarks(String remarks) { this.remarks = remarks; }
 
     public LocalDateTime getUpdateTime() { return updateTime; }
     public void setUpdateTime(LocalDateTime updateTime) { this.updateTime = updateTime; }

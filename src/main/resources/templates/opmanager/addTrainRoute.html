@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Assign Route to Train</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h2>Assign Route to Train</h2>
+
+    <form th:action="@{/trains/addTrainRoute}" method="post">
+
+        <!-- Hidden trainId -->
+        <input type="hidden" name="trainId" th:value="${trainId}">
+
+        <!-- Select Route -->
+        <label for="route">Select Route</label>
+        <select id="route" name="routeId" required>
+            <option value="">-- Choose a Route --</option>
+            <option th:each="route : ${routes}"
+                    th:value="${route.routeId}"
+                    th:text="${route.routeName}">
+            </option>
+        </select>
+
+        <button type="submit">Assign Route</button>
+    </form>
+</div>
+</body>
+</html>

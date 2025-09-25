@@ -3,10 +3,7 @@ package org.example.trainsystem.controller;
 import org.example.trainsystem.entity.Driver;
 import org.example.trainsystem.entity.Message;
 import org.example.trainsystem.entity.User;
-import org.example.trainsystem.service.DriverService;
-import org.example.trainsystem.service.MessageService;
-import org.example.trainsystem.service.OpManagerService;
-import org.example.trainsystem.service.UserService;
+import org.example.trainsystem.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +32,9 @@ public class OpManagerController {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    private TrainStatusService trainStatusService;
+
     // Utility to get logged-in username
     private String getAuthenticatedUsername() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -46,6 +46,12 @@ public class OpManagerController {
         } else {
             return principal.toString();
         }
+    }
+
+    @PostMapping("/override-status")
+    public String overrideStatus(@RequestParam int statusId, @RequestParam String newStatus) {
+        trainStatusService.overrideStatus(statusId, newStatus);
+        return "redirect:/opmanager/dashboard";
     }
 
     // Dashboard page

@@ -63,9 +63,17 @@
                 <div th:if="${route == null}" class="no-route">
                     No active route assigned.
                 </div>
+
+                <div class="route-detail">
+                    <strong>Current Stop:</strong>
+                    <span id="currentLocation" th:text="${route.stops[0].stopName}">Start Stop</span>
+                    <input type="hidden" id="routeId" th:value="${route.routeId}" />
+                </div>
             </div>
 
+
             <div class="button-group">
+
                 <button class="refresh-btn" onclick="refreshRoute()">🔄 Refresh Route</button>
                 <button class="location-btn" onclick="updateLocation()" th:if="${route != null}">📍 Update Location</button>
             </div>
@@ -160,18 +168,18 @@
     }
 
     function updateLocation() {
-        const currentLocationEl = document.getElementById('currentLocation');
-        let currentLocation = currentLocationEl.textContent;
+        const currentLocation = document.getElementById('currentLocation').textContent;
+        const routeId = document.getElementById('routeId').value;
 
-        fetch('/driver/next-stop', {
+        fetch('/driver/update-location', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ currentLocation: currentLocation })
+            body: JSON.stringify({ currentStop: currentLocation, routeId: routeId})
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    currentLocationEl.textContent = data.nextStop;
+                    document.getElementById('currentLocation').textContent = data.nextStop;
                     showMessage(`Location updated to ${data.nextStop}`, 'success');
                 } else {
                     showMessage(data.message, 'error');
@@ -182,6 +190,7 @@
                 showMessage('Error updating location', 'error');
             });
     }
+
 
     document.getElementById('messageForm').addEventListener('submit', function(e) {
         e.preventDefault(); sendMessage();

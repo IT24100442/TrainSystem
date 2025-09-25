@@ -1,7 +1,6 @@
 package org.example.trainsystem.controller;
 
-import org.example.trainsystem.service.RouteService;
-import org.example.trainsystem.service.StatusUpdateService;
+import org.example.trainsystem.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import org.example.trainsystem.dto.StatusUpdateRequest;
 import org.example.trainsystem.dto.MessageRequest;
 import org.example.trainsystem.entity.*;
-import org.example.trainsystem.service.DriverService;
-import org.example.trainsystem.service.UserService;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +32,9 @@ public class DriverController {
 
     @Autowired
     private RouteService routeService;
+
+    @Autowired
+    private TrainStatusService trainStatusService;
 
     @Autowired
     StatusUpdateService statusUpdateService;
@@ -83,28 +84,21 @@ public class DriverController {
 
     @PostMapping("/update-location")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> updateLocation(@RequestBody StatusUpdateRequest request) {
-        String username = getAuthenticatedUsername();
+    public Map<String, Object> updateLocation(@RequestBody Map<String, String> payload) {
+        String currentStop = payload.get("currentStop");
+        Integer routeId = Integer.valueOf(payload.get("routeId"));
+
+        String nextStop = trainStatusService.getNextStop(routeId, currentStop);
+        trainStatusService.updateStop(routeId, nextStop, LocalDateTime.now());
+
+
         Map<String, Object> response = new HashMap<>();
-
-        if (username == null) {
-            response.put("success", false);
-            response.put("message", "Not authenticated");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
-
-        try {
-            Driver driver = driverService.getDriverWithUser(username);
-            driverService.updateLocation(driver.getUserId(), request.getLocation(), request.getStatus(), request.getRemarks());
-            response.put("success", true);
-            response.put("message", "Location updated successfully");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "Error updating location: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
+        response.put("success", true);
+        response.put("nextStop", nextStop);
+        return response;
     }
+
+
     @PostMapping("/next-stop")
     @ResponseBody
     public Map<String, Object> updateNextStop() {
