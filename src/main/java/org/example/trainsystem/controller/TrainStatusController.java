@@ -76,4 +76,15 @@ public class TrainStatusController {
 
         return "redirect:/train-status/override";
     }
+
+    @GetMapping("/addStatus")
+    public String addStatus(@RequestParam("trainRouteId") Integer trainRouteId,
+                            Model model) {
+
+        TrainStatus status = new TrainStatus();
+        status.setTrainRouteId(trainRouteId);
+        statusrepo.save(status);
+        model.addAttribute("success", "Status added successfully");
+        return "redirect:/train-status/override";
+    }
 }

@@ -47,12 +47,12 @@ public class TrainRouteDAO {
             return null;
         }
     }
-/*
+
     public int save(TrainRoute route) {
-        String sql = "INSERT INTO TrainRoute (name) VALUES (?)";
-        return jdbcTemplate.update(sql, route.getName());
+        String sql = "INSERT INTO TrainRoute (trainId, routeId) VALUES (?,?)";
+        return jdbcTemplate.update(sql, route.getTrainId(),route.getRouteId());
     }
-*/
+
     public int update(TrainRoute route) {
         String sql = "UPDATE TrainRoute SET trainId = ?, routeId = ? WHERE trainRouteId = ?";
         return jdbcTemplate.update(sql, route.getTrainId(), route.getRouteId(), route.getTrainRouteId());
@@ -70,5 +70,10 @@ public class TrainRouteDAO {
         } catch (Exception e) {
             return null;
         }
+    }
+    public int getLastInsertId() {
+        String sql = "SELECT TOP 1 trainRouteId FROM TrainRoute ORDER BY trainRouteId DESC";
+        Integer lastId = jdbcTemplate.queryForObject(sql, Integer.class);
+        return lastId != null ? lastId : 0;
     }
 }

@@ -37,11 +37,12 @@ public class TrainStatusDAO {
 
     public int save(TrainStatus status) {
         String sql = "INSERT INTO TrainStatus (trainRouteId, stopId, status, timestamp) VALUES (?, ?, ?, ?)";
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
         return jdbcTemplate.update(sql,
                 status.getTrainRouteId(),
-                status.getStopId(),
+                1,
                 status.getStatus(),
-                status.getTimestamp());
+                now);
     }
 
     public List<TrainStatus> findByTrainRoute(int trainRouteId) {

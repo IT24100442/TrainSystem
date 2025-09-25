@@ -8,6 +8,16 @@ public class Route {
     private String routeName;
     private int durationMinutes;
     private Integer driverId;
+    private String availableTime;
+
+    public String getAvailableTime() {
+        return availableTime;
+    }
+
+    public void setAvailableTime(String availableTime) {
+        this.availableTime = availableTime;
+    }
+
     private List<Stop> stops = new ArrayList<>();
 
     public Integer getRouteId() { return routeId; }

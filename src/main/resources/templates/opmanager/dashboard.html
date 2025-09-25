@@ -456,6 +456,37 @@
                     </form>
                 </div>
             </div>
+
+            <!-- Create Train Form -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <i class="fas fa-train"></i>
+                    Add Train
+                </div>
+                <div class="card-body">
+                    <form id="createTrainForm" th:action="@{/trains/add}" method="post">
+
+                        <!-- Train Name Input -->
+                        <div class="mb-3">
+                            <label for="trainName" class="form-label">Train Name</label>
+                            <input type="text"
+                                   id="trainName"
+                                   name="trainName"
+                                   class="form-control"
+                                   placeholder="Enter Train Name"
+                                   required />
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Add Train
+                        </button>
+
+                    </form>
+                </div>
+            </div>
+
+
         </div>
     </div>
 </div>
