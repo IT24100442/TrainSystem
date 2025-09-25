@@ -7,6 +7,15 @@ package org.example.trainsystem.dto;
         private String name;
         private String email;
         private String userType;
+        private String address;
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
 
         public UserDTO() {
         }
