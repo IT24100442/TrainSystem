@@ -11,7 +11,7 @@ import java.util.Collections;
 public class PassengerService {
 
     @Autowired
-    private PassengerDAO passengerDAO;
+    private static PassengerDAO passengerDAO;
 
     // Get passenger with user details (expects DAO to return joined Passenger+User)
     public Passenger getPassengerWithUser(String username) {
@@ -47,6 +47,11 @@ public class PassengerService {
             throw new RuntimeException("Search address cannot be empty");
         }
         return passengerDAO.findByAddressContaining(address.trim());
+    }
+
+    // Save passenger
+    public int save(Passenger passenger) {
+        return passengerDAO.save(passenger);  // Uses JPA repository to persist
     }
 
     // Update passenger details (address)

@@ -1,6 +1,6 @@
 package org.example.trainsystem.dto;
 
-public class PassengerDto {
+public class PassengerDTO {
 
     private int userId;
     private String username;
@@ -11,10 +11,10 @@ public class PassengerDto {
     private String address;
 
     // Default constructor
-    public PassengerDto() {}
+    public PassengerDTO() {}
 
     // Convenience constructor
-    public PassengerDto(int userId, String username, String password, String email, String name, String userType, String address) {
+    public PassengerDTO(int userId, String username, String password, String email, String name, String userType, String address) {
         this.userId = userId;
         this.username = username;
         this.password = password;

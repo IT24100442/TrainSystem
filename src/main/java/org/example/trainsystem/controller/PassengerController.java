@@ -37,13 +37,13 @@ public class PassengerController {
     }
 
     // ================== REGISTER ADDRESS (AFTER REGISTRATION) ==================
-    @GetMapping("/register/address")
+    @GetMapping("/register/addressUI")
     public String showAddressForm() {
         // Show a page where the user can enter their address
         return "passenger/register-address"; // create this template
     }
 
-    @PostMapping("/register/address")
+    @PostMapping("/register/addressUI")
     public String handleAddress(@RequestParam String address, HttpSession session) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
