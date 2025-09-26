@@ -26,27 +26,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        // 🔹 only Admins can manage users/routes
+
+
+                        // 🔹 Public pages first
+                        .requestMatchers("/", "/login", "/register-passenger", "/registration","/register", "/css/**", "/js/**").permitAll()
+
+                        // 🔹 Role-restricted pages next
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-
-                        // 🔹 Operation Managers dashboard & features
                         .requestMatchers("/opmanager/**").hasRole("OPMANAGER")
-
-                        // 🔹 Drivers dashboard & routes
                         .requestMatchers("/driver/**").hasRole("DRIVER")
-
-
-                        //🔹 IT Officer dashboard & routes
-                         .requestMatchers("/it/**").hasRole("ITOFFICER")
-
-                        // 🔹 Passenger pages
+                        .requestMatchers("/it/**").hasRole("ITOFFICER")
                         .requestMatchers("/passenger/**").hasRole("PASSENGER")
 
-
-                        // 🔹 Public pages like login/register
-                        .requestMatchers("/", "/login", "/register", "/css/**", "/js/**").permitAll()
-
-                        // everything else requires login
+                        // 🔹 Any other request requires login
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable()) // ❗ disable CSRF for now (you can enable later)
