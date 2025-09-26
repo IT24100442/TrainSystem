@@ -1,7 +1,7 @@
 package org.example.trainsystem.entity;
 
-public class OpManager {
-    private Integer userId;
+public class OpManager extends User implements Employee {
+    private int userId;
     private String contactNumber;
     private User user;
 
@@ -15,7 +15,7 @@ public class OpManager {
     }
 
     // Getters and Setters
-    public Integer getUserId() {
+    public int getUserId() {
         return userId;
     }
     public void setUserId(int userId) {
