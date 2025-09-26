@@ -18,13 +18,7 @@ public class HomeController {
             }
             // add other user types if needed
         }
-        return "home"; // landing page
-    }
-
-
-    @GetMapping("/register/addressUI")
-    public String registerAddress() {
-        return "register-address"; // new template to collect address
+        return "home"; // landing page home.html
     }
 
 }

@@ -47,7 +47,7 @@ public class PassengerController {
     public String handleAddress(@RequestParam String address, HttpSession session) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
-            // If somehow session is null, redirect to login
+            // If somehow session is null, redirect to login.html
             return "redirect:/login";
         }
 
@@ -71,7 +71,7 @@ public class PassengerController {
         Passenger passenger = passengerService.getPassengerById((loggedInUser.getUserId()));
         model.addAttribute("passenger", passenger);
 
-        return "passenger/details";
+        return "passenger/users";
     }
 
     // ================== EDIT PASSENGER PROFILE ==================
@@ -100,7 +100,8 @@ public class PassengerController {
         // Pass String userId, not int
         passengerService.updatePassengerDetails(loggedInUser.getUserId(), updated.getAddress());
         model.addAttribute("successMessage", "Profile updated successfully!");
-        return "redirect:/passenger/home"; // ✅ use /home, since your PassengerController maps dashboard there
+        return "redirect:/passenger/home";
+        // ✅ use /home, since your PassengerController maps dashboard there
     }
 
 
