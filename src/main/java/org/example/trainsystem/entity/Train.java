@@ -1,7 +1,7 @@
 package org.example.trainsystem.entity;
 
 public class Train {
-    private int tid;
+    private int trainId;
     private String name;
 
 
@@ -9,23 +9,23 @@ public class Train {
     }
 
     public Train(int tid, String name) {
-        this.tid = tid;
+        this.trainId = tid;
         this.name = name;
     }
 
-    public int getTid() {
-        return tid;
+    public int getTrainId() {
+        return trainId;
     }
 
-    public void setTid(int tid) {
-        this.tid = tid;
+    public void setTrainId(int tid) {
+        this.trainId = tid;
     }
 
-    public String getName() {
+    public String getTrainName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setTrainName(String name) {
         this.name = name;
     }
 }

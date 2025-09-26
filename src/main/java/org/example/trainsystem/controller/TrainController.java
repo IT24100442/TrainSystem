@@ -38,7 +38,7 @@ public class TrainController {
     @PostMapping("/add")
     public String addTrain(@RequestParam("trainName") String trainName, Model model) {
         Train train = new Train();
-        train.setName(trainName);
+        train.setTrainName(trainName);
 
         trainDAO.save(train);
 

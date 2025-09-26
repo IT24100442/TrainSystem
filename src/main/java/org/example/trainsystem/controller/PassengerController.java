@@ -23,25 +23,10 @@ public class PassengerController {
         return "register-passenger";
 
     }
-//
-//    @GetMapping("/registerAddress")
-//    public String showItOfficerForm(@RequestParam("userId") int userId, Model model) {
-//        model.addAttribute("userId", userId);
-//        return "passenger-add";
-//    }
-//
-//    @PostMapping("/registerAddress")
-//    public String registerUser(@RequestParam("userId") int userId,
-//                               @RequestParam("address") String address) {
-//        Passenger passenger = new Passenger();
-//        passenger.setUserId(userId);
-//        passenger.setAddress(address);
-//
-//        passengerDAO.save(passenger);
-//        System.out.println("New passenger registered: " + passenger);
-//
-//        return "redirect:/login";
-//
-//    }
+
+    @GetMapping("/passenger/dashboard")
+    public String showPassengerDashboard() {
+        return "passenger/dashboard";
+    }
 
 }

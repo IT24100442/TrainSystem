@@ -21,15 +21,15 @@ public class TrainDAO {
         @Override
         public Train mapRow(ResultSet rs, int rowNum) throws SQLException {
             Train train = new Train();
-            train.setTid(rs.getInt("trainId"));
-            train.setName(rs.getString("trainName"));
+            train.setTrainId(rs.getInt("trainId"));
+            train.setTrainName(rs.getString("trainName"));
             return train;
         }
     }
 
     public void save(Train train) {
         String sql = "INSERT INTO Train (trainName) VALUES (?)";
-        jdbcTemplate.update(sql, train.getName());
+        jdbcTemplate.update(sql, train.getTrainName());
     }
 
     public Train getTrainById(int trainId) {
@@ -44,7 +44,7 @@ public class TrainDAO {
 
     public int updateTrain(Train train) {
         String sql = "UPDATE Train SET trainName = ? WHERE trainId = ?";
-        return jdbcTemplate.update(sql, train.getName(), train.getTid());
+        return jdbcTemplate.update(sql, train.getTrainName(), train.getTrainId());
     }
 
     public int getLastTrainId() {
