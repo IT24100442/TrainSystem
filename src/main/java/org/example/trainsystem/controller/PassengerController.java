@@ -1,10 +1,9 @@
 package org.example.trainsystem.controller;
 
-import jakarta.servlet.http.HttpSession;
 import org.example.trainsystem.entity.Passenger;
-import org.example.trainsystem.entity.User;
 import org.example.trainsystem.service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,62 +19,59 @@ public class PassengerController {
 
     // ================== PASSENGER DASHBOARD ==================
     @GetMapping("/dashboard")
-    public String passengerDashboard(HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
+    public String passengerDashboard(Authentication authentication, Model model) {
+        String username = authentication.getName(); // logged-in username
 
-        if (!isPassenger(loggedInUser)) {
-            return "redirect:/login"; // block unauthorized access
-        }
-
-        // Get passenger record; create if not exists
-        Passenger passenger = passengerService.getPassengerById(loggedInUser.getUserId());
+        Passenger passenger = passengerService.getPassengerWithUser(username);
         if (passenger == null) {
-            passenger = new Passenger();
-            passenger.setUserId(loggedInUser.getUserId());
-            passengerService.createPassenger(passenger);
+            return "redirect:/login"; // safety check
         }
 
-        model.addAttribute("userName", loggedInUser.getName());
-        model.addAttribute("userEmail", loggedInUser.getEmail());
+        model.addAttribute("userName", passenger.getName());
+        model.addAttribute("userEmail", passenger.getEmail());
         model.addAttribute("passenger", passenger);
 
-        return "passenger/dashboard"; // maps to passenger dashboard view
+        return "passenger/dashboard";
     }
 
     // ================== VIEW PASSENGER DETAILS ==================
     @GetMapping("/view")
-    public String viewPassengerDetails(HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (!isPassenger(loggedInUser)) {
+    public String viewPassengerDetails(Authentication authentication, Model model) {
+        String username = authentication.getName();
+        Passenger passenger = passengerService.getPassengerWithUser(username);
+
+        if (passenger == null) {
             return "redirect:/login";
         }
 
-        Passenger passenger = passengerService.getPassengerById(loggedInUser.getUserId());
         model.addAttribute("passenger", passenger);
         return "passenger/users";
     }
 
     // ================== EDIT PASSENGER PROFILE ==================
     @GetMapping("/edit")
-    public String showEditForm(HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (!isPassenger(loggedInUser)) {
+    public String showEditForm(Authentication authentication, Model model) {
+        String username = authentication.getName();
+        Passenger passenger = passengerService.getPassengerWithUser(username);
+
+        if (passenger == null) {
             return "redirect:/login";
         }
 
-        Passenger passenger = passengerService.getPassengerById(loggedInUser.getUserId());
         model.addAttribute("passenger", passenger);
         return "passenger/edit";
     }
 
     @PostMapping("/update")
-    public String updatePassenger(@ModelAttribute Passenger updated, HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (!isPassenger(loggedInUser)) {
+    public String updatePassenger(@ModelAttribute Passenger updated, Authentication authentication, Model model) {
+        String username = authentication.getName();
+        Passenger passenger = passengerService.getPassengerWithUser(username);
+
+        if (passenger == null) {
             return "redirect:/login";
         }
 
-        passengerService.updatePassengerDetails(loggedInUser.getUserId(), updated.getAddress());
+        passengerService.updatePassengerDetails(passenger.getUserId(), updated.getAddress());
         model.addAttribute("successMessage", "Profile updated successfully!");
         return "redirect:/passenger/dashboard";
     }
@@ -102,11 +98,5 @@ public class PassengerController {
         model.addAttribute("passengers", passengers);
         model.addAttribute("searchAddress", address);
         return "passenger/search";
-    }
-
-    // ================== HELPER METHOD ==================
-    private boolean isPassenger(User user) {
-        return user != null && user.getUserType() != null &&
-                user.getUserType().trim().equalsIgnoreCase("PASSENGER");
     }
 }
