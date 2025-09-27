@@ -2,42 +2,100 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Registration</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
 </head>
-<body>
-<div class="form-container">
-    <h2>Passenger Registration</h2>
+<body class="bg-light">
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="card shadow mt-4">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2 class="mb-0">
+                        <i class="bi bi-person-plus-fill me-2"></i>
+                        Passenger Registration
+                    </h2>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/register}" th:object="${user}" method="post">
+                        <div class="row">
+                            <!-- Left Column -->
+                            <div class="col-md-6">
+                                <!-- Username -->
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">
+                                        <i class="bi bi-person-circle me-1"></i>Username
+                                    </label>
+                                    <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                                </div>
 
-    <form th:action="@{/register}" th:object="${user}" method="post">
-        <!-- Username -->
-        <label for="username">Username:</label>
-        <input type="text" id="username" th:field="*{username}" required>
+                                <!-- Password -->
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">
+                                        <i class="bi bi-lock-fill me-1"></i>Password
+                                    </label>
+                                    <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                                </div>
 
-        <!-- Password -->
-        <label for="password">Password:</label>
-        <input type="password" id="password" th:field="*{password}" required>
+                                <!-- Confirm Password -->
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">
+                                        <i class="bi bi-lock-fill me-1"></i>Confirm Password
+                                    </label>
+                                    <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" required>
+                                </div>
+                            </div>
 
-        <!-- Confirm Password -->
-        <label for="confirmPassword">Confirm Password:</label>
-        <input type="password" id="confirmPassword" th:field="*{confirmPassword}" required>
+                            <!-- Right Column -->
+                            <div class="col-md-6">
+                                <!-- Name -->
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">
+                                        <i class="bi bi-person-fill me-1"></i>Full Name
+                                    </label>
+                                    <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                                </div>
 
-        <!-- Name -->
-        <label for="name">Name:</label>
-        <input type="text" id="name" th:field="*{name}" required>
+                                <!-- Email -->
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">
+                                        <i class="bi bi-envelope-fill me-1"></i>Email Address
+                                    </label>
+                                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                </div>
 
-        <!-- Email -->
-        <label for="email">Email:</label>
-        <input type="email" id="email" th:field="*{email}" required>
+                                <!-- Address -->
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">
+                                        <i class="bi bi-geo-alt-fill me-1"></i>Address
+                                    </label>
+                                    <input type="text" class="form-control" id="address" th:field="*{address}" required>
+                                </div>
+                            </div>
+                        </div>
 
-        <input type="hidden" th:field="*{userType}" />
+                        <input type="hidden" th:field="*{userType}" />
 
-        <label for="address">Address:</label>
-        <input type="text" id="address" th:field="*{address}" required>
-
-        <!-- Submit Button -->
-        <button type="submit">Register</button>
-    </form>
+                        <!-- Submit Button -->
+                        <div class="row mt-3">
+                            <div class="col-12 d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-check-circle-fill me-2"></i>Register
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

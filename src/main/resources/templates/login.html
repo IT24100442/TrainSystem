@@ -45,6 +45,17 @@
         <p class="mb-0">Please sign in to continue</p>
     </div>
     <div class="card-body p-4">
+
+        <!-- Show error message if present -->
+        <div th:if="${param.error}" class="alert alert-danger mb-3">
+            Invalid username or password
+        </div>
+
+        <div th:if="${param.logout}" class="alert alert-success mb-3">
+            You have been logged out successfully.
+        </div>
+
+
         <form th:action="@{/login}" method="post">
             <div class="mb-3">
                 <label class="form-label fw-semibold">Username</label>

@@ -4,10 +4,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class PWEncoder {
 
-    public static String encode(String password){
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+    // Hash password (for registration)
+    public static String encode(String password) {
         return encoder.encode(password);
     }
+
+    // Verify password (for login)
+    public static boolean matches(String rawPassword, String encodedPassword) {
+        return encoder.matches(rawPassword, encodedPassword);
+    }
+
     //Password:  $2a$10$fZEBlItGg93.9QTY2Dqs8Okt2pJ7rUX.//eq7J1xDFEoYJDHz.P1q
     public static void main(String[] args) {
         String rawPassword = "123";

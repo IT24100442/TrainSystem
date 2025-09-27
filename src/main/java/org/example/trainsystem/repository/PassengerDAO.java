@@ -1,18 +1,17 @@
 package org.example.trainsystem.repository;
 
 import org.example.trainsystem.entity.Passenger;
-import org.example.trainsystem.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
@@ -21,128 +20,92 @@ public class PassengerDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    // -----------------------------
-    // RowMappers
-    // -----------------------------
     private static final class PassengerRowMapper implements RowMapper<Passenger> {
         @Override
         public Passenger mapRow(ResultSet rs, int rowNum) throws SQLException {
             Passenger passenger = new Passenger();
             passenger.setUserId(rs.getInt("userId"));
-            passenger.setAddress(rs.getString("address"));
-            return passenger;
-        }
-    }
-
-    private static final class PassengerWithUserRowMapper implements RowMapper<Passenger> {
-        @Override
-        public Passenger mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Passenger passenger = new Passenger();
-            passenger.setUserId(rs.getInt("userId"));
             passenger.setUsername(rs.getString("username"));
-            passenger.setPassword(rs.getString("password"));
-            passenger.setEmail(rs.getString("email"));
             passenger.setName(rs.getString("name"));
-            passenger.setUserType(rs.getString("userType"));
+            passenger.setEmail(rs.getString("email"));
             passenger.setAddress(rs.getString("address"));
+            passenger.setUserType(rs.getString("userType"));
             return passenger;
         }
     }
-
-    // -----------------------------
-    // CRUD Operations
-    // -----------------------------
 
     // Find passenger by userId
     public Passenger findPassengerById(int userId) {
-        String sql = "SELECT userId, address FROM Passenger WHERE userId = ?";
+        String sql = "SELECT userId, username, name, email, address, userType FROM Passengers WHERE userId = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new PassengerRowMapper(), userId);
-        } catch (Exception e) {
+        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             return null;
         }
     }
 
-    // Find passenger with user info by username
+    // Find passenger by username
     public Passenger findPassengerWithUser(String username) {
-        String sql = """
-                SELECT p.userId, p.address, u.username, u.password, u.email, u.name, u.userType
-                FROM Passenger p
-                INNER JOIN Users u ON p.userId = u.userId
-                WHERE u.username = ?
-                """;
+        String sql = "SELECT userId, username, name, email, address, userType FROM Passengers WHERE username = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new PassengerWithUserRowMapper(), username);
-        } catch (Exception e) {
+            return jdbcTemplate.queryForObject(sql, new PassengerRowMapper(), username);
+        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             return null;
         }
-    }
-
-    // Insert a passenger (user must exist)
-    public int save(Passenger passenger) {
-        String sql = "INSERT INTO Passenger (userId, address) VALUES (?, ?)";
-        return jdbcTemplate.update(sql, passenger.getUserId(), passenger.getAddress());
-    }
-
-    // Update passenger
-    public int update(Passenger passenger) {
-        String sql = "UPDATE Passenger SET address = ? WHERE userId = ?";
-        return jdbcTemplate.update(sql, passenger.getAddress(), passenger.getUserId());
-    }
-
-    // Delete passenger by userId
-    public int delete(int userId) {
-        String sql = "DELETE FROM Passenger WHERE userId = ?";
-        return jdbcTemplate.update(sql, userId);
     }
 
     // Find all passengers
     public List<Passenger> findAllPassengers() {
-        String sql = "SELECT userId, address FROM Passenger";
+        String sql = "SELECT userId, username, name, email, address, userType FROM Passengers";
         return jdbcTemplate.query(sql, new PassengerRowMapper());
     }
 
     // Search passengers by address
     public List<Passenger> findByAddressContaining(String address) {
-        String sql = "SELECT userId, address FROM Passenger WHERE address LIKE ?";
+        String sql = "SELECT userId, username, name, email, address, userType FROM Passengers WHERE address LIKE ?";
         return jdbcTemplate.query(sql, new PassengerRowMapper(), "%" + address + "%");
+    }
+
+    // Save passenger (auto-generate key if needed)
+    public int save(Passenger passenger) {
+        String sql = "INSERT INTO Passengers (userId, username, name, email, address, userType) VALUES (?, ?, ?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, passenger.getUserId()); // from registered User
+            ps.setString(2, passenger.getUsername());
+            ps.setString(3, passenger.getName());
+            ps.setString(4, passenger.getEmail());
+            ps.setString(5, passenger.getAddress());
+            ps.setString(6, passenger.getUserType());
+            return ps;
+        }, keyHolder);
+
+        return passenger.getUserId();
+    }
+
+    // Update passenger
+    public int update(Passenger passenger) {
+        String sql = "UPDATE Passengers SET username = ?, name = ?, email = ?, address = ?, userType = ? WHERE userId = ?";
+        return jdbcTemplate.update(sql,
+                passenger.getUsername(),
+                passenger.getName(),
+                passenger.getEmail(),
+                passenger.getAddress(),
+                passenger.getUserType(),
+                passenger.getUserId());
+    }
+
+    // Delete passenger
+    public int delete(int userId) {
+        String sql = "DELETE FROM Passengers WHERE userId = ?";
+        return jdbcTemplate.update(sql, userId);
     }
 
     // Count all passengers
     public int countAllPassengers() {
-        String sql = "SELECT COUNT(*) FROM Passenger";
-        try {
-            return jdbcTemplate.queryForObject(sql, Integer.class);
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
-    // -----------------------------
-    // Transactional method: Insert User and Passenger together
-    // -----------------------------
-    @Transactional
-    public Passenger saveUserAndPassenger(Passenger passenger) {
-        // 1️⃣ Insert into Users and get generated userId
-        String sqlUser = "INSERT INTO Users (username, password, email, name, userType) VALUES (?, ?, ?, ?, ?)";
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sqlUser, new String[]{"userId"});
-            ps.setString(1, passenger.getUsername());
-            ps.setString(2, passenger.getPassword());
-            ps.setString(3, passenger.getEmail());
-            ps.setString(4, passenger.getName());
-            ps.setString(5, "passenger");
-            return ps;
-        }, keyHolder);
-
-        int generatedUserId = keyHolder.getKey().intValue();
-        passenger.setUserId(generatedUserId);
-
-        // 2️⃣ Insert into Passenger
-        save(passenger);
-
-        return passenger;
+        String sql = "SELECT COUNT(*) FROM Passengers";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 }

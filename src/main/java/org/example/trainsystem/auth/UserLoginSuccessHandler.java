@@ -21,29 +21,26 @@ public class UserLoginSuccessHandler implements AuthenticationSuccessHandler {
             Authentication authentication
     ) throws IOException, ServletException {
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        String contextPath = request.getContextPath(); // e.g. /trainsystem
+        String redirectURL = contextPath + "/"; // default
 
-        String redirectURL = request.getContextPath(); // default to root if no match
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
         for (GrantedAuthority authority : authorities) {
             String role = authority.getAuthority();
 
-            switch (role) {
-                case "ROLE_ADMIN":
-                    redirectURL = "/admin/dashboard";
-                    break;
-                case "ROLE_PASSENGER":
-                    redirectURL = "/passenger/dashboard";
-                    break;
-                case "ROLE_DRIVER":
-                    redirectURL = "/driver/dashboard";
-                    break;
-                case "ROLE_OPMANAGER":
-                    redirectURL = "/opmanager/dashboard";
-                    break;
-                default:
-                    redirectURL = "/";
-                    break;
+            if (role.equals("ROLE_ADMIN")) {
+                redirectURL = contextPath + "/admin/dashboard";
+                break;
+            } else if (role.equals("ROLE_PASSENGER")) {
+                redirectURL = contextPath + "/passenger/dashboard";
+                break;
+            } else if (role.equals("ROLE_DRIVER")) {
+                redirectURL = contextPath + "/driver/dashboard";
+                break;
+            } else if (role.equals("ROLE_OPMANAGER")) {
+                redirectURL = contextPath + "/opmanager/dashboard";
+                break;
             }
         }
 

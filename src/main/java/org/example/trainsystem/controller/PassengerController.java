@@ -23,11 +23,17 @@ public class PassengerController {
     public String passengerDashboard(HttpSession session, Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
-        if (loggedInUser == null || !"PASSENGER".equalsIgnoreCase(loggedInUser.getUserType())) {
+        if (!isPassenger(loggedInUser)) {
             return "redirect:/login"; // block unauthorized access
         }
 
-        Passenger passenger = passengerService.getPassengerById((loggedInUser.getUserId()));
+        // Get passenger record; create if not exists
+        Passenger passenger = passengerService.getPassengerById(loggedInUser.getUserId());
+        if (passenger == null) {
+            passenger = new Passenger();
+            passenger.setUserId(loggedInUser.getUserId());
+            passengerService.createPassenger(passenger);
+        }
 
         model.addAttribute("userName", loggedInUser.getName());
         model.addAttribute("userEmail", loggedInUser.getEmail());
@@ -36,41 +42,16 @@ public class PassengerController {
         return "passenger/dashboard"; // maps to passenger dashboard view
     }
 
-    // ================== REGISTER ADDRESS (AFTER REGISTRATION) ==================
-    @GetMapping("/register/addressUI")
-    public String showAddressForm() {
-        // Show a page where the user can enter their address
-        return "passenger/register-address"; // create this template
-    }
-
-    @PostMapping("/register/addressUI")
-    public String handleAddress(@RequestParam String address, HttpSession session) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (loggedInUser == null) {
-            // If somehow session is null, redirect to login.html
-            return "redirect:/login";
-        }
-
-        // Save the address to the passenger
-        passengerService.updatePassengerDetails((loggedInUser.getUserId()), address);
-
-        // Redirect to dashboard
-        return "redirect:/passenger/dashboard";
-    }
-
-
     // ================== VIEW PASSENGER DETAILS ==================
     @GetMapping("/view")
     public String viewPassengerDetails(HttpSession session, Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
-
-        if (loggedInUser == null || !"PASSENGER".equalsIgnoreCase(loggedInUser.getUserType())) {
+        if (!isPassenger(loggedInUser)) {
             return "redirect:/login";
         }
 
-        Passenger passenger = passengerService.getPassengerById((loggedInUser.getUserId()));
+        Passenger passenger = passengerService.getPassengerById(loggedInUser.getUserId());
         model.addAttribute("passenger", passenger);
-
         return "passenger/users";
     }
 
@@ -78,32 +59,26 @@ public class PassengerController {
     @GetMapping("/edit")
     public String showEditForm(HttpSession session, Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
-
-        if (loggedInUser == null || !"PASSENGER".equalsIgnoreCase(loggedInUser.getUserType())) {
+        if (!isPassenger(loggedInUser)) {
             return "redirect:/login";
         }
 
-        Passenger passenger = passengerService.getPassengerById((loggedInUser.getUserId()));
+        Passenger passenger = passengerService.getPassengerById(loggedInUser.getUserId());
         model.addAttribute("passenger", passenger);
-
         return "passenger/edit";
     }
 
     @PostMapping("/update")
     public String updatePassenger(@ModelAttribute Passenger updated, HttpSession session, Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
-
-        if (loggedInUser == null) {
+        if (!isPassenger(loggedInUser)) {
             return "redirect:/login";
         }
 
-        // Pass String userId, not int
         passengerService.updatePassengerDetails(loggedInUser.getUserId(), updated.getAddress());
         model.addAttribute("successMessage", "Profile updated successfully!");
-        return "redirect:/passenger/home";
-        // ✅ use /home, since your PassengerController maps dashboard there
+        return "redirect:/passenger/dashboard";
     }
-
 
     // ================== LIST ALL PASSENGERS (ADMIN USE CASE) ==================
     @GetMapping("/list")
@@ -126,7 +101,12 @@ public class PassengerController {
 
         model.addAttribute("passengers", passengers);
         model.addAttribute("searchAddress", address);
-
         return "passenger/search";
+    }
+
+    // ================== HELPER METHOD ==================
+    private boolean isPassenger(User user) {
+        return user != null && user.getUserType() != null &&
+                user.getUserType().trim().equalsIgnoreCase("PASSENGER");
     }
 }

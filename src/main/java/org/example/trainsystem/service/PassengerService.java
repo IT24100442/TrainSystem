@@ -11,7 +11,7 @@ import java.util.Collections;
 public class PassengerService {
 
     @Autowired
-    private static PassengerDAO passengerDAO;
+    private PassengerDAO passengerDAO;
 
     // Get passenger with user details (expects DAO to return joined Passenger+User)
     public Passenger getPassengerWithUser(String username) {
@@ -75,22 +75,34 @@ public class PassengerService {
     // NOTE: This method assumes passengerDAO.save(...) will insert both user (users table)
     // and passenger (passengers table) rows as needed. If your DAO only writes the passengers
     // table, you must insert a user row first (via userDAO).
-    public void createPassenger(String userId, String address) {
-        Passenger existing = passengerDAO.findPassengerById(Integer.parseInt(userId));
-        if (existing != null) {
-            throw new RuntimeException("Passenger already exists with userId: " + userId);
+    // Create new passenger
+    public void createPassenger(Passenger passenger) {
+        if (passenger == null) {
+            throw new RuntimeException("Passenger cannot be null");
         }
 
-        Passenger passenger = new Passenger();
-        passenger.setUserId(Integer.parseInt(userId));
-        passenger.setUserType("passenger"); // discriminator for ISA
-        passenger.setAddress(address);
+        Passenger existing = passengerDAO.findPassengerById(passenger.getUserId());
+        if (existing != null) {
+            throw new RuntimeException("Passenger already exists with userId: " + passenger.getUserId());
+        }
+
+        String passengerCode = "P" + (passengerDAO.countAllPassengers() + 1);
+        passenger.setPassengerCode(passengerCode);
+
+        // Make sure userType is set correctly
+        passenger.setUserType("PASSENGER");
+
+        // Default address if null
+        if (passenger.getAddress() == null) {
+            passenger.setAddress("N/A");
+        }
 
         int result = passengerDAO.save(passenger);
         if (result == 0) {
             throw new RuntimeException("Failed to create passenger");
         }
     }
+
 
     // Delete passenger
     public void deletePassenger(String userId) {

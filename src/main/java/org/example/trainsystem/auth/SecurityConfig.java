@@ -47,10 +47,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // ❗ disable CSRF for now (you can enable later)
 
                 .formLogin(form -> form
-                        .loginPage("/login") // your Thymeleaf login.html
-                        .successHandler(successHandler)
+                        .loginPage("/login")                 // your login.html
+                        .loginProcessingUrl("/login")        // POST action in your form
+                        .successHandler(successHandler)      // custom success redirect
+                        .failureUrl("/login?error=true")     // show error on failed login
                         .permitAll()
                 )
+
 
                 .logout(logout -> logout
                         .addLogoutHandler(new HeaderWriterLogoutHandler(new ClearSiteDataHeaderWriter(COOKIES)))
