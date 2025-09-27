@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Violation Report</title>
     <style>
+        /* Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* Body */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
@@ -18,6 +20,7 @@
             padding: 20px;
         }
 
+        /* Container */
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -27,6 +30,7 @@
             overflow: hidden;
         }
 
+        /* Header */
         .header {
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
             color: white;
@@ -45,6 +49,7 @@
             font-size: 1.1rem;
         }
 
+        /* Back button */
         .back-button {
             position: absolute;
             top: 25px;
@@ -65,10 +70,12 @@
             transform: translateY(-2px);
         }
 
+        /* Main content */
         .main-content {
             padding: 40px;
         }
 
+        /* Passenger info section */
         .passenger-info {
             background: #fff5f5;
             border-radius: 12px;
@@ -113,6 +120,7 @@
             border: 1px solid #e2e8f0;
         }
 
+        /* Violation form */
         .violation-form {
             background: #f8f9ff;
             border-radius: 12px;
@@ -178,6 +186,7 @@
             font-weight: 600;
         }
 
+        /* Buttons */
         .btn {
             padding: 15px 30px;
             border: none;
@@ -218,6 +227,7 @@
             margin-top: 40px;
         }
 
+        /* Alerts */
         .alert {
             padding: 15px;
             border-radius: 8px;
@@ -228,6 +238,10 @@
             background: #c6f6d5;
             color: #22543d;
             border: 1px solid #9ae6b4;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
         }
 
         .alert-error {
@@ -236,20 +250,21 @@
             border: 1px solid #fc8181;
         }
 
+        /* Mobile responsive */
         @media (max-width: 768px) {
             .main-content {
                 padding: 20px;
             }
-
             .action-buttons {
                 flex-direction: column;
             }
-
             .info-grid {
                 grid-template-columns: 1fr;
             }
         }
     </style>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }</style>
+
 </head>
 <body>
 <div class="container">
@@ -259,34 +274,41 @@
         <p>Report passenger violations and misconduct</p>
     </div>
 
+
     <div class="main-content">
         <!-- Passenger Information -->
         <div class="passenger-info">
             <h3>👤 Passenger Information</h3>
             <div class="info-grid">
-
                 <div class="info-item">
                     <span class="info-label">Booking ID</span>
-                    <span class="info-value" id="bookingId">#BK12345</span>
+                    <span class="info-value" th:text="${bookingId}">#BK12345</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Train Number</span>
-                    <span class="info-value" id="trainNumber">T-101</span>
+                    <span class="info-value" th:text="${trainNumber}">T-101</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Seat Assignment</span>
-                    <span class="info-value" id="seatNumber">A2</span>
+                    <span class="info-value" th:text="${seatNumber}">A2</span>
                 </div>
-
                 <div class="info-item">
-                    <span class="info-label">Date & Time</span>
-                    <span class="info-value" id="dateTime">2025-09-18 14:30</span>
+                    <span class="info-label">Date</span>
+                    <span class="info-value" th:text="${currentDate}">2025-09-18 14:30</span>
                 </div>
             </div>
         </div>
 
         <!-- Violation Form -->
-        <form class="violation-form" id="violationForm">
+        <form class="violation-form" id="violationForm" th:action="@{/violation/submit}" method="post">
+            <!-- Hidden inputs to send passenger info -->
+
+            <input type="hidden" name="bookingId" th:value="${bookingId}">
+            <input type="hidden" name="trainNumber" th:value="${trainNumber}">
+            <input type="hidden" name="seatNumber" th:value="${seatNumber}">
+
+            <input type="hidden" name="passengerId" th:value="${passengerId}">
+
             <div class="form-section">
                 <h3>⚠️ Violation Type</h3>
                 <div class="violation-types">
@@ -314,126 +336,14 @@
                         <input type="radio" name="violationType" value="other" id="other">
                         <label for="other">Other violation</label>
                     </div>
-
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button type="button" class="btn btn-secondary" onclick="history.back()">
-                    ❌ Cancel
-                </button>
-                <button type="submit" class="btn btn-danger">
-                    🚨 Submit Violation Report
-                </button>
-            </div>
+            <button type="submit">🚨 Submit Violation Report</button>
         </form>
     </div>
 </div>
 
-<script>
-    let selectedViolationType = null;
 
-    document.addEventListener('DOMContentLoaded', function() {
-        loadPassengerData();
-        updateDateTime();
-    });
-
-    function loadPassengerData() {
-        const violationData = localStorage.getItem('violationData');
-        if (violationData) {
-            const data = JSON.parse(violationData);
-            document.getElementById('passengerName').textContent = data.passengerName || 'Unknown';
-            document.getElementById('bookingId').textContent = data.bookingId || 'Unknown';
-            document.getElementById('trainNumber').textContent = data.trainNumber || 'Unknown';
-            document.getElementById('seatNumber').textContent = data.seatNumber || 'Unknown';
-            document.getElementById('officerName').textContent = data.officerName || 'Officer';
-            document.getElementById('dateTime').textContent = `${data.date || '2025-09-18'} ${data.time || '14:30'}`;
-        }
-
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('bookingId')) document.getElementById('bookingId').textContent = urlParams.get('bookingId');
-        if (urlParams.has('passengerName')) document.getElementById('passengerName').textContent = urlParams.get('passengerName');
-        if (urlParams.has('trainNumber')) document.getElementById('trainNumber').textContent = urlParams.get('trainNumber');
-        if (urlParams.has('seatNumber')) document.getElementById('seatNumber').textContent = urlParams.get('seatNumber');
-    }
-
-    function updateDateTime() {
-        const now = new Date();
-        const dateStr = now.toISOString().split('T')[0];
-        const timeStr = now.toLocaleTimeString('en-US', { hour12: false }).substring(0, 5);
-        document.getElementById('dateTime').textContent = `${dateStr} ${timeStr}`;
-    }
-
-    function selectViolationType(element, type) {
-        document.querySelectorAll('.violation-type').forEach(el => el.classList.remove('selected'));
-        element.classList.add('selected');
-        element.querySelector('input[type="radio"]').checked = true;
-        selectedViolationType = type;
-    }
-
-    document.getElementById('violationForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (!selectedViolationType) {
-            showAlert('Please select a violation type.', 'error');
-            return;
-        }
-
-        const formData = {
-            passengerName: document.getElementById('passengerName').textContent,
-            bookingId: document.getElementById('bookingId').textContent,
-            trainNumber: document.getElementById('trainNumber').textContent,
-            seatNumber: document.getElementById('seatNumber').textContent,
-            officerName: document.getElementById('officerName').textContent,
-            violationType: selectedViolationType,
-            dateTime: document.getElementById('dateTime').textContent,
-            timestamp: new Date().toISOString()
-        };
-
-        submitViolationReport(formData);
-    });
-
-    function submitViolationReport(formData) {
-        const submitBtn = document.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '⏳ Submitting...';
-        submitBtn.disabled = true;
-
-        fetch('/submit-violation-report', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showAlert('Violation report submitted successfully!', 'success');
-                    localStorage.removeItem('violationData');
-                    setTimeout(() => { window.location.href = 'ticket-verification.html'; }, 2000);
-                } else {
-                    throw new Error(data.message || 'Failed to submit report');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert('Failed to submit violation report. Please try again.', 'error');
-            })
-            .finally(() => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            });
-    }
-
-    function showAlert(message, type) {
-        document.querySelectorAll('.alert').forEach(alert => alert.remove());
-        const alert = document.createElement('div');
-        alert.className = `alert alert-${type === 'success' ? 'success' : 'error'}`;
-        alert.innerHTML = `<span>${message}</span>`;
-        const mainContent = document.querySelector('.main-content');
-        mainContent.insertBefore(alert, mainContent.firstChild);
-        setTimeout(() => { alert.style.opacity = '0'; setTimeout(() => alert.remove(), 300); }, 5000);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-</script>
 </body>
 </html>

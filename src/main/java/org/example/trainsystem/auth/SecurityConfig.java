@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/driver/**").hasRole("DRIVER")
                         .requestMatchers("/it/**").hasRole("ITOFFICER")
                         .requestMatchers("/passenger/**").hasRole("PASSENGER")
+                        .requestMatchers("/ticket/**").hasRole("TICKETOFFICER")
 
                         // 🔹 Any other request requires login
                         .anyRequest().authenticated()

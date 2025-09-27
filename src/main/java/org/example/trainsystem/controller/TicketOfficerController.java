@@ -76,17 +76,30 @@ public class TicketOfficerController {
     }
 
     @GetMapping("/violation-report")  // Fixed: removed duplicate path
-    public String violationReport(@RequestParam(required = false) String bookingId,
-                                  @RequestParam(required = false) String trainNumber,
+    public String violationReport(@RequestParam(required = false) int bookingId,
+                                  @RequestParam(required = false) int trainNumber,
                                   @RequestParam(required = false) String seatNumber,
-                                  @RequestParam(required = false) String officerName,
+                                  @RequestParam(required = false) int passengerId,
                                   Model model) {
 
+
+        String username = getAuthenticatedUsername();
+        if (username == null) {
+            return "redirect:/login";
+        }
+
+        // Fetch driver info using username
+        TicketOfficer ticketOfficer = ticketOfficerDAO.findTicketOfficerWithUser(username);
+
+        int ticketOfficerId = ticketOfficer.getUserId();
+        model.addAttribute("ticketOfficerId", ticketOfficerId);
+
+
         // Add parameters to model (with defaults if null)
-        model.addAttribute("bookingId", bookingId != null ? bookingId : "");
-        model.addAttribute("trainNumber", trainNumber != null ? trainNumber : "");
+        model.addAttribute("bookingId", bookingId);
+        model.addAttribute("trainNumber", trainNumber);
         model.addAttribute("seatNumber", seatNumber != null ? seatNumber : "");
-        model.addAttribute("officerName", officerName != null ? officerName : "Officer");
+        model.addAttribute("passengerId", passengerId);
 
         // Add current date and time
         model.addAttribute("currentDate", LocalDate.now().toString());
@@ -95,26 +108,4 @@ public class TicketOfficerController {
         return "ticket/Violation"; // Returns violation-report.html template
     }
 
-    // Add this method to handle the ticket verification page
-    @GetMapping("/verification")
-    public String showVerification(@RequestParam(required = false) String train,
-                                   Authentication authentication,
-                                   Model model) {
-
-        // Get officer name from authentication if available
-        String officerName = authentication != null ? authentication.getName() : "Officer";
-
-        model.addAttribute("officerName", officerName);
-        model.addAttribute("selectedTrain", train);
-        model.addAttribute("date", LocalDate.now().toString());
-        model.addAttribute("time", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
-
-        // Add sample statistics (replace with real data from service)
-        model.addAttribute("totalPassengers", 24);
-        model.addAttribute("verifiedCount", 18);
-        model.addAttribute("pendingCount", 6);
-        model.addAttribute("violationCount", 2);
-
-        return "ticket-verification"; // Returns ticket-verification.html template
-    }
 }

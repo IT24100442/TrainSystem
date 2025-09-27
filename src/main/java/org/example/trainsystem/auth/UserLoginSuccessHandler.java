@@ -44,7 +44,6 @@ public class UserLoginSuccessHandler implements AuthenticationSuccessHandler {
                 case "ROLE_TICKETOFFICER":
                     redirectURL = "/Ticket_Officer/dashboard";
                     break;
-
                 default:
                     redirectURL = "/";
                     break;

@@ -21,22 +21,10 @@ public class ViolationReportDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<ViolationReport> findByReportStatus(String status) {
-        {
-            String sql = """
-        SELECT violationId, officerId, trainId, passengerId, violationType,
-               violationDescription, violationTime, reportStatus, penaltyAmount,
-               resolvedBy, resolutionTime
-        FROM ViolationReport
-        WHERE reportStatus = ?
-    """;
-            return jdbcTemplate.query(sql, new ViolationReportRowMapper(), status);
-        }
-    }
-
 
     // ---------- RowMappers ----------
     private static final class ViolationReportRowMapper implements RowMapper<ViolationReport> {
+
         @Override
         public ViolationReport mapRow(ResultSet rs, int rowNum) throws SQLException {
             ViolationReport violationReport = new ViolationReport();
@@ -55,36 +43,8 @@ public class ViolationReportDAO {
         }
     }
 
-//    private static final class ViolationReportWithDetailsRowMapper implements RowMapper<ViolationReport> {
-//        @Override
-//        public ViolationReport mapRow(ResultSet rs, int rowNum) throws SQLException {
-//            ViolationReport violationReport = new ViolationReport();
-//            violationReport.se(rs.getInt("reportId"));
-//            violationReport.setOfficerId(rs.getString("ticketOfficerId"));
-//            violationReport.setTrainId(rs.getString("trainId"));
-//            violationReport.setPassengerId(rs.getString("passengerId"));
-//            violationReport.setViolationType(rs.getString("violationType"));
-//            violationReport.setViolationTime(rs.getTimestamp("reportDate"));
-//
-//            TicketOfficer ticketOfficer = new TicketOfficer();
-//            ticketOfficer.setUserId(rs.getString("userId"));
-//
-//            User user = new User();
-//            user.setUserId(rs.getInt("userId"));
-//            user.setUsername(rs.getString("username"));
-//            user.setEmail(rs.getString("email"));
-//            user.setName(rs.getString("name"));
-//            user.setUserType(rs.getString("userType"));
-//            // 🚨 Password excluded for security reasons
-//
-//            ticketOfficer.setUser(user);
-//            violationReport.setTicketOfficer(ticketOfficer);
-//
-//            return violationReport;
-//        }
-//    }
-
     // ---------- Queries ----------
+
     public Optional<ViolationReport> findById(Integer violationId) {
         String sql = """
             SELECT *
@@ -99,6 +59,18 @@ public class ViolationReportDAO {
             return Optional.empty();
         }
     }
+    public List<ViolationReport> findByReportStatus(String status) {
+        {
+            String sql = """
+        SELECT violationId, officerId, trainId, passengerId, violationType,
+               violationDescription, violationTime, reportStatus, penaltyAmount,
+               resolvedBy, resolutionTime
+        FROM ViolationReport
+        WHERE reportStatus = ?
+    """;
+            return jdbcTemplate.query(sql, new ViolationReportRowMapper(), status);
+        }
+    }
 
     public List<ViolationReport> findByOfficerId(String officerId) {
         String sql = """
@@ -109,40 +81,23 @@ public class ViolationReportDAO {
         return jdbcTemplate.query(sql, new ViolationReportRowMapper(), officerId);
     }
 
-//    public Optional<ViolationReport> findViolationReportWithDetails(Integer violationId) {
-//        String sql = """
-//            SELECT vr.violationId, vr.officerId, vr.trainId, vr.passengerId, vr.violationType,
-//                   vr.violationDescription, vr.violationTime, vr.reportStatus, vr.penaltyAmount,
-//                   vr.resolvedBy, vr.resolutionTime
-//                    , t.assignedRoute,
-//                   u.username, u.email, u.name, u.userType
-//            FROM ViolationReport vr
-//            INNER JOIN TicketOfficer t ON vr.officerId = t.userId
-//            INNER JOIN Users u ON t.userId = u.userId
-//            WHERE vr.violationId = ?
-//        """;
-//        try {
-//            return Optional.ofNullable(
-//                    jdbcTemplate.queryForObject(sql, new ViolationReportWithDetailsRowMapper(), violationId)
-//            );
-//        } catch (EmptyResultDataAccessException e) {
-//            return Optional.empty();
-//        }
-//    }
+
 
     public int save(ViolationReport violationReport) {
         String sql = """
             INSERT INTO ViolationReport
-                (reportId, trainId, passengerId, violationType,
+                (trainId, passengerId, violationType, ticketOfficerId,
                  reportDate)
             VALUES (?, ?, ?, ?, ?)
         """;
+
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
         return jdbcTemplate.update(sql,
-                violationReport.getReportId(),
                 violationReport.getTrainId(),
                 violationReport.getPassengerId(),
                 violationReport.getViolationType(),
-                violationReport.getReportDate()
+                violationReport.getTicketOfficerId(),
+                now
 
         );
     }

@@ -81,11 +81,16 @@
             background: #e6f0ff;
         }
 
-        .no-bookings {
-            text-align: center;
-            color: #888;
-            font-style: italic;
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
         }
+
     </style>
 </head>
 <body>
@@ -94,7 +99,9 @@
         <h1>Ticket Officer Dashboard</h1>
         <p>Welcome, Officer <span th:text="${userId}"></span></p>
     </header>
-
+    <div th:if="${message}" class="alert alert-success">
+        <span th:text="${message}"></span>
+    </div>
     <section class="bookings-section">
         <h2>Bookings for Your Train</h2>
 
