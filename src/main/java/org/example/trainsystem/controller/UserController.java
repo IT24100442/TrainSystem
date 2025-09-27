@@ -48,7 +48,7 @@ public class UserController {
         User user2 = new User();
         user2.setUsername(user.getUsername());
 
-        String hashedPassword = pwEncoder.encode(user.getPassword()); // TODO: hash the password
+        String hashedPassword = pwEncoder.encode(user.getPassword()); //
         user2.setPassword(hashedPassword);
         user2.setName(user.getName());
         user2.setEmail(user.getEmail());
