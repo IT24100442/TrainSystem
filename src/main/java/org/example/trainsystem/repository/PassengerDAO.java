@@ -87,15 +87,15 @@ public class PassengerDAO {
 
     // Update passenger
     public int update(Passenger passenger) {
-        String sql = "UPDATE Passengers SET username = ?, name = ?, email = ?, address = ?, userType = ? WHERE userId = ?";
+        String sql = "UPDATE passengers SET name=?, email=?, address=? WHERE user_id=?";
         return jdbcTemplate.update(sql,
-                passenger.getUsername(),
                 passenger.getName(),
                 passenger.getEmail(),
                 passenger.getAddress(),
-                passenger.getUserType(),
-                passenger.getUserId());
+                passenger.getUserId()
+        );
     }
+
 
     // Delete passenger
     public int delete(int userId) {

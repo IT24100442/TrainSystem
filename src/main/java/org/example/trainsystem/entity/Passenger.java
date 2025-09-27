@@ -2,7 +2,6 @@ package org.example.trainsystem.entity;
 
 public class Passenger extends User {
     private String address;
-    private String passengerCode; // Example of an additional field specific to Passenger
 
     public Passenger() {
     }
@@ -19,11 +18,4 @@ public class Passenger extends User {
         this.address = address;
     }
 
-    public String getPassengerCode() {
-        return passengerCode;
-    }
-
-    public void setPassengerCode(String passengerCode) {
-        this.passengerCode = passengerCode;
-    }
 }

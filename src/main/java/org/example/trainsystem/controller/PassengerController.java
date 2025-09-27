@@ -1,5 +1,6 @@
 package org.example.trainsystem.controller;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.trainsystem.entity.Passenger;
 import org.example.trainsystem.service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,19 +63,28 @@ public class PassengerController {
         return "passenger/edit";
     }
 
-    @PostMapping("/update")
-    public String updatePassenger(@ModelAttribute Passenger updated, Authentication authentication, Model model) {
-        String username = authentication.getName();
-        Passenger passenger = passengerService.getPassengerWithUser(username);
-
-        if (passenger == null) {
+    @PostMapping("/update-profile")
+    public String updateProfile(@ModelAttribute("passenger") Passenger formPassenger,
+                                HttpSession session, Model model) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
             return "redirect:/login";
         }
 
-        passengerService.updatePassengerDetails(passenger.getUserId(), updated.getAddress());
+        // Set the correct userId to ensure the correct passenger is updated
+        formPassenger.setUserId(userId);
+
+        // Update full profile via service
+        passengerService.updatePassengerProfile(formPassenger);
+
+        // Reload passenger data to reflect changes in the dashboard
+        Passenger updatedPassenger = passengerService.getPassengerById(userId);
+        model.addAttribute("passenger", updatedPassenger);
         model.addAttribute("successMessage", "Profile updated successfully!");
-        return "redirect:/passenger/dashboard";
+
+        return "passenger-dashboard"; // Your Thymeleaf template
     }
+
 
     // ================== LIST ALL PASSENGERS (ADMIN USE CASE) ==================
     @GetMapping("/list")

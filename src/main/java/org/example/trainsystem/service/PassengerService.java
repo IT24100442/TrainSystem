@@ -54,20 +54,23 @@ public class PassengerService {
         return passengerDAO.save(passenger);  // Uses JPA repository to persist
     }
 
-    // Update passenger details (address)
-    public void updatePassengerDetails(int userId, String address) {
-        // Find passenger by int userId directly
-        Passenger passenger = passengerDAO.findPassengerById(userId);  // Use the updated DAO method
-        if (passenger == null) {
-            throw new RuntimeException("Passenger not found with userId: " + userId);
+    // Update full passenger details
+    public void updatePassengerProfile(Passenger updatedPassenger) {
+        Passenger existing = passengerDAO.findPassengerById(updatedPassenger.getUserId());
+        if (existing == null) {
+            throw new RuntimeException("Passenger not found with userId: " + updatedPassenger.getUserId());
         }
 
-        passenger.setAddress(address);
-        int result = passengerDAO.update(passenger);
+        existing.setName(updatedPassenger.getName());
+        existing.setEmail(updatedPassenger.getEmail());
+        existing.setAddress(updatedPassenger.getAddress());
+
+        int result = passengerDAO.update(existing); // DAO must handle all three fields
         if (result == 0) {
-            throw new RuntimeException("Failed to update passenger details");
+            throw new RuntimeException("Failed to update passenger profile");
         }
     }
+
 
 
 
@@ -85,9 +88,6 @@ public class PassengerService {
         if (existing != null) {
             throw new RuntimeException("Passenger already exists with userId: " + passenger.getUserId());
         }
-
-        String passengerCode = "P" + (passengerDAO.countAllPassengers() + 1);
-        passenger.setPassengerCode(passengerCode);
 
         // Make sure userType is set correctly
         passenger.setUserType("PASSENGER");
