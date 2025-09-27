@@ -3,32 +3,39 @@ package org.example.trainsystem.entity;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 
 public class TicketOfficer {
-    private String userId;
+    private int userId;
+    private int trainId;
+    private User user; // Relationship with User entity
 
-    private String assignedRoute;
-    private SecurityProperties.User user; // Reference your own User entity
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     // Constructors
     public TicketOfficer() {}
 
-    public TicketOfficer(String userId, String badgeNumber, String assignedRoute) {
+    public TicketOfficer(int userId, int trainId) {
         this.userId = userId;
-
-        this.assignedRoute = assignedRoute;
+        this.trainId = trainId;
     }
 
-    // Getters and Setters
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public int getUserId() {
+        return userId;
+    }
 
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
-    public String getAssignedRoute() { return assignedRoute; }
-    public void setAssignedRoute(String assignedRoute) { this.assignedRoute = assignedRoute; }
+    public int getTrainId() {
+        return trainId;
+    }
 
-    public SecurityProperties.User getUser() { return user; }
-    public void setUser(SecurityProperties.User user) { this.user = user; }
-
-    public String getName() {
-        return user != null ? user.getName() : null;
+    public void setTrainId(int trainId) {
+        this.trainId = trainId;
     }
 }

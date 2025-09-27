@@ -1,10 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Ticket Booking</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #004e92, #000428);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: #dcdcdc;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .btn-primary {
+            background: #1e90ff;
+        }
+
+        .btn-primary:hover {
+            background: #187bcd;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: #ff6347;
+        }
+
+        .btn-secondary:hover {
+            background: #d94b36;
+            transform: scale(1.05);
+        }
+
+        .btn-tertiary {
+            background: #32cd32;
+        }
+
+        .btn-tertiary:hover {
+            background: #28a428;
+            transform: scale(1.05);
+        }
+
+        footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+    </style>
 </head>
 <body>
+
+<header>
+    <h1>Welcome to Sri Lanka Railways</h1>
+    <p>Book your train tickets online with ease</p>
+</header>
+
+<div class="button-container">
+    <a href="/search" class="btn btn-primary">Search Trains</a>
+    <a href="/bookings" class="btn btn-secondary">My Bookings</a>
+    <a href="/login" class="btn btn-tertiary">Login</a>
+    <a href="/registration" class="btn btn-tertiary">Register</a>
+
+
+</div>
+
+<footer>
+    &copy; 2025 Sri Lanka Railways. All rights reserved.
+</footer>
 
 </body>
 </html>

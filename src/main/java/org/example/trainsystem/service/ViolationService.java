@@ -24,9 +24,9 @@ public class ViolationService {
     public List<ViolationReport> getPendingViolations() {
         return violationReportDAO.findByReportStatus("PENDING");
     }
-    public Optional<ViolationReport> getViolationWithDetails(Integer violationId) {
-        return violationReportDAO.findViolationReportWithDetails(violationId);
-    }
+//    public Optional<ViolationReport> getViolationWithDetails(Integer violationId) {
+//        return violationReportDAO.findViolationReportWithDetails(violationId);
+//    }
 
     public boolean createViolationReport(ViolationReport violationReport) {
         return violationReportDAO.save(violationReport) > 0;

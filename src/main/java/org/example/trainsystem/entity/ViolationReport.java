@@ -1,71 +1,88 @@
 package org.example.trainsystem.entity;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 public class ViolationReport {
-    private Integer violationId;
-    private String officerId;
-    private String trainId;
-    private String passengerId;
+    private int reportId;
+    private int ticketOfficerId;
+    private int trainId;
+    private int passengerId;
     private String violationType;
-    private String violationDescription;
-    private Timestamp violationTime;
-    private String reportStatus;
-    private BigDecimal penaltyAmount;
-    private String resolvedBy;
-    private Timestamp resolutionTime;
+    private LocalDateTime reportDate;
+
 
     private TicketOfficer ticketOfficer; // Relationship with officer
 
     // Constructors
-    public ViolationReport() {}
-
-    public ViolationReport(String officerId, String trainId, String passengerId,
-                           String violationType, String violationDescription, LocalDateTime violationTime) {
-        this.officerId = officerId;
-        this.trainId = trainId;
-        this.passengerId = passengerId;
-        this.violationType = violationType;
-        this.violationDescription = violationDescription;
-        this.violationTime = Timestamp.valueOf(violationTime);
+    public ViolationReport() {
     }
 
-    // Getters and Setters
-    public Integer getViolationId() { return violationId; }
-    public void setViolationId(Integer violationId) { this.violationId = violationId; }
+    public ViolationReport(int reportId, int officerId, int trainId, int passengerId,
+                           String violationType, LocalDateTime violationTime) {
+        this.reportId = reportId;
+        this.ticketOfficerId = officerId;
+        this.trainId = trainId;
+        this.passengerId = passengerId;
+        this.reportDate = violationTime;
+        this.violationType = violationType;
 
-    public String getOfficerId() { return officerId; }
-    public void setOfficerId(String officerId) { this.officerId = officerId; }
+    }
 
-    public String getTrainId() { return trainId; }
-    public void setTrainId(String trainId) { this.trainId = trainId; }
+    public int getReportId() {
+        return reportId;
+    }
 
-    public String getPassengerId() { return passengerId; }
-    public void setPassengerId(String passengerId) { this.passengerId = passengerId; }
+    public void setReportId(int reportId) {
+        this.reportId = reportId;
+    }
 
-    public String getViolationType() { return violationType; }
-    public void setViolationType(String violationType) { this.violationType = violationType; }
+    public int getTicketOfficerId() {
+        return ticketOfficerId;
+    }
 
-    public String getViolationDescription() { return violationDescription; }
-    public void setViolationDescription(String violationDescription) { this.violationDescription = violationDescription; }
+    public void setTicketOfficerId(int ticketOfficerId) {
+        this.ticketOfficerId = ticketOfficerId;
+    }
 
-    public Timestamp getViolationTime() { return violationTime; }
-    public void setViolationTime(Timestamp violationTime) { this.violationTime = violationTime; }
+    public int getTrainId() {
+        return trainId;
+    }
 
-    public String getReportStatus() { return reportStatus; }
-    public void setReportStatus(String reportStatus) { this.reportStatus = reportStatus; }
+    public void setTrainId(int trainId) {
+        this.trainId = trainId;
+    }
 
-    public BigDecimal getPenaltyAmount() { return penaltyAmount; }
-    public void setPenaltyAmount(BigDecimal penaltyAmount) { this.penaltyAmount = penaltyAmount; }
+    public int getPassengerId() {
+        return passengerId;
+    }
 
-    public String getResolvedBy() { return resolvedBy; }
-    public void setResolvedBy(String resolvedBy) { this.resolvedBy = resolvedBy; }
+    public void setPassengerId(int passengerId) {
+        this.passengerId = passengerId;
+    }
 
-    public Timestamp getResolutionTime() { return resolutionTime; }
-    public void setResolutionTime(Timestamp resolutionTime) { this.resolutionTime = resolutionTime; }
+    public String getViolationType() {
+        return violationType;
+    }
 
-    public TicketOfficer getTicketOfficer() { return ticketOfficer; }
-    public void setTicketOfficer(TicketOfficer ticketOfficer) { this.ticketOfficer = ticketOfficer; }
+    public void setViolationType(String violationType) {
+        this.violationType = violationType;
+    }
+
+    public LocalDateTime getReportDate() {
+        return reportDate;
+    }
+
+    public void setReportDate(LocalDateTime reportDate) {
+        this.reportDate = reportDate;
+    }
+
+    public TicketOfficer getTicketOfficer() {
+        return ticketOfficer;
+    }
+
+    public void setTicketOfficer(TicketOfficer ticketOfficer) {
+        this.ticketOfficer = ticketOfficer;
+    }
 }
+

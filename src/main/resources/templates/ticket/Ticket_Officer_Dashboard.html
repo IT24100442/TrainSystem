@@ -279,44 +279,14 @@
     <div class="main-content">
         <!-- Officer Information -->
         <div class="officer-info">
-            <strong>👮‍♂️ Officer:</strong> <span th:text="${officerName}">Officer Smith</span> |
-            <strong>📅 Date:</strong> <span th:text="${date}">2025-09-18</span> |
+            <strong>👮‍♂️ Officer:</strong> <span th:text="${userId}">01</span> |
+            <strong>📅 Date:</strong> <span id="currentDate"></span> |
             <strong>🕐 Time:</strong> <span id="currentTime" th:text="${time}">12:45</span>
         </div>
 
-        <!-- Statistics Section -->
-        <div class="stats-section">
-            <div class="stat-card">
-                <div class="stat-number" th:text="${totalPassengers ?: '24'}">24</div>
-                <div class="stat-label">Total Passengers</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" th:text="${verifiedCount ?: '18'}">18</div>
-                <div class="stat-label">Verified</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" th:text="${pendingCount ?: '6'}">6</div>
-                <div class="stat-label">Pending</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" th:text="${violationCount ?: '2'}">2</div>
-                <div class="stat-label">Violations</div>
-            </div>
-        </div>
 
-        <!-- Controls Section -->
-        <div class="controls-section">
-            <div class="form-group">
-                <label for="trainSelect">Select Train for Verification</label>
-                <select id="trainSelect" name="trainNumber" class="form-control" onchange="loadPassengerData(this.value)">
-                    <option value="">Choose train...</option>
-                    <option value="T-101" th:selected="${selectedTrain == 'T-101'}">T-101 (Colombo - Kandy)</option>
-                    <option value="T-102" th:selected="${selectedTrain == 'T-102'}">T-102 (Kandy - Colombo)</option>
-                    <option value="T-201" th:selected="${selectedTrain == 'T-201'}">T-201 (Colombo - Galle)</option>
-                    <option value="T-301" th:selected="${selectedTrain == 'T-301'}">T-301 (Colombo - Jaffna)</option>
-                </select>
-            </div>
-        </div>
+
+
 
         <!-- Verification Table -->
         <div style="overflow-x: auto;">
@@ -471,6 +441,14 @@
     // Update time every second
     updateTime();
     setInterval(updateTime, 1000);
+
+
+    function updateDateTime() {
+        const now = new Date();
+        document.getElementById("currentDate").textContent = now.toLocaleDateString();
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
 
     function loadPassengerData(trainNumber) {
         if (trainNumber) {

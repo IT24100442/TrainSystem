@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 
 @Controller  // Changed from @RestController to @Controller
 @RequestMapping("/api/violations")
-public class ViolationController {
+public class  ViolationController {
 
     @Autowired
     private ViolationService violationService;
@@ -46,90 +46,90 @@ public class ViolationController {
         model.addAttribute("currentDate", LocalDate.now().toString());
         model.addAttribute("currentTime", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
 
-        return "violation-report"; // Returns violation-report.html template
+        return "ticket/violation-report"; // Returns violation-report.html template
     }
 
-    // NEW: Handle form submission from the violation report page
-    @PostMapping("/submit")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> submitViolationReport(@RequestBody Map<String, Object> requestData) {
-        Map<String, Object> response = new HashMap<>();
-
-        try {
-            // Extract data from the request
-            String bookingId = (String) requestData.get("bookingId");
-            String passengerName = (String) requestData.get("passengerName");
-            String trainNumber = (String) requestData.get("trainNumber");
-            String seatNumber = (String) requestData.get("seatNumber");
-            String officerName = (String) requestData.get("officerName");
-            String violationType = (String) requestData.get("violationType");
-            String dateTime = (String) requestData.get("dateTime");
-
-            // Create ViolationReport entity
-            ViolationReport violationReport = new ViolationReport();
-            violationReport.setOfficerId(officerName);
-            violationReport.setTrainId(trainNumber);
-            violationReport.setPassengerId(bookingId);
-            violationReport.setViolationType(violationType);
-            violationReport.setViolationDescription("Violation reported for passenger: " + passengerName +
-                    " (Booking ID: " + bookingId + ")" +
-                    " on train: " + trainNumber +
-                    " at seat: " + seatNumber +
-                    " on " + dateTime);
-            violationReport.setPenaltyAmount(BigDecimal.valueOf(getDefaultPenaltyAmount(violationType)));
-            violationReport.setReportStatus("PENDING");
-            violationReport.setViolationTime(Timestamp.valueOf(LocalDateTime.now()));
-
-            // Save violation report using ViolationService
-            boolean success = violationService.createViolationReport(violationReport);
-
-            if (success) {
-                response.put("success", true);
-                response.put("message", "Violation report submitted successfully");
-                response.put("violationId", bookingId);
-            } else {
-                response.put("success", false);
-                response.put("message", "Failed to save violation report");
-            }
-
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "Failed to submit violation report: " + e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
-    }
-
-    // REST API endpoints using ViolationService
-
-    // Report a new violation (REST API)
-    @PostMapping("/report")
-    @ResponseBody
-    public ResponseEntity<String> reportViolation(@RequestBody ViolationReportRequest request) {
-        try {
-            // Convert DTO to Entity
-            ViolationReport violationReport = new ViolationReport();
-            violationReport.setOfficerId(request.getOfficerId());
-            violationReport.setTrainId(request.getTrainId());
-            violationReport.setPassengerId(request.getPassengerId());
-            violationReport.setViolationType(request.getViolationType());
-            violationReport.setViolationDescription(request.getViolationDescription());
-            violationReport.setPenaltyAmount(BigDecimal.valueOf(request.getPenaltyAmount()));
-            violationReport.setReportStatus(request.getReportStatus() != null ? request.getReportStatus() : "PENDING");
-            violationReport.setViolationTime(java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
-
-            boolean success = violationService.createViolationReport(violationReport);
-
-            if (success) {
-                return ResponseEntity.ok("Violation reported successfully");
-            } else {
-                return ResponseEntity.badRequest().body("Failed to save violation report");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to report violation: " + e.getMessage());
-        }
-    }
+//    // NEW: Handle form submission from the violation report page
+//    @PostMapping("/submit")
+//    @ResponseBody
+//    public ResponseEntity<Map<String, Object>> submitViolationReport(@RequestBody Map<String, Object> requestData) {
+//        Map<String, Object> response = new HashMap<>();
+//
+//        try {
+//            // Extract data from the request
+//            String bookingId = (String) requestData.get("bookingId");
+//            String passengerName = (String) requestData.get("passengerName");
+//            String trainNumber = (String) requestData.get("trainNumber");
+//            String seatNumber = (String) requestData.get("seatNumber");
+//            String officerName = (String) requestData.get("officerName");
+//            String violationType = (String) requestData.get("violationType");
+//            String dateTime = (String) requestData.get("dateTime");
+//
+//            // Create ViolationReport entity
+//            ViolationReport violationReport = new ViolationReport();
+//            violationReport.setOfficerId(officerName);
+//            violationReport.setTrainId(trainNumber);
+//            violationReport.setPassengerId(bookingId);
+//            violationReport.setViolationType(violationType);
+//            violationReport.setViolationDescription("Violation reported for passenger: " + passengerName +
+//                    " (Booking ID: " + bookingId + ")" +
+//                    " on train: " + trainNumber +
+//                    " at seat: " + seatNumber +
+//                    " on " + dateTime);
+//            violationReport.setPenaltyAmount(BigDecimal.valueOf(getDefaultPenaltyAmount(violationType)));
+//            violationReport.setReportStatus("PENDING");
+//            violationReport.setViolationTime(Timestamp.valueOf(LocalDateTime.now()));
+//
+//            // Save violation report using ViolationService
+//            boolean success = violationService.createViolationReport(violationReport);
+//
+//            if (success) {
+//                response.put("success", true);
+//                response.put("message", "Violation report submitted successfully");
+//                response.put("violationId", bookingId);
+//            } else {
+//                response.put("success", false);
+//                response.put("message", "Failed to save violation report");
+//            }
+//
+//            return ResponseEntity.ok(response);
+//
+//        } catch (Exception e) {
+//            response.put("success", false);
+//            response.put("message", "Failed to submit violation report: " + e.getMessage());
+//            return ResponseEntity.badRequest().body(response);
+//        }
+//    }
+//
+//    // REST API endpoints using ViolationService
+//
+//    // Report a new violation (REST API)
+//    @PostMapping("/report")
+//    @ResponseBody
+//    public ResponseEntity<String> reportViolation(@RequestBody ViolationReportRequest request) {
+//        try {
+//            // Convert DTO to Entity
+//            ViolationReport violationReport = new ViolationReport();
+//            violationReport.setOfficerId(request.getOfficerId());
+//            violationReport.setTrainId(request.getTrainId());
+//            violationReport.setPassengerId(request.getPassengerId());
+//            violationReport.setViolationType(request.getViolationType());
+//            violationReport.setViolationDescription(request.getViolationDescription());
+//            violationReport.setPenaltyAmount(BigDecimal.valueOf(request.getPenaltyAmount()));
+//            violationReport.setReportStatus(request.getReportStatus() != null ? request.getReportStatus() : "PENDING");
+//            violationReport.setViolationTime(java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+//
+//            boolean success = violationService.createViolationReport(violationReport);
+//
+//            if (success) {
+//                return ResponseEntity.ok("Violation reported successfully");
+//            } else {
+//                return ResponseEntity.badRequest().body("Failed to save violation report");
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body("Failed to report violation: " + e.getMessage());
+//        }
+//    }
 
     // Get all violations reported by a specific officer
     @GetMapping("/officer/{officerId}")
@@ -144,20 +144,20 @@ public class ViolationController {
     }
 
     // Get details of a specific violation
-    @GetMapping("/{violationId}")
-    @ResponseBody
-    public ResponseEntity<ViolationReport> getViolationDetails(@PathVariable Integer violationId) {
-        try {
-            Optional<ViolationReport> violation = violationService.getViolationWithDetails(violationId);
-            if (violation.isPresent()) {
-                return ResponseEntity.ok(violation.get());
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @GetMapping("/{violationId}")
+//    @ResponseBody
+//    public ResponseEntity<ViolationReport> getViolationDetails(@PathVariable Integer violationId) {
+//        try {
+////            Optional<ViolationReport> violation = violationService.getViolationWithDetails(violationId);
+//            if (violation.isPresent()) {
+//                return ResponseEntity.ok(violation.get());
+//            } else {
+//                return ResponseEntity.notFound().build();
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
     // Get all pending violations
     @GetMapping("/pending")

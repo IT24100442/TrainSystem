@@ -31,7 +31,7 @@ public class TicketCheckingController {
 
     // Get list of passengers for a train
     @GetMapping("/passengers/{trainId}")
-    public ResponseEntity<List<Booking>> getPassengerList(@PathVariable String trainId) {
+    public ResponseEntity<List<Booking>> getPassengerList(@PathVariable int trainId) {
         try {
             List<Booking> passengers = ticketOfficerService.getPassengerList(trainId);
             return ResponseEntity.ok(passengers);
@@ -39,17 +39,17 @@ public class TicketCheckingController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    // Verify a passenger's ticket
-    @PostMapping("/verify")
-    public ResponseEntity<String> verifyTicket(@RequestBody TicketCheckingRequest request) {
-        try {
-            ticketOfficerService.verifyTicket(request.getBookingId(), request.getStatus());
-            return ResponseEntity.ok("Ticket verified successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Failed to verify ticket: " + e.getMessage());
-        }
-    }
+//
+//    // Verify a passenger's ticket
+//    @PostMapping("/verify")
+//    public ResponseEntity<String> verifyTicket(@RequestBody TicketCheckingRequest request) {
+//        try {
+//            ticketOfficerService.verifyTicket(request.getBookingId(), request.getStatus());
+//            return ResponseEntity.ok("Ticket verified successfully");
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body("Failed to verify ticket: " + e.getMessage());
+//        }
+//    }
 
     // Get route assigned to officer
     @GetMapping("/route/{officerId}")

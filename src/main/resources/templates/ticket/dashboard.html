@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Officer Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: #004080;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .officer-info {
+            margin-top: 10px;
+            font-size: 1rem;
+            background: #e9f0fb;
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .bookings-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .bookings-section h2 {
+            margin-top: 0;
+            color: #004080;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table thead {
+            background: #004080;
+            color: white;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        table tbody tr:hover {
+            background: #e6f0ff;
+        }
+
+        .no-bookings {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <header>
+        <h1>Ticket Officer Dashboard</h1>
+        <p>Welcome, Officer <span th:text="${userId}"></span></p>
+    </header>
+
+    <section class="bookings-section">
+        <h2>Bookings for Your Train</h2>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Passenger ID</th>
+                <th>Seat</th>
+                <th>Booking Date</th>
+                <th>Class</th>
+                <th>✔ Validate</th>
+                <th>📄 Report</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="booking : ${bookings}">
+                <td th:text="${booking.bookingId}"></td>
+                <td th:text="${booking.passengerId}"></td>
+                <td th:text="${booking.seatNumber}"></td>
+                <td th:text="${#temporals.format(booking.bookingDate, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${booking.bookingClass}"></td>
+                <td>
+                    <input type="checkbox" name="tickOff" th:value="${booking.bookingId}">
+                </td>
+
+                <!-- Report Button column -->
+                <td>
+                    <a th:href="@{/Ticket_Officer/violation-report(
+        passengerId=${booking.passengerId},
+        bookingId=${booking.bookingId},
+        trainNumber=${booking.trainId},
+        seatNumber=${booking.seatNumber}
+    )}"
+                       class="btn btn-sm btn-primary">
+                        Generate Report
+                    </a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(bookings)}">
+                <td colspan="7">No bookings available.</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+</body>
+</html>

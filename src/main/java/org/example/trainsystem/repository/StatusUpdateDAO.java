@@ -1,10 +1,10 @@
 package org.example.trainsystem.repository;
 
+import org.example.trainsystem.entity.StatusUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import org.example.trainsystem.entity.StatusUpdate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,7 +25,6 @@ public class StatusUpdateDAO {
             update.setTrainId(rs.getInt("trainId"));
             update.setCurrentLocation(rs.getString("currentLocation"));
             update.setStatus(rs.getString("status"));
-            update.setRemarks(rs.getString("remarks"));
 
             Timestamp timestamp = rs.getTimestamp("updateTime");
             if (timestamp != null) {
@@ -37,7 +36,7 @@ public class StatusUpdateDAO {
     }
 
     public StatusUpdate findById(long id) {
-        String sql = "SELECT id, trainId, currentLocation, status, remarks, updateTime FROM StatusUpdates WHERE id = ?";
+        String sql = "SELECT id, trainId, currentLocation, status, updateTime FROM StatusUpdates WHERE id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new StatusUpdateRowMapper(), id);
         } catch (Exception e) {
@@ -47,7 +46,7 @@ public class StatusUpdateDAO {
 
     public static StatusUpdate findLatestByTrainId(int trainId) {
         String sql = """
-            SELECT TOP 1 id, trainId, currentLocation, status, remarks, updateTime
+            SELECT TOP 1 id, trainId, currentLocation, status, updateTime
             FROM StatusUpdates
             WHERE trainId = ?
             ORDER BY updateTime DESC
@@ -61,7 +60,7 @@ public class StatusUpdateDAO {
 
     public List<StatusUpdate> findByTrainId(int trainId) {
         String sql = """
-            SELECT id, trainId, currentLocation, status, remarks, updateTime
+            SELECT id, trainId, currentLocation, status, updateTime
             FROM StatusUpdates
             WHERE trainId = ?
             ORDER BY updateTime DESC
@@ -71,28 +70,26 @@ public class StatusUpdateDAO {
 
     public static int save(StatusUpdate update) {
         String sql = """
-            INSERT INTO StatusUpdates (trainId, currentLocation, status, remarks, updateTime)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO StatusUpdates (trainId, currentLocation, status, updateTime)
+            VALUES (?, ?, ?, ?)
             """;
         return jdbcTemplate.update(sql,
                 update.getTrainId(),
                 update.getCurrentLocation(),
                 update.getStatus(),
-                update.getRemarks(),
                 Timestamp.valueOf(update.getUpdateTime()));
     }
 
     public int update(StatusUpdate update) {
         String sql = """
             UPDATE StatusUpdates
-            SET trainId = ?, currentLocation = ?, status = ?, remarks = ?, updateTime = ?
+            SET trainId = ?, currentLocation = ?, status = ?, updateTime = ?
             WHERE id = ?
             """;
         return jdbcTemplate.update(sql,
                 update.getTrainId(),
                 update.getCurrentLocation(),
                 update.getStatus(),
-                update.getRemarks(),
                 Timestamp.valueOf(update.getUpdateTime()),
                 update.getId());
     }
