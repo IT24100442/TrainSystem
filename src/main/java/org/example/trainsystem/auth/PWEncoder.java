@@ -1,8 +1,9 @@
 package org.example.trainsystem.auth;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class PWEncoder {
 
     public static String encode(String password){

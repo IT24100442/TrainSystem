@@ -19,7 +19,8 @@ public class UserController {
     private final UserDAO userDAO;
     private final PassengerDAO passengerDAO;
 
-     PWEncoder pwEncoder; // Ensure encoder is injected
+    @Autowired
+    PWEncoder pwEncoder; // Ensure encoder is injected
 
     @Autowired
     public UserController(UserDAO userDAO, PassengerDAO passengerDAO) {
