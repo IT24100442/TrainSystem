@@ -51,7 +51,7 @@ public class PassengerService {
 
     // Save passenger
     public int save(Passenger passenger) {
-        return passengerDAO.save(passenger);  // Uses JPA repository to persist
+        return passengerDAO.savePassengerDetails(passenger);  // Uses JPA repository to persist
     }
 
     // Update full passenger details
@@ -65,7 +65,7 @@ public class PassengerService {
         existing.setEmail(updatedPassenger.getEmail());
         existing.setAddress(updatedPassenger.getAddress());
 
-        int result = passengerDAO.update(existing); // DAO must handle all three fields
+        int result = passengerDAO.updatePassengerDetails(existing); // DAO must handle all three fields
         if (result == 0) {
             throw new RuntimeException("Failed to update passenger profile");
         }
@@ -97,7 +97,7 @@ public class PassengerService {
             passenger.setAddress("N/A");
         }
 
-        int result = passengerDAO.save(passenger);
+        int result = passengerDAO.savePassengerDetails(passenger);
         if (result == 0) {
             throw new RuntimeException("Failed to create passenger");
         }

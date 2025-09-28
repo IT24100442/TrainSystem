@@ -26,14 +26,14 @@ public class UserService {
     }
 
     public void createUser(User user) {
-        int result = userDAO.save(user);
+        int result = userDAO.saveUser(user);
         if (result == 0) {
             throw new RuntimeException("Failed to create user");
         }
     }
 
     public void updateUser(User user) {
-        int result = userDAO.update(user);
+        int result = userDAO.updateUser(user);
         if (result == 0) {
             throw new RuntimeException("Failed to update user");
         }

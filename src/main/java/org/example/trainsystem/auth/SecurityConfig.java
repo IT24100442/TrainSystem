@@ -1,5 +1,6 @@
 package org.example.trainsystem.auth;
 
+import org.example.trainsystem.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,30 +23,35 @@ public class SecurityConfig {
     @Autowired
     private UserLoginSuccessHandler successHandler;
 
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
+                        // Public pages first
+                        .requestMatchers("/", "/login", "/register-passenger", "/registration", "/register", "/css/**", "/js/**", "/images/**").permitAll()
 
-
-                        // 🔹 Public pages first
-                        .requestMatchers("/", "/login", "/register-passenger", "/registration","/register", "/css/**", "/js/**").permitAll()
-
-                        // 🔹 Role-restricted pages next
+                        // Role-restricted pages next
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/opmanager/**").hasRole("OPMANAGER")
                         .requestMatchers("/driver/**").hasRole("DRIVER")
                         .requestMatchers("/it/**").hasRole("ITOFFICER")
-                        .requestMatchers("/passenger/**").hasRole("PASSENGER")
+                        .requestMatchers("/passenger/**").hasRole("PASSENGER") //hasRole("PASSENGER") change
 
-                        // 🔹 Any other request requires login
-                        .anyRequest().authenticated()
+                        // Any other request requires login
+                        .anyRequest().authenticated()  // change to .authenticated() if you want to restrict all other URLs
                 )
-                .csrf(csrf -> csrf.disable()) // ❗ disable CSRF for now (you can enable later)
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for now
 
                 .formLogin(form -> form
-                        .loginPage("/login") // your Thymeleaf login.html
+                        .loginPage("/login") // Your Thymeleaf login.html
+                        .loginProcessingUrl("/login") // Spring Security will handle POST to /login
+                        .usernameParameter("username") // Match your form field names
+                        .passwordParameter("password") // Match your form field names
                         .successHandler(successHandler)
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
 
@@ -54,7 +60,10 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
-                );
+                )
+
+                // Set custom user details service
+                .userDetailsService(customUserDetailsService);
 
         return http.build();
     }

@@ -4,14 +4,10 @@ import org.example.trainsystem.entity.Passenger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 @Repository
@@ -28,15 +24,20 @@ public class PassengerDAO {
             passenger.setUsername(rs.getString("username"));
             passenger.setName(rs.getString("name"));
             passenger.setEmail(rs.getString("email"));
-            passenger.setAddress(rs.getString("address"));
             passenger.setUserType(rs.getString("userType"));
+            passenger.setAddress(rs.getString("address")); // From Passengers table
             return passenger;
         }
     }
 
-    // Find passenger by userId
+    // Find passenger with user details by userId
     public Passenger findPassengerById(int userId) {
-        String sql = "SELECT userId, username, name, email, address, userType FROM Passengers WHERE userId = ?";
+        String sql = """
+            SELECT u.userId, u.username, u.name, u.email, u.userType, p.address 
+            FROM Users u 
+            LEFT JOIN Passengers p ON u.userId = p.userId 
+            WHERE u.userId = ? AND u.userType = 'PASSENGER'
+            """;
         try {
             return jdbcTemplate.queryForObject(sql, new PassengerRowMapper(), userId);
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
@@ -44,9 +45,14 @@ public class PassengerDAO {
         }
     }
 
-    // Find passenger by username
+    // Find passenger with user details by username
     public Passenger findPassengerWithUser(String username) {
-        String sql = "SELECT userId, username, name, email, address, userType FROM Passengers WHERE username = ?";
+        String sql = """
+            SELECT u.userId, u.username, u.name, u.email, u.userType, p.address 
+            FROM Users u 
+            LEFT JOIN Passengers p ON u.userId = p.userId 
+            WHERE u.username = ? AND u.userType = 'PASSENGER'
+            """;
         try {
             return jdbcTemplate.queryForObject(sql, new PassengerRowMapper(), username);
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
@@ -56,46 +62,48 @@ public class PassengerDAO {
 
     // Find all passengers
     public List<Passenger> findAllPassengers() {
-        String sql = "SELECT userId, username, name, email, address, userType FROM Passengers";
+        String sql = """
+            SELECT u.userId, u.username, u.name, u.email, u.userType, p.address 
+            FROM Users u 
+            LEFT JOIN Passengers p ON u.userId = p.userId 
+            WHERE u.userType = 'PASSENGER'
+            """;
         return jdbcTemplate.query(sql, new PassengerRowMapper());
     }
 
     // Search passengers by address
     public List<Passenger> findByAddressContaining(String address) {
-        String sql = "SELECT userId, username, name, email, address, userType FROM Passengers WHERE address LIKE ?";
+        String sql = """
+            SELECT u.userId, u.username, u.name, u.email, u.userType, p.address 
+            FROM Users u 
+            LEFT JOIN Passengers p ON u.userId = p.userId 
+            WHERE u.userType = 'PASSENGER' AND p.address LIKE ?
+            """;
         return jdbcTemplate.query(sql, new PassengerRowMapper(), "%" + address + "%");
     }
 
-    // Save passenger (auto-generate key if needed)
-    public int save(Passenger passenger) {
-        String sql = "INSERT INTO Passengers (userId, username, name, email, address, userType) VALUES (?, ?, ?, ?, ?, ?)";
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+    // Save passenger (assumes User already exists)
+    public int savePassengerDetails(Passenger passenger) {
+        // First check if passenger record exists
+        String checkSql = "SELECT COUNT(*) FROM Passengers WHERE userId = ?";
+        int count = jdbcTemplate.queryForObject(checkSql, Integer.class, passenger.getUserId());
 
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setInt(1, passenger.getUserId()); // from registered User
-            ps.setString(2, passenger.getUsername());
-            ps.setString(3, passenger.getName());
-            ps.setString(4, passenger.getEmail());
-            ps.setString(5, passenger.getAddress());
-            ps.setString(6, passenger.getUserType());
-            return ps;
-        }, keyHolder);
-
-        return passenger.getUserId();
+        if (count > 0) {
+            // Update existing passenger
+            String updateSql = "UPDATE Passengers SET address = ? WHERE userId = ?";
+            return jdbcTemplate.update(updateSql, passenger.getAddress(), passenger.getUserId());
+        } else {
+            // Insert new passenger record
+            String insertSql = "INSERT INTO Passengers (userId, address) VALUES (?, ?)";
+            return jdbcTemplate.update(insertSql, passenger.getUserId(), passenger.getAddress());
+        }
     }
 
-    // Update passenger
-    public int update(Passenger passenger) {
-        String sql = "UPDATE passengers SET name=?, email=?, address=? WHERE user_id=?";
-        return jdbcTemplate.update(sql,
-                passenger.getName(),
-                passenger.getEmail(),
-                passenger.getAddress(),
-                passenger.getUserId()
-        );
+    // Update passenger details only (User details updated separately)
+    public int updatePassengerDetails(Passenger passenger) {
+        String sql = "UPDATE Passengers SET address = ? WHERE userId = ?";
+        return jdbcTemplate.update(sql, passenger.getAddress(), passenger.getUserId());
     }
-
 
     // Delete passenger
     public int delete(int userId) {
@@ -105,7 +113,7 @@ public class PassengerDAO {
 
     // Count all passengers
     public int countAllPassengers() {
-        String sql = "SELECT COUNT(*) FROM Passengers";
+        String sql = "SELECT COUNT(*) FROM Users WHERE userType = 'PASSENGER'";
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 }

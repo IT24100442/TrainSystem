@@ -1,6 +1,5 @@
 package org.example.trainsystem.controller;
 
-
 import org.example.trainsystem.auth.PWEncoder;
 import org.example.trainsystem.dto.UserDTO;
 import org.example.trainsystem.entity.Passenger;
@@ -17,67 +16,72 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class UserController {
 
-    @Autowired
     private final UserDAO userDAO;
+    private final PassengerDAO passengerDAO;
+
+     PWEncoder pwEncoder; // Ensure encoder is injected
 
     @Autowired
-    private PassengerDAO passengerDAO;
-
-
-    PWEncoder pwEncoder;
-
-    public UserController(UserDAO userDAO) {
+    public UserController(UserDAO userDAO, PassengerDAO passengerDAO) {
         this.userDAO = userDAO;
+        this.passengerDAO = passengerDAO;
     }
 
-    // ================= REGISTER =================
+    // ================= REGISTER PAGE =================
     @GetMapping("/register")
     public String registerPage(Model model) {
         model.addAttribute("user", new UserDTO());
         return "register"; // maps to register.html
     }
 
-    // Handle form submission
+    // ================= REGISTER HANDLER =================
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") UserDTO user, Model model) {
-        // Validate passwords
+        // ===== Validate passwords =====
         if (!user.getPassword().equals(user.getConfirmPassword())) {
             model.addAttribute("error", "Passwords do not match!");
-            return "it/register";
+            return "register";
         }
-        User user2 = new User();
-        user2.setUsername(user.getUsername());
 
-        String hashedPassword = pwEncoder.encode(user.getPassword()); // TODO: hash the password
-        user2.setPassword(hashedPassword);
-        user2.setName(user.getName());
-        user2.setEmail(user.getEmail());
-        user2.setUserType(user.getUserType());
+        // ===== Map DTO to Entity =====
+        User newUser = new User();
+        newUser.setUsername(user.getUsername());
+        newUser.setName(user.getName());
+        newUser.setEmail(user.getEmail());
 
-        System.out.println("user type: :+ " + user2.getUserType());
+        // ===== Set userType safely =====
+        // Default to "Passenger" if null
+        String userType = (user.getUserType() != null && !user.getUserType().isEmpty())
+                ? user.getUserType()
+                : "Passenger";
+        newUser.setUserType(userType);
 
+        // ===== Encode password =====
+        newUser.setPassword(pwEncoder.encode(user.getPassword()));
 
-        // Save to DB
-        userDAO.save(user2);
-        // Example: save user (you’d normally call a service here)
-        System.out.println("New user registered: " + user);
-        int userId = user2.getUserId();
+        // ===== Save User =====
+        userDAO.saveUser(newUser);
+        int userId = newUser.getUserId();
+        System.out.println("New user registered: " + newUser);
 
-        if(user.getUserType().equals("Passenger")) {
+        // ===== If Passenger, save passenger details =====
+        if ("Passenger".equalsIgnoreCase(userType)) {
             Passenger passenger = new Passenger();
-            passenger.setAddress(user.getAddress());
             passenger.setUserId(userId);
-            try{
-                passengerDAO.save(passenger);
+            passenger.setAddress(user.getAddress());
+
+            try {
+                passengerDAO.savePassengerDetails(passenger);
                 System.out.println("New passenger registered: " + passenger);
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Error saving passenger: " + e.getMessage());
                 model.addAttribute("error", "Error saving passenger details.");
-                return "register-passenger";
+                return "register";
             }
-
         }
-        switch (user.getUserType()) {
+
+        // ===== Redirect based on userType =====
+        switch (userType) {
             case "ItOfficer":
                 return "redirect:/it/register?userId=" + userId;
             case "Passenger":

@@ -24,7 +24,6 @@
     </style>
 </head>
 <body>
-<!-- Header -->
 <header class="bg-white border-bottom">
     <div class="container-fluid px-4 py-3 d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
@@ -32,15 +31,14 @@
             <h1 class="h4 mb-0 text-dark">Train Booking System</h1>
         </div>
         <div class="d-flex align-items-center">
-            <span class="text-muted me-3">Welcome, <span th:text="${passenger.fullName ?: 'Guest'}">Guest</span></span>
-            <div class="user-avatar" th:text="${passenger.fullName != null ? passenger.fullName.substring(0,1).toUpperCase() : 'G'}">G</div>
+            <span class="text-muted me-3">Welcome, <span th:text="${passenger.name ?: 'Guest'}">Guest</span></span>
+            <div class="user-avatar" th:text="${(passenger.name != null and passenger.name.length() > 0) ? passenger.name.substring(0,1).toUpperCase() : 'G'}">G</div>
         </div>
     </div>
 </header>
 
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar Navigation -->
         <aside class="col-md-3 col-lg-2 sidebar p-0">
             <nav class="nav flex-column p-3">
                 <a class="nav-link active" href="#" onclick="showSection(event, 'home')">
@@ -70,17 +68,14 @@
             </nav>
         </aside>
 
-        <!-- Main Content -->
         <main class="col-md-9 col-lg-10 p-4">
 
-            <!-- Home Section -->
             <div id="home" class="content-section active">
                 <div class="header-gradient text-white p-4 rounded mb-4">
-                    <h2 class="mb-2">Welcome back, <span th:text="${passenger.fullName ?: 'Guest'}">Guest</span>!</h2>
+                    <h2 class="mb-2">Welcome back, <span th:text="${passenger.name ?: 'Guest'}">Guest</span>!</h2>
                     <p class="mb-0 opacity-75">Ready for your next journey?</p>
                 </div>
 
-                <!-- Stats Cards -->
                 <div class="row mb-4">
                     <div class="col-md-4 mb-3">
                         <div class="card h-100">
@@ -123,7 +118,6 @@
                     </div>
                 </div>
 
-                <!-- Quick Book -->
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title mb-4">Quick Book</h5>
@@ -149,7 +143,6 @@
                 </div>
             </div>
 
-            <!-- Book Ticket Section -->
             <div id="book" class="content-section">
                 <div class="card">
                     <div class="card-body">
@@ -195,23 +188,20 @@
                 </div>
             </div>
 
-            <!-- My Tickets Section -->
             <div id="tickets" class="content-section">
                 <h2 class="mb-4">My Tickets</h2>
 
-                <!-- Check if tickets exist -->
                 <div th:if="${#lists.isEmpty(tickets)}">
                     <div class="alert alert-info">
                         <i class="bi bi-info-circle me-2"></i>No tickets found. <a href="#" onclick="showSection(event, 'book')">Book your first ticket</a>!
                     </div>
                 </div>
 
-                <!-- Display tickets -->
                 <div th:each="ticket : ${tickets}" class="card mb-3">
                     <div class="card-body">
                         <div class="row align-items-start">
                             <div class="col-md-8">
-                                <h5 class="card-title" th:text="${ticket.fromStation} + ' → ' + ${ticket.toStation}">Route</h5>
+                                <h5 class="card-title" th:text="|${ticket.fromStation} → ${ticket.toStation}|">Route</h5>
                                 <div class="d-flex flex-wrap gap-3 text-muted small">
                                     <span><i class="bi bi-calendar me-1"></i><span th:text="${#temporals.format(ticket.travelDate, 'yyyy-MM-dd')}">Date</span></span>
                                     <span><i class="bi bi-clock me-1"></i><span th:text="${ticket.departureTime}">Time</span></span>
@@ -219,13 +209,12 @@
                                 </div>
                             </div>
                             <div class="col-md-4 text-md-end">
-                                    <span th:class="'badge status-badge ' + (${ticket.status == 'CONFIRMED'} ? 'bg-success' : 'bg-secondary')"
+                                    <span th:class="|badge status-badge ${ticket.status == 'CONFIRMED' ? 'bg-success' : 'bg-secondary'}|"
                                           th:text="${ticket.status}">Status</span>
                                 <p class="small text-muted mb-0 mt-1" th:text="${ticket.ticketId}">Ticket ID</p>
                             </div>
                         </div>
 
-                        <!-- Action buttons for confirmed tickets -->
                         <div th:if="${ticket.status == 'CONFIRMED'}" class="mt-3">
                             <a th:href="@{/passenger/ticket/{id}/view(id=${ticket.id})}" class="btn btn-primary btn-sm me-2">
                                 <i class="bi bi-eye me-1"></i>View Digital Ticket
@@ -240,7 +229,6 @@
                 </div>
             </div>
 
-            <!-- Travel History Section -->
             <div id="history" class="content-section">
                 <h2 class="mb-4">Travel History</h2>
 
@@ -254,8 +242,8 @@
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h5 class="mb-1" th:text="${trip.fromStation} + ' → ' + ${trip.toStation}">Route</h5>
-                                <p class="text-muted mb-0" th:text="${#temporals.format(trip.travelDate, 'yyyy-MM-dd')} + ' at ' + ${trip.departureTime}">Date and Time</p>
+                                <h5 class="mb-1" th:text="|${trip.fromStation} → ${trip.toStation}|">Route</h5>
+                                <p class="text-muted mb-0" th:text="|${#temporals.format(trip.travelDate, 'yyyy-MM-dd')} at ${trip.departureTime}|">Date and Time</p>
                             </div>
                             <div class="col-auto">
                                 <span class="badge bg-secondary">Completed</span>
@@ -265,7 +253,6 @@
                 </div>
             </div>
 
-            <!-- Track Location Section -->
             <div id="track" class="content-section">
                 <div class="card">
                     <div class="card-body">
@@ -287,7 +274,6 @@
                 </div>
             </div>
 
-            <!-- Updates Section -->
             <div id="updates" class="content-section">
                 <h2 class="mb-4">Updates & Notifications</h2>
 
@@ -311,7 +297,6 @@
                 </div>
             </div>
 
-            <!-- Complaints Section -->
             <div id="complaints" class="content-section">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Complaints & Issues</h2>
@@ -335,7 +320,7 @@
                                 <p class="small text-muted mb-0">Submitted on <span th:text="${#temporals.format(complaint.submittedDate, 'yyyy-MM-dd')}">Date</span></p>
                             </div>
                             <div class="col-auto">
-                                    <span th:class="'badge ' + (${complaint.status == 'IN_PROGRESS'} ? 'bg-warning' : 'bg-success')"
+                                    <span th:class="|badge ${complaint.status == 'IN_PROGRESS' ? 'bg-warning' : 'bg-success'}|"
                                           th:text="${complaint.status}">Status</span>
                             </div>
                         </div>
@@ -343,7 +328,6 @@
                 </div>
             </div>
 
-            <!-- Account Section -->
             <div id="account" class="content-section">
                 <h2 class="mb-4">Account Management</h2>
 
@@ -391,7 +375,6 @@
     </div>
 </div>
 
-<!-- New Complaint Modal -->
 <div class="modal fade" id="newComplaintModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -423,7 +406,6 @@
     </div>
 </div>
 
-<!-- Query Modal -->
 <div class="modal fade" id="queryModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
