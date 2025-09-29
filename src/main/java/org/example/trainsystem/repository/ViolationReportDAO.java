@@ -21,6 +21,10 @@ public class ViolationReportDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    public List<ViolationReport> findAll() {
+        return null;
+    }
+
 
     // ---------- RowMappers ----------
     private static final class ViolationReportRowMapper implements RowMapper<ViolationReport> {

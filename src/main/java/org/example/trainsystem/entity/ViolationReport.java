@@ -2,6 +2,7 @@ package org.example.trainsystem.entity;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class ViolationReport {
     private int reportId;
@@ -13,6 +14,7 @@ public class ViolationReport {
 
 
     private TicketOfficer ticketOfficer; // Relationship with officer
+    private String status;
 
     // Constructors
     public ViolationReport() {
@@ -83,6 +85,19 @@ public class ViolationReport {
 
     public void setTicketOfficer(TicketOfficer ticketOfficer) {
         this.ticketOfficer = ticketOfficer;
+    }
+
+
+    public OffsetDateTime getReportedDate() {
+        return reportDate.atOffset(OffsetDateTime.now().getOffset());
+    }
+
+    public String getStatus() {
+        return "PENDING";
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
 
