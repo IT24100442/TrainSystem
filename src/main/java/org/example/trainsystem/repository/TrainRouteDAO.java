@@ -17,7 +17,7 @@ public class TrainRouteDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<TrainRoute> rowMapper = new RowMapper<>() {
+    private static final class TrainRouteRowMapper implements RowMapper<TrainRoute> {
         @Override
         public TrainRoute mapRow(ResultSet rs, int rowNum) throws SQLException {
             TrainRoute route = new TrainRoute();
@@ -32,17 +32,17 @@ public class TrainRouteDAO {
 
     public List<TrainRoute> findAll() {
         String sql = "SELECT * FROM TrainRoute";
-        return jdbcTemplate.query(sql, rowMapper);
+        return jdbcTemplate.query(sql, new TrainRouteRowMapper());
     }
 
     public TrainRoute findById(int id) {
         String sql = "SELECT * FROM TrainRoute WHERE trainRouteId = ?";
-        return jdbcTemplate.queryForObject(sql, rowMapper, id);
+        return jdbcTemplate.queryForObject(sql,  new TrainRouteRowMapper(), id);
     }
     public TrainRoute findbyRouteId(int routeId) {
         String sql = "SELECT * FROM TrainRoute WHERE routeId = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, rowMapper, routeId);
+            return jdbcTemplate.queryForObject(sql,  new TrainRouteRowMapper(), routeId);
         } catch (Exception e) {
             return null;
         }
@@ -66,7 +66,7 @@ public class TrainRouteDAO {
     public TrainRoute findByTrainId(int trainId) {
         String sql = "SELECT * FROM TrainRoute WHERE trainId = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, rowMapper, trainId);
+            return jdbcTemplate.queryForObject(sql,  new TrainRouteRowMapper(), trainId);
         } catch (Exception e) {
             return null;
         }

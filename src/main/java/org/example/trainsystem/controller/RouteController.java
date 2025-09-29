@@ -42,7 +42,7 @@ public class RouteController {
     public String showAddRouteForm(Model model) {
         Route route = new Route();
         // Initialize 5 stops for the form
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             route.getStops().add(new Stop());
         }
         model.addAttribute("route", route);

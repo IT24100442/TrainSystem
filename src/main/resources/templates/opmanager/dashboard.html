@@ -15,110 +15,122 @@
 
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            padding: 30px 0;
+            padding: 20px;
             color: #2c3e50;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1500px;
             margin: auto;
             padding: 0 20px;
         }
 
-        h2 {
-            color: white;
-            margin-bottom: 40px;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.2rem;
             font-weight: 700;
-            font-size: 2.8rem;
-            text-align: center;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.25);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .dashboard-icon {
-            background: rgba(255, 255, 255, 0.25);
-            padding: 18px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 12px;
             border-radius: 50%;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
-        .row {
+        .btn-logout {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .main-content {
             display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr; /* 3 columns */
+            grid-template-columns: 2fr 1fr;
             gap: 30px;
-            align-items: start;
         }
 
-        @media (max-width: 1100px) {
-            .row {
-                grid-template-columns: 1fr 1fr; /* 2 columns on medium screens */
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
             }
         }
 
-        @media (max-width: 768px) {
-            .row {
-                grid-template-columns: 1fr; /* 1 column on mobile */
-            }
-        }
-
-
-        .col {
+        .section {
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 20px;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             overflow: hidden;
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.35s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
         }
 
         .card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
         }
 
         .card-header {
             background: linear-gradient(135deg, #34495e, #2c3e50);
             color: white;
-            padding: 22px 26px;
+            padding: 18px 22px;
             font-weight: 600;
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             display: flex;
             align-items: center;
-            gap: 14px;
-            position: relative;
-            letter-spacing: 0.5px;
+            gap: 10px;
         }
 
         .card-header i {
-            font-size: 1.3rem;
-            opacity: 0.95;
+            font-size: 1.2rem;
         }
 
         .card-body {
-            padding: 28px;
-            max-height: 420px;
+            padding: 20px;
+            max-height: 400px;
             overflow-y: auto;
         }
 
         .card-body::-webkit-scrollbar {
-            width: 7px;
+            width: 6px;
         }
 
         .card-body::-webkit-scrollbar-thumb {
-            background: #b5b5b5;
+            background: #bdc3c7;
             border-radius: 10px;
         }
 
@@ -126,27 +138,27 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 20px;
-            margin-bottom: 12px;
-            border-radius: 14px;
-            background: rgba(245, 246, 250, 0.8);
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: rgba(245, 245, 245, 0.9);
             border: 1px solid rgba(0,0,0,0.05);
             transition: all 0.3s ease;
         }
 
         .driver-item:hover, .communication-item:hover {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(155, 89, 182, 0.15));
-            transform: translateX(6px);
+            background: rgba(236, 240, 241, 0.8);
+            transform: translateX(4px);
         }
 
         .driver-info strong {
             font-weight: 600;
             color: #2c3e50;
-            font-size: 1.05rem;
+            font-size: 1rem;
         }
 
         .small {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .text-muted {
@@ -155,17 +167,16 @@
 
         .driver-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .driver-actions a, button.btn-send {
-            padding: 9px 16px;
+        .btn {
+            padding: 8px 14px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 500;
-            text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -182,6 +193,11 @@
             color: white;
         }
 
+        .btn-primary {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+
         .btn-send {
             background: linear-gradient(135deg, #2980b9, #3498db);
             color: white;
@@ -189,124 +205,88 @@
             justify-content: center;
         }
 
-        .btn-info:hover, .btn-success:hover, .btn-send:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
         }
 
         .no-data {
-            padding: 40px 20px;
+            padding: 30px;
             color: #7f8c8d;
             text-align: center;
             font-style: italic;
             background: rgba(236, 240, 241, 0.7);
-            border-radius: 14px;
+            border-radius: 10px;
         }
 
         .no-data i {
-            font-size: 2.5rem;
-            margin-bottom: 12px;
+            font-size: 2rem;
+            margin-bottom: 10px;
             opacity: 0.5;
             display: block;
         }
 
         select, textarea, input[type="text"] {
             width: 100%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 2px solid #dfe6e9;
-            margin-bottom: 15px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #dfe6e9;
+            margin-bottom: 12px;
             resize: vertical;
             font-family: 'Inter', sans-serif;
             background: rgba(255, 255, 255, 0.95);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
         }
 
         select:focus, textarea:focus, input[type="text"]:focus {
             border-color: #2980b9;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
             outline: none;
         }
 
-        button[type="submit"], button[type="button"] {
-            background: linear-gradient(135deg, #1abc9c, #16a085);
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        button[type="submit"]:hover, button[type="button"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.25);
-        }
-
-        #messageStatus {
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: 500;
-            text-align: center;
-            margin-top: 12px;
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .fade-in {
-            animation: fadeIn 0.6s ease-in-out;
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
-    </style>
 
+        #messageStatus {
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
 <div class="container fade-in">
-    <h2>
-        <div class="dashboard-icon">
-            <i class="fas fa-tachometer-alt"></i>
-        </div>
-        Operations Manager Dashboard
-    </h2>
-
-    <div class="row">
-        <!-- Column 1: Drivers -->
-        <div class="col">
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-users"></i>
-                    All Drivers
-                </div>
-                <div class="card-body">
-                    <div th:if="${drivers != null and !drivers.isEmpty()}">
-                        <div th:each="driver : ${drivers}" class="driver-item">
-                            <div class="driver-info">
-                                <strong th:text="${driver.user != null ? driver.user.name : 'Unknown'}">A. Perera</strong>
-                                <div class="small text-muted" th:text="'ID: ' + ${driver.userId}">ID: 101</div>
-                            </div>
-                            <div class="driver-actions">
-                                <a th:href="@{|/operations/driver/${driver.userId}|}" class="btn-info">
-                                    <i class="fas fa-eye"></i> View
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div th:if="${drivers == null or #lists.isEmpty(drivers)}" class="no-data">
-                        <i class="fas fa-users"></i>
-                        No drivers available
-                    </div>
-                </div>
+    <div class="header">
+        <h1>
+            <div class="dashboard-icon">
+                <i class="fas fa-tachometer-alt"></i>
             </div>
-        </div>
+            Operations Manager Dashboard
+        </h1>
+        <button class="btn-logout" onclick="location.href='/logout'">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
 
-        <!-- Column 2: Messages -->
-        <div class="col">
+    <div class="main-content">
+        <!-- Left Section: Messages and Drivers -->
+        <div class="section">
+            <!-- Messages -->
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-comments"></i>
@@ -334,8 +314,8 @@
             </div>
         </div>
 
-        <!-- Column 3: Actions -->
-        <div class="col">
+        <!-- Right Section: Actions -->
+        <div class="section">
             <!-- Send Message -->
             <div class="card">
                 <div class="card-header">
@@ -350,23 +330,23 @@
                             <option th:each="d : ${drivers}" th:value="${d.userId}" th:text="${d.user != null ? d.user.name : 'Unknown'}"></option>
                         </select>
                         <textarea id="messageText" placeholder="Type your message" required></textarea>
-                        <button type="submit" class="btn-send">
+                        <button type="submit" class="btn btn-send">
                             <i class="fas fa-paper-plane"></i> Send Message
                         </button>
-                        <div id="messageStatus" class="mt-2"></div>
+                        <div id="messageStatus"></div>
                     </form>
                 </div>
             </div>
 
             <!-- Add Train -->
-            <div class="card mt-3">
+            <div class="card">
                 <div class="card-header">
                     <i class="fas fa-train"></i>
                     Add Train
                 </div>
                 <div class="card-body">
                     <form id="createTrainForm" th:action="@{/trains/add}" method="post">
-                        <div class="mb-3">
+                        <div>
                             <label for="trainName" class="form-label">Train Name</label>
                             <input type="text"
                                    id="trainName"
@@ -375,7 +355,7 @@
                                    placeholder="Enter Train Name"
                                    required />
                         </div>
-                        <button type="submit" class="btn-success">
+                        <button type="submit" class="btn btn-success">
                             <i class="fas fa-plus"></i> Add Train
                         </button>
                     </form>
@@ -383,18 +363,17 @@
             </div>
 
             <!-- Action Buttons -->
-            <button type="button" onclick="window.location.href='/routes/list'" class="btn-info mt-3" style="width:100%">
-                <i class="fas fa-route"></i> Manage Routes
-            </button>
-
-            <button type="button" onclick="window.location.href='/train-status/override'" class="btn-primary mt-2" style="width:100%">
-                <i class="fas fa-exchange-alt"></i> Override Operations
-            </button>
-
-            <!-- Logout -->
-            <button onclick="location.href='/logout'" class="btn-danger mt-3" style="width:100%">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
+            <div class="action-buttons">
+                <button type="button" onclick="window.location.href='/routes/list'" class="btn btn-info">
+                    <i class="fas fa-route"></i> Manage Routes
+                </button>
+                <button type="button" onclick="window.location.href='/train-status/override'" class="btn btn-primary">
+                    <i class="fas fa-exchange-alt"></i> Override Operations
+                </button>
+                <button type="button" onclick="window.location.href='/opmanager/assign-train'" class="btn btn-success">
+                    <i class="fas fa-train"></i> Assign Train to Driver
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -407,7 +386,6 @@
         const driverId = document.getElementById('driverSelect').value;
         const messageText = document.getElementById('messageText').value;
 
-        // Show loading state
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalContent = submitBtn.innerHTML;
         submitBtn.innerHTML = '<div class="loading"></div> Sending...';
@@ -442,13 +420,11 @@
                 'linear-gradient(135deg, #e74c3c, #c0392b)';
             document.getElementById('messageStatus').style.color = 'white';
         }).finally(() => {
-            // Restore button state
             submitBtn.innerHTML = originalContent;
             submitBtn.disabled = false;
         });
     });
 
-    // Add smooth scroll behavior
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();

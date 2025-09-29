@@ -62,15 +62,16 @@ public class TrainStatusService {
     /**
      * Updates the train's current stop in TrainStatus table.
      */
-    public void updateStop(Integer routeId, String nextStop, LocalDateTime time) {
+    public void updateStop(Integer routeId, int trainId, String nextStop, LocalDateTime time) {
         if (nextStop == null) {
             throw new IllegalStateException("No next stop available for this route.");
         }
 
         // 1. Resolve trainRoute from trainId
-        TrainRoute trainRoute = trainRouteDAO.findbyRouteId(routeId);
+        TrainRoute trainRoute = trainRouteDAO.findByTrainId(trainId);
+        System.out.println("routeId: " + routeId + ", trainId: " + trainId + " trainRoute: "+ trainRoute) ;
         if (trainRoute == null) {
-            throw new IllegalArgumentException("No TrainRoute found for trainId: " + routeId);
+            throw new IllegalArgumentException("No TrainRoute found for routeId: " + routeId);
         }
 
         // 2. Get stopId for the stop name
