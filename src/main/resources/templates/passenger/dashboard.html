@@ -356,21 +356,17 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card mt-4">
                     <div class="card-body">
-                        <h5 class="card-title mb-4">Customer Service</h5>
-                        <div class="d-flex gap-3">
-                            <a href="tel:+1234567890" class="btn btn-success">
-                                <i class="bi bi-telephone me-2"></i>Call Support
-                            </a>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#queryModal">
-                                <i class="bi bi-chat-dots me-2"></i>Submit Query
+                        <h5 class="card-title mb-4">Account Logout</h5>
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
                             </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
-
         </main>
     </div>
 </div>
