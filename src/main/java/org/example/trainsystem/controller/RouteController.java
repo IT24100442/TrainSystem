@@ -29,7 +29,7 @@ public class RouteController {
     @Autowired
     private DriverService driverService;
 
-    // ✅ List all routes with stops and driver info
+    //  List all routes with stops and driver info
     @GetMapping("/list")
     public String listRoutes(Model model) {
         List<Route> routes = routeService.getAllRoutes();
@@ -37,7 +37,7 @@ public class RouteController {
         return "opmanager/listRoutes";
     }
 
-    // ✅ Show form to add a new route
+    // Show form to add a new route
     @GetMapping("/add")
     public String showAddRouteForm(Model model) {
         Route route = new Route();
@@ -50,7 +50,7 @@ public class RouteController {
         return "opmanager/addRouteWithStops"; // create this Thymeleaf page
     }
 
-    // ✅ Save route and stops to DB
+    //  Save route and stops to DB
     @PostMapping("/add")
     public String addRouteWithStops(@ModelAttribute Route route) {
         // 1️⃣ Save route
