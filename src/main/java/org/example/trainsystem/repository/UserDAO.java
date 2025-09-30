@@ -69,8 +69,10 @@ public class UserDAO {
             return ps;
         }, keyHolder);
 
-        return keyHolder.getKey().intValue();
-    }
+        int generatedUserId = keyHolder.getKey().intValue();
+        user.setUserId(generatedUserId); // Set the generated ID back on the entity
+        return generatedUserId;
+}
 
     // Update user details
     public int updateUser(User user) {
