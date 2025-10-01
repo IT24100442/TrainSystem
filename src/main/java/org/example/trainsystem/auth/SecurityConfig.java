@@ -41,10 +41,18 @@ public class SecurityConfig {
                         // everything else requires login
                         .anyRequest().authenticated()
                 )
-                .csrf(csrf -> csrf.disable()) // ❗ disable CSRF for now (you can enable later)
+                .csrf(csrf -> csrf.disable())
 
                 .formLogin(form -> form
-                        .loginPage("/login") // your Thymeleaf login.html
+                        .loginPage("/login")
+                        .successHandler(successHandler)
+                        .permitAll()
+                )
+
+                //validation
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .failureUrl("/login?error=true")
                         .successHandler(successHandler)
                         .permitAll()
                 )

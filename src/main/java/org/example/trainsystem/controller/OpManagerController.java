@@ -78,13 +78,12 @@ public class OpManagerController {
         model.addAttribute("drivers", drivers);
 
         // Fetch recent messages for first driver as example
-        List<Message> driverMessages = new ArrayList<>();
-        for (Driver driver : drivers) {
-            List<Message> msgs = messageService.getMessagesSentforManager(opManager.getUserId());
-            for (Message msg : msgs) {
+        List<Message> driverMessages = messageService.getMessagesSentforManager(opManager.getUserId()) ;
+        for (Message msg : driverMessages) {
+            Driver driver = driverService.getDriverById(msg.getSenderId());
+            if (driver != null) {
                 msg.setDriverName(driver.getUser().getName());
             }
-            driverMessages.addAll(msgs);
         }
 
 
