@@ -3,7 +3,9 @@ package org.example.trainsystem.controller;
 
 import org.example.trainsystem.auth.PWEncoder;
 import org.example.trainsystem.dto.UserDTO;
+import org.example.trainsystem.entity.Passenger;
 import org.example.trainsystem.entity.User;
+import org.example.trainsystem.repository.PassengerDAO;
 import org.example.trainsystem.repository.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,8 @@ public class UserController {
     @Autowired
     private final UserDAO userDAO;
 
+    @Autowired
+    private PassengerDAO passengerDAO;
 
     PWEncoder pwEncoder;
 
@@ -55,12 +59,24 @@ public class UserController {
         System.out.println("New user registered: " + user);
         int userId = user2.getUserId();
 
+        if(user.getUserType().equals("Passenger")) {
+            Passenger passenger = new Passenger();
+            passenger.setAddress(user.getAddress());
+            passenger.setUserId(userId);
+            try{
+                passengerDAO.save(passenger);
+                System.out.println("New passenger registered: " + passenger);
+            }catch (Exception e){
+                System.out.println("Error saving passenger: " + e.getMessage());
+                model.addAttribute("error", "Error saving passenger details.");
+                return "register-passenger";
+            }
+
+        }
 
         switch (user.getUserType()) {
             case "ItOfficer":
                 return "redirect:/it/register?userId=" + userId;
-            case "Customer":
-                return "redirect:/register/customer?userId=" + userId;
             case "Admin":
                 return "redirect:/register/admin?userId=" + userId;
             default:

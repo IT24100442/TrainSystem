@@ -26,6 +26,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
+                        // 🔹 Public pages first
+                        .requestMatchers("/", "/login", "/register-passenger", "/registration","/register", "/css/**", "/js/**").permitAll()
+
+
                         // 🔹 only Admins can manage users/routes
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
@@ -42,9 +46,6 @@ public class SecurityConfig {
                         // 🔹 Passenger pages
                         .requestMatchers("/passenger/**").hasRole("PASSENGER")
 
-
-                        // 🔹 Public pages like login/register
-                        .requestMatchers("/", "/login", "/register", "/css/**", "/js/**").permitAll()
 
                         // everything else requires login
                         .anyRequest().authenticated()
