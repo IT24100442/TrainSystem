@@ -16,7 +16,7 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
-    // ✅ View all users
+    //  View all users
     @GetMapping("/users")
     public String listUsers(Model model) {
         List<User> users = userService.getAllUsers();
@@ -24,7 +24,7 @@ public class AdminController {
         return "admin/users"; // maps to admin/users.html
     }
 
-    // ✅ Delete user
+    //  Delete user
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable("id") int userId) {
         userService.deleteUser(userId);

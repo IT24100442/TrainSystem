@@ -13,6 +13,9 @@ public class PassengerService {
     @Autowired
     private PassengerDAO passengerDAO;
 
+    @Autowired
+    private UserDAO UserDAO;
+
     // Get passenger with user details (expects DAO to return joined Passenger+User)
     public Passenger getPassengerWithUser(String username) {
         Passenger passenger = passengerDAO.findPassengerWithUser(username);
@@ -61,23 +64,25 @@ public class PassengerService {
             throw new RuntimeException("Passenger not found with userId: " + updatedPassenger.getUserId());
         }
 
-        existing.setName(updatedPassenger.getName());
-        existing.setEmail(updatedPassenger.getEmail());
+        //  Update passenger-specific field
         existing.setAddress(updatedPassenger.getAddress());
+        int passengerResult = passengerDAO.updatePassengerDetails(existing);
 
-        int result = passengerDAO.updatePassengerDetails(existing); // DAO must handle all three fields
-        if (result == 0) {
+        //  Update user-specific fields
+        User user = UserDAO.findById(updatedPassenger.getUserId());
+        if (user == null) {
+            throw new RuntimeException("User not found with userId: " + updatedPassenger.getUserId());
+        }
+        user.setName(updatedPassenger.getName());
+        user.setEmail(updatedPassenger.getEmail());
+        int userResult = UserDAO.updateUser(user);
+
+        if (passengerResult == 0 || userResult == 0) {
             throw new RuntimeException("Failed to update passenger profile");
         }
     }
 
 
-
-
-    // Create new passenger
-    // NOTE: This method assumes passengerDAO.save(...) will insert both user (users table)
-    // and passenger (passengers table) rows as needed. If your DAO only writes the passengers
-    // table, you must insert a user row first (via userDAO).
     // Create new passenger
     public void createPassenger(Passenger passenger) {
         if (passenger == null) {

@@ -3,24 +3,357 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <title>User Registration | TrainHub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Decoration */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .decoration-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .decoration-circle:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .decoration-circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 5s;
+        }
+
+        .decoration-circle:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-30px) rotate(180deg);
+                opacity: 0.6;
+            }
+        }
+
+        /* Back to Home Button */
+        .back-home {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 100;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            animation: slideDown 1s ease-out;
+        }
+
+        .back-home:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Container */
+        .container-fluid {
+            position: relative;
+            z-index: 10;
+            padding-top: 100px;
+            padding-bottom: 50px;
+        }
+
+        .registration-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        /* Card Header */
+        .card-header {
+            background: linear-gradient(45deg, #4facfe, #00f2fe) !important;
+            color: white !important;
+            padding: 40px 30px !important;
+            text-align: center;
+            border: none !important;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-weight: 900;
+            font-size: 2rem;
+        }
+
+        .header-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 40px !important;
+            background: transparent;
+        }
+
+        /* Form Elements */
+        .form-label {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-control {
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 20px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-control:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25);
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            outline: none;
+        }
+
+        .form-control:-webkit-autofill,
+        .form-control:-webkit-autofill:hover,
+        .form-control:-webkit-autofill:focus {
+            -webkit-text-fill-color: white;
+            -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.1) inset;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        /* Input Groups */
+        .mb-3 {
+            transition: transform 0.3s ease;
+        }
+
+        /* Button */
+        .btn-primary {
+            background: linear-gradient(45deg, #4facfe, #00f2fe) !important;
+            border: none !important;
+            border-radius: 25px;
+            padding: 14px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #00f2fe, #4facfe) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Already Have Account Section */
+        .login-link-section {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .login-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .login-link {
+            text-decoration: none;
+            color: #4facfe;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .login-link:hover {
+            color: #00f2fe;
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            0% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .back-home {
+                top: 20px;
+                left: 20px;
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+
+            .container-fluid {
+                padding-top: 80px;
+            }
+
+            .card-header {
+                padding: 30px 20px !important;
+            }
+
+            .card-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .header-icon {
+                font-size: 2.5rem;
+            }
+
+            .card-body {
+                padding: 30px 20px !important;
+            }
+
+            .form-control {
+                padding: 10px 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .back-home {
+                position: static;
+                margin-bottom: 20px;
+                display: inline-flex;
+            }
+
+            .container-fluid {
+                padding-top: 20px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
+<!-- Background Decoration -->
+<div class="bg-decoration">
+    <div class="decoration-circle"></div>
+    <div class="decoration-circle"></div>
+    <div class="decoration-circle"></div>
+</div>
+
+<!-- Back to Home -->
+<a href="/" class="back-home">
+    <i class="fas fa-arrow-left"></i>
+    Back to Home
+</a>
+
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-lg-10 col-xl-8">
-            <div class="card shadow mt-4">
-                <div class="card-header bg-primary text-white text-center">
-                    <h2 class="mb-0">
-                        <i class="bi bi-person-plus-fill me-2"></i>
+            <div class="card shadow registration-card">
+                <div class="card-header">
+                    <div class="header-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h2>
                         Passenger Registration
                     </h2>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body">
                     <form th:action="@{/register}" th:object="${user}" method="post">
                         <div class="row">
                             <!-- Left Column -->
@@ -28,25 +361,28 @@
                                 <!-- Username -->
                                 <div class="mb-3">
                                     <label for="username" class="form-label">
-                                        <i class="bi bi-person-circle me-1"></i>Username
+                                        <i class="fas fa-user-circle"></i>
+                                        Username
                                     </label>
-                                    <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                                    <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="Choose a username" required>
                                 </div>
 
                                 <!-- Password -->
                                 <div class="mb-3">
                                     <label for="password" class="form-label">
-                                        <i class="bi bi-lock-fill me-1"></i>Password
+                                        <i class="fas fa-lock"></i>
+                                        Password
                                     </label>
-                                    <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                                    <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Create a password" required>
                                 </div>
 
                                 <!-- Confirm Password -->
                                 <div class="mb-3">
                                     <label for="confirmPassword" class="form-label">
-                                        <i class="bi bi-lock-fill me-1"></i>Confirm Password
+                                        <i class="fas fa-lock"></i>
+                                        Confirm Password
                                     </label>
-                                    <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" required>
+                                    <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" placeholder="Re-enter password" required>
                                 </div>
                             </div>
 
@@ -55,25 +391,28 @@
                                 <!-- Name -->
                                 <div class="mb-3">
                                     <label for="name" class="form-label">
-                                        <i class="bi bi-person-fill me-1"></i>Full Name
+                                        <i class="fas fa-id-card"></i>
+                                        Full Name
                                     </label>
-                                    <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                                    <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Enter your full name" required>
                                 </div>
 
                                 <!-- Email -->
                                 <div class="mb-3">
                                     <label for="email" class="form-label">
-                                        <i class="bi bi-envelope-fill me-1"></i>Email Address
+                                        <i class="fas fa-envelope"></i>
+                                        Email Address
                                     </label>
-                                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                    <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="your.email@example.com" required>
                                 </div>
 
                                 <!-- Address -->
                                 <div class="mb-3">
                                     <label for="address" class="form-label">
-                                        <i class="bi bi-geo-alt-fill me-1"></i>Address
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        Address
                                     </label>
-                                    <input type="text" class="form-control" id="address" th:field="*{address}" required>
+                                    <input type="text" class="form-control" id="address" th:field="*{address}" placeholder="Enter your address" required>
                                 </div>
                             </div>
                         </div>
@@ -84,9 +423,16 @@
                         <div class="row mt-3">
                             <div class="col-12 d-grid">
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-check-circle-fill me-2"></i>Register
+                                    <i class="fas fa-check-circle me-2"></i>Register
                                 </button>
                             </div>
+                        </div>
+
+                        <!-- Login Link -->
+                        <div class="login-link-section">
+                            <p class="login-text">
+                                Already have an account? <a th:href="@{/login}" class="login-link">Login here</a>
+                            </p>
                         </div>
                     </form>
                 </div>
@@ -95,7 +441,52 @@
     </div>
 </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add smooth focus effect
+        const inputs = document.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateX(5px)';
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateX(0)';
+            });
+        });
+
+        // Button click animation
+        const submitBtn = document.querySelector('.btn-primary');
+        submitBtn.addEventListener('click', function(e) {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
+
+        // Password validation
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+
+        confirmPassword.addEventListener('input', function() {
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.setCustomValidity('Passwords do not match');
+            } else {
+                confirmPassword.setCustomValidity('');
+            }
+        });
+
+        password.addEventListener('input', function() {
+            if (confirmPassword.value !== '') {
+                if (password.value !== confirmPassword.value) {
+                    confirmPassword.setCustomValidity('Passwords do not match');
+                } else {
+                    confirmPassword.setCustomValidity('');
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>
