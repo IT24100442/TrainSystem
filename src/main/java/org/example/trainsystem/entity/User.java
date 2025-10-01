@@ -1,6 +1,7 @@
 package org.example.trainsystem.entity;
 
 public class User {
+
     private int userId;
     private String username;
     private String password;
@@ -39,3 +40,4 @@ public class User {
     public String getUserType() { return userType; }
     public void setUserType(String userType) { this.userType = userType; }
 }
+
