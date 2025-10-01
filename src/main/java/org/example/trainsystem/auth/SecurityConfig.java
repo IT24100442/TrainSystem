@@ -39,6 +39,8 @@ public class SecurityConfig {
                         // 🔹 Drivers dashboard & routes
                         .requestMatchers("/driver/**").hasRole("DRIVER")
 
+                        // ticket officer dashboard
+                        .requestMatchers("/ticket/**").hasRole("TICKETOFFICER")
 
                         //🔹 IT Officer dashboard & routes
                          .requestMatchers("/it/**").hasRole("ITOFFICER")

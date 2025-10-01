@@ -95,3 +95,29 @@ button:hover {
         transform: translateY(0);
     }
 }
+/* User Type Dropdown */
+select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 18px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white;
+    appearance: none; /* Remove default arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    transition: border 0.3s, box-shadow 0.3s;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
+
+/* Dropdown focus effect */
+select:focus {
+    border-color: #004e92;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 78, 146, 0.5);
+}

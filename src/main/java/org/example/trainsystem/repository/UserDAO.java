@@ -56,6 +56,11 @@ public class UserDAO {
         }
     }
 
+    public List<User> findAll() {
+        String sql = "SELECT userId, username, password, email, name, userType FROM Users";
+        return jdbcTemplate.query(sql, new UserRowMapper());
+    }
+
     public List<User> findByUserType(String userType) {
         String sql = "SELECT userId, username, password, email, name, userType FROM Users WHERE userType = ?";
         return jdbcTemplate.query(sql, new UserRowMapper(), userType);

@@ -2,6 +2,7 @@ package org.example.trainsystem.controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.example.trainsystem.entity.ITOfficer;
+import org.example.trainsystem.entity.User;
 import org.example.trainsystem.repository.ITOfficerDAO;
 import org.example.trainsystem.repository.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/it")
@@ -21,6 +21,9 @@ public class ITOfficerController {
 
     @Autowired
     private ITOfficerDAO itOfficerDAO;
+
+    @Autowired
+    private UserDAO userDAO;
 
     ITOfficer itOfficer = new ITOfficer();
 
@@ -46,6 +49,10 @@ public class ITOfficerController {
         }
 
         model.addAttribute("username", username);
+        List<User> users = userDAO.findAll();
+
+        model.addAttribute("users", users);
+
         return "it/dashboard"; // Thymeleaf template
     }
 
@@ -63,6 +70,16 @@ public class ITOfficerController {
         itOfficer.setAccessLevel(accessLevel);
         itOfficerDAO.save(itOfficer);
         return "redirect:/login";
+    }
+
+    @PostMapping("/delete-user/{id}")
+    public String deleteUser(@PathVariable("id") int userId) {
+        userDAO.delete(userId);
+        if(userId == itOfficer.getUserId()){
+            SecurityContextHolder.clearContext();
+            return "redirect:/login?logout";
+        }
+        return "redirect:/it/dashboard";
     }
 
 }
