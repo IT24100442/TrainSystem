@@ -15,52 +15,76 @@
 
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            padding: 20px 0;
+            padding: 20px;
             color: #2c3e50;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1500px;
             margin: auto;
             padding: 0 20px;
         }
 
-        h2 {
-            color: white;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
             margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.2rem;
             font-weight: 700;
-            font-size: 2.5rem;
-            text-align: center;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .dashboard-icon {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 12px;
             border-radius: 50%;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
-        .row {
+        .btn-logout {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .main-content {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 2fr 1fr;
             gap: 30px;
-            align-items: start;
         }
 
-        @media (max-width: 768px) {
-            .row {
+        @media (max-width: 1200px) {
+            .main-content {
                 grid-template-columns: 1fr;
             }
         }
 
-        .col {
+        .section {
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -68,49 +92,35 @@
 
         .card {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             overflow: hidden;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(0,0,0,0.05);
             transition: all 0.3s ease;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
         }
 
         .card-header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #34495e, #2c3e50);
             color: white;
-            padding: 20px 25px;
+            padding: 18px 22px;
             font-weight: 600;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             display: flex;
             align-items: center;
-            gap: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            gap: 10px;
         }
 
         .card-header i {
-            font-size: 1.3rem;
-            opacity: 0.9;
+            font-size: 1.2rem;
         }
 
         .card-body {
-            padding: 25px;
+            padding: 20px;
             max-height: 400px;
             overflow-y: auto;
         }
@@ -119,13 +129,8 @@
             width: 6px;
         }
 
-        .card-body::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
         .card-body::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
+            background: #bdc3c7;
             border-radius: 10px;
         }
 
@@ -133,39 +138,27 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px 20px;
-            border-bottom: 1px solid rgba(224, 224, 224, 0.6);
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: rgba(245, 245, 245, 0.9);
+            border: 1px solid rgba(0,0,0,0.05);
             transition: all 0.3s ease;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            background: rgba(248, 249, 250, 0.5);
         }
 
         .driver-item:hover, .communication-item:hover {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%);
-            border-bottom-color: transparent;
-            transform: translateX(5px);
-        }
-
-        .driver-item:last-child, .communication-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-        .driver-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+            background: rgba(236, 240, 241, 0.8);
+            transform: translateX(4px);
         }
 
         .driver-info strong {
             font-weight: 600;
             color: #2c3e50;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .small {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .text-muted {
@@ -177,184 +170,85 @@
             gap: 8px;
         }
 
-        .driver-actions button, .driver-actions a, button.btn-send {
-            padding: 8px 16px;
+        .btn {
+            padding: 8px 14px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 500;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            transition: all 0.3s ease;
         }
 
         .btn-info {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+            background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
             color: white;
         }
 
         .btn-send {
-            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+            background: linear-gradient(135deg, #2980b9, #3498db);
             color: white;
+            width: 100%;
+            justify-content: center;
         }
 
-        .btn-info:hover, .btn-primary:hover, .btn-success:hover, .btn-send:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-        }
-
-        .badge {
-            border-radius: 20px;
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-active {
-            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-            color: white;
-        }
-
-        .status-medium {
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-            color: white;
-        }
-
-        .status-high {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
         }
 
         .no-data {
-            padding: 40px 20px;
-            color: #95a5a6;
+            padding: 30px;
+            color: #7f8c8d;
             text-align: center;
             font-style: italic;
-            background: rgba(236, 240, 241, 0.5);
-            border-radius: 12px;
-            margin: 10px 0;
+            background: rgba(236, 240, 241, 0.7);
+            border-radius: 10px;
         }
 
         .no-data i {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 2rem;
+            margin-bottom: 10px;
             opacity: 0.5;
             display: block;
         }
 
-        select, textarea {
+        select, textarea, input[type="text"] {
             width: 100%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 2px solid #e0e6ed;
-            margin-bottom: 15px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #dfe6e9;
+            margin-bottom: 12px;
             resize: vertical;
             font-family: 'Inter', sans-serif;
+            background: rgba(255, 255, 255, 0.95);
+            font-size: 0.9rem;
             transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.9);
-            font-size: 0.95rem;
         }
 
-        select:focus, textarea:focus {
+        select:focus, textarea:focus, input[type="text"]:focus {
+            border-color: #2980b9;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-            background: white;
         }
 
-        textarea {
-            min-height: 100px;
-            font-family: 'Inter', sans-serif;
-        }
-
-        button[type="submit"] {
-            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        button[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(41, 128, 185, 0.3);
-        }
-
-        .mt-3 {
-            margin-top: 20px;
-        }
-
-        .mt-2 {
-            margin-top: 10px;
-        }
-
-        #messageStatus {
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 500;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .message-content {
+        .action-buttons {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-        }
-
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .message-meta {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .timestamp {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+            gap: 10px;
         }
 
         .fade-in {
@@ -362,51 +256,37 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        #messageStatus {
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 <div class="container fade-in">
-    <h2>
-        <div class="dashboard-icon">
-            <i class="fas fa-tachometer-alt"></i>
-        </div>
-        Operations Manager Dashboard
-    </h2>
-    <div class="row">
-        <!-- Drivers Column -->
-        <div class="col">
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-users"></i>
-                    All Drivers
-                </div>
-                <div class="card-body">
-                    <div th:if="${drivers != null and !drivers.isEmpty()}">
-                        <div th:each="driver : ${drivers}" class="driver-item">
-                            <div class="driver-info">
-                                <strong th:text="${driver.user != null ? driver.user.name : 'Unknown'}">A. Perera</strong>
-                                <div class="small text-muted" th:text="'ID: ' + ${driver.userId}">ID: 101</div>
-                            </div>
-                            <div class="driver-actions">
-                                <a th:href="@{|/operations/driver/${driver.userId}|}" class="btn-info">
-                                    <i class="fas fa-eye"></i> View
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div th:if="${drivers == null or #lists.isEmpty(drivers)}" class="no-data">
-                        <i class="fas fa-users"></i>
-                        No drivers available
-                    </div>
-                </div>
+    <div class="header">
+        <h1>
+            <div class="dashboard-icon">
+                <i class="fas fa-tachometer-alt"></i>
             </div>
-        </div>
+            Operations Manager Dashboard
+        </h1>
+        <button class="btn-logout" onclick="location.href='/logout'">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
 
-        <!-- Messages Column -->
-        <div class="col">
+    <div class="main-content">
+        <!-- Left Section: Messages and Drivers -->
+        <div class="section">
+            <!-- Messages -->
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-comments"></i>
@@ -420,7 +300,6 @@
                                     <strong th:text="${msg.receiverId}">A. Perera</strong>
                                     <div class="message-meta">
                                         <small class="timestamp" th:text="${#temporals.format(msg.msgTime, 'HH:mm')}">14:42</small>
-
                                     </div>
                                 </div>
                                 <div th:text="${msg.msgText}">Message content</div>
@@ -433,9 +312,12 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Send Message Form -->
-            <div class="card mt-3">
+        <!-- Right Section: Actions -->
+        <div class="section">
+            <!-- Send Message -->
+            <div class="card">
                 <div class="card-header">
                     <i class="fas fa-paper-plane"></i>
                     Send Message
@@ -448,26 +330,23 @@
                             <option th:each="d : ${drivers}" th:value="${d.userId}" th:text="${d.user != null ? d.user.name : 'Unknown'}"></option>
                         </select>
                         <textarea id="messageText" placeholder="Type your message" required></textarea>
-                        <button type="submit">
-                            <i class="fas fa-send"></i>
-                            Send Message
+                        <button type="submit" class="btn btn-send">
+                            <i class="fas fa-paper-plane"></i> Send Message
                         </button>
-                        <div id="messageStatus" class="mt-2"></div>
+                        <div id="messageStatus"></div>
                     </form>
                 </div>
             </div>
 
-            <!-- Create Train Form -->
-            <div class="card mt-3">
+            <!-- Add Train -->
+            <div class="card">
                 <div class="card-header">
                     <i class="fas fa-train"></i>
                     Add Train
                 </div>
                 <div class="card-body">
                     <form id="createTrainForm" th:action="@{/trains/add}" method="post">
-
-                        <!-- Train Name Input -->
-                        <div class="mb-3">
+                        <div>
                             <label for="trainName" class="form-label">Train Name</label>
                             <input type="text"
                                    id="trainName"
@@ -476,17 +355,25 @@
                                    placeholder="Enter Train Name"
                                    required />
                         </div>
-
-                        <!-- Submit Button -->
                         <button type="submit" class="btn btn-success">
                             <i class="fas fa-plus"></i> Add Train
                         </button>
-
                     </form>
                 </div>
             </div>
 
-
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button type="button" onclick="window.location.href='/routes/list'" class="btn btn-info">
+                    <i class="fas fa-route"></i> Manage Routes
+                </button>
+                <button type="button" onclick="window.location.href='/train-status/override'" class="btn btn-primary">
+                    <i class="fas fa-exchange-alt"></i> Override Operations
+                </button>
+                <button type="button" onclick="window.location.href='/opmanager/assign-train'" class="btn btn-success">
+                    <i class="fas fa-train"></i> Assign Train to Driver
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -499,7 +386,6 @@
         const driverId = document.getElementById('driverSelect').value;
         const messageText = document.getElementById('messageText').value;
 
-        // Show loading state
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalContent = submitBtn.innerHTML;
         submitBtn.innerHTML = '<div class="loading"></div> Sending...';
@@ -534,13 +420,11 @@
                 'linear-gradient(135deg, #e74c3c, #c0392b)';
             document.getElementById('messageStatus').style.color = 'white';
         }).finally(() => {
-            // Restore button state
             submitBtn.innerHTML = originalContent;
             submitBtn.disabled = false;
         });
     });
 
-    // Add smooth scroll behavior
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();

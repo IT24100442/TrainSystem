@@ -35,6 +35,7 @@ public class DriverDAO {
             Driver driver = new Driver();
             driver.setUserId(rs.getInt("userId"));
             driver.setLicense(rs.getString("license"));
+            driver.setTrainId(rs.getInt("trainId"));
 
             User user = new User();
             user.setUserId(rs.getInt("userId"));
@@ -43,6 +44,7 @@ public class DriverDAO {
             user.setEmail(rs.getString("email"));
             user.setName(rs.getString("name"));
             user.setUserType(rs.getString("userType"));
+
 
             driver.setUser(user);
             return driver;
@@ -60,7 +62,7 @@ public class DriverDAO {
 
     public Driver findDriverWithUser(String username) {
         String sql = """
-        SELECT d.userId, d.license, u.username, u.password, u.email, u.name, u.userType
+        SELECT d.userId, d.license, d.trainId, u.username, u.password, u.email, u.name, u.userType
         FROM Driver d
         INNER JOIN Users u ON d.userId = u.userId
         WHERE u.username = ?;

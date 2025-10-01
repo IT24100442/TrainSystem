@@ -2,7 +2,10 @@ package org.example.trainsystem.controller;
 
 import org.example.trainsystem.entity.Driver;
 import org.example.trainsystem.entity.Message;
+import org.example.trainsystem.entity.Train;
 import org.example.trainsystem.entity.User;
+import org.example.trainsystem.repository.DriverDAO;
+import org.example.trainsystem.repository.TrainDAO;
 import org.example.trainsystem.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,6 +37,12 @@ public class OpManagerController {
 
     @Autowired
     private TrainStatusService trainStatusService;
+
+    @Autowired
+    private DriverDAO driverDAO;
+
+    @Autowired
+    private TrainDAO trainDAO;
 
     // Utility to get logged-in username
     private String getAuthenticatedUsername() {
@@ -69,13 +78,12 @@ public class OpManagerController {
         model.addAttribute("drivers", drivers);
 
         // Fetch recent messages for first driver as example
-        List<Message> driverMessages = new ArrayList<>();
-        for (Driver driver : drivers) {
-            List<Message> msgs = messageService.getMessagesSentforManager(opManager.getUserId());
-            for (Message msg : msgs) {
+        List<Message> driverMessages = messageService.getMessagesSentforManager(opManager.getUserId()) ;
+        for (Message msg : driverMessages) {
+            Driver driver = driverService.getDriverById(msg.getSenderId());
+            if (driver != null) {
                 msg.setDriverName(driver.getUser().getName());
             }
-            driverMessages.addAll(msgs);
         }
 
 
@@ -135,5 +143,27 @@ public class OpManagerController {
             response.put("message", "Error sending message: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    @GetMapping("/assign-train")
+    public String showAssignPage(Model model) {
+        List<Driver> drivers = driverDAO.findAllDrivers();
+        List<Train> trains = trainDAO.getAllTrains();
+
+        model.addAttribute("drivers", drivers);
+        model.addAttribute("trains", trains);
+        return "opmanager/assign-train";
+    }
+    @PostMapping("/assign-train")
+    public String assignTrainToDriver(
+            @RequestParam("driverId") int driverId,
+            @RequestParam("trainId") int trainId) {
+
+        Driver driver = driverDAO.findById(driverId);
+        if (driver != null) {
+            driver.setTrainId(trainId);
+            driverDAO.update(driver); // update license/trainId for driver
+        }
+        return "redirect:/opmanager/assign-train?success";
     }
 }

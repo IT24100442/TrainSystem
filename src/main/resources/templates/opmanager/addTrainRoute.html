@@ -1,31 +1,175 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assign Route to Train</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dashboard-icon {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 12px;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        select {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #dfe6e9;
+            font-family: 'Inter', sans-serif;
+            background: rgba(255, 255, 255, 0.95);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            border-color: #2980b9;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            width: fit-content;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <h2>Assign Route to Train</h2>
+<div class="container fade-in">
+    <div class="header">
+        <h1>
+            <div class="dashboard-icon">
+                <i class="fas fa-train"></i>
+            </div>
+            Assign Route to Train
+        </h1>
+    </div>
 
-    <form th:action="@{/trains/addTrainRoute}" method="post">
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/trains/addTrainRoute}" method="post">
+                <!-- Hidden trainId -->
+                <input type="hidden" name="trainId" th:value="${trainId}">
 
-        <!-- Hidden trainId -->
-        <input type="hidden" name="trainId" th:value="${trainId}">
+                <!-- Select Route -->
+                <div>
+                    <label for="route">Select Route:</label>
+                    <select id="route" name="routeId" required>
+                        <option value="">-- Choose a Route --</option>
+                        <option th:each="route : ${routes}"
+                                th:value="${route.routeId}"
+                                th:text="${route.routeName}">
+                        </option>
+                    </select>
+                </div>
 
-        <!-- Select Route -->
-        <label for="route">Select Route</label>
-        <select id="route" name="routeId" required>
-            <option value="">-- Choose a Route --</option>
-            <option th:each="route : ${routes}"
-                    th:value="${route.routeId}"
-                    th:text="${route.routeName}">
-            </option>
-        </select>
-
-        <button type="submit">Assign Route</button>
-    </form>
+                <button type="submit" class="btn">
+                    <i class="fas fa-plus"></i> Assign Route
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
 </body>
 </html>
