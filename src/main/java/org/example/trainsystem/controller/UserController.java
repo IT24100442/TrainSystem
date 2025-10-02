@@ -78,13 +78,13 @@ public class UserController {
             case "ItOfficer":
                 return "redirect:/it/register?userId=" + userId;
             case "TicketOfficer":
-                return "redirect:/ticket-officer/register?userId=" + userId;
+                return "redirect:/it/ticket-officer/register?userId=" + userId;
             case "OpManager" :
-                return "redirect:/opmanager/register?userId=" + userId;
+                return "redirect:/it/opmanager/register?userId=" + userId;
             case "Driver":
-                return "redirect:/driver/register?userId=" + userId;
+                return "redirect:/it/driver/register?userId=" + userId;
             case "CustomerService":
-                return "redirect:/customer-service/register?userId=" + userId;
+                return "redirect:/it/customer-service/register?userId=" + userId;
             default:
                 return "redirect:/login";
         }

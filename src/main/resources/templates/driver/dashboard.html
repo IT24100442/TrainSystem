@@ -32,26 +32,29 @@
         <div class="section">
             <h3>🛤️ Assigned Route</h3>
             <div id="routeSection">
-                <div th:if="${route != null}" class="route-card">
+
+                <!-- Route Card -->
+                <div th:if="${route != null and (route.routeName != null or route.durationMinutes != null or (route.stops != null and !#lists.isEmpty(route.stops)))}" class="route-card">
                     <div class="route-detail">
                         <strong>Route:</strong>
-                        <span th:text="${route.routeName}">Route Name</span>
+                        <span th:text="${route != null and route.routeName != null ? route.routeName : 'Not assigned'}">Route Name</span>
                     </div>
                     <div class="route-detail">
                         <strong>Duration:</strong>
-                        <span th:text="${route.durationMinutes + ' minutes'}">Duration</span>
+                        <span th:text="${route != null and route.durationMinutes != null ? route.durationMinutes + ' minutes' : 'Not assigned'}">Duration</span>
                     </div>
                     <div class="route-detail">
                         <strong>Status:</strong>
                         <span><span class="status-indicator status-active"></span>Active</span>
                     </div>
 
-
-                    <!-- Display Stops -->
+                    <!-- Stops List -->
                     <div class="route-detail">
                         <strong>Stops:</strong>
                         <ul>
-                            <li th:each="stop : ${route.stops}" th:text="${stop.stopName}">Stop Name</li>
+                            <li th:each="stop : ${route != null and route.stops != null ? route.stops : {}}"
+                                th:text="${stop.stopName}">Stop Name</li>
+                            <li th:if="${route == null or route.stops == null or #lists.isEmpty(route.stops)}">Not assigned</li>
                         </ul>
                     </div>
 
@@ -60,16 +63,23 @@
                     <input type="hidden" id="currentStopIndex" value="0" />
                 </div>
 
-                <div th:if="${route == null}" class="no-route">
+                <!-- No Route Assigned -->
+                <div th:if="${route == null or (route.routeName == null and route.durationMinutes == null and (route.stops == null or #lists.isEmpty(route.stops)))}" class="no-route">
                     No active route assigned.
                 </div>
 
+                <!-- Current Stop -->
                 <div class="route-detail">
                     <strong>Current Stop:</strong>
-                    <span id="currentLocation" th:text="${route.stops[0].stopName}">Start Stop</span>
-                    <input type="hidden" id="routeId" th:value="${route.routeId}" />
+                    <span id="currentLocation"
+                          th:text="${route != null and route.stops != null and !#lists.isEmpty(route.stops) ? route.stops[0].stopName : 'Not assigned'}">
+                Start Stop
+            </span>
+                    <input type="hidden" id="routeId" th:value="${route != null ? route.routeId : ''}" />
                 </div>
+
             </div>
+
 
 
             <div class="button-group">

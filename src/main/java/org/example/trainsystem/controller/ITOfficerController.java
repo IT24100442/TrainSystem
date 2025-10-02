@@ -1,9 +1,13 @@
 package org.example.trainsystem.controller;
 
 import jakarta.servlet.http.HttpSession;
+import org.example.trainsystem.entity.Driver;
 import org.example.trainsystem.entity.ITOfficer;
+import org.example.trainsystem.entity.OpManager;
 import org.example.trainsystem.entity.User;
+import org.example.trainsystem.repository.DriverDAO;
 import org.example.trainsystem.repository.ITOfficerDAO;
+import org.example.trainsystem.repository.OpManagerDAO;
 import org.example.trainsystem.repository.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -24,6 +28,12 @@ public class ITOfficerController {
 
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private DriverDAO driverDAO;
+
+    @Autowired
+    private OpManagerDAO opManagerDAO;
 
     ITOfficer itOfficer = new ITOfficer();
 
@@ -69,6 +79,42 @@ public class ITOfficerController {
         itOfficer.setUserId(userId);
         itOfficer.setAccessLevel(accessLevel);
         itOfficerDAO.save(itOfficer);
+        return "redirect:/login";
+    }
+
+    @GetMapping("driver/register")
+    public String showDriverForm(@RequestParam("userId") int userId, Model model) {
+        model.addAttribute("userId", userId);
+        return "driver/driver";
+    }
+
+    @PostMapping("driver/register")
+    public String saveDriver(@RequestParam("userId") int userId,
+                                @RequestParam("license") String license) {
+
+        Driver driver = new Driver();
+        driver.setUserId(userId);
+        driver.setLicense(license);
+        driver.setTrainId(1); // Default train assignment
+        driverDAO.save(driver);
+        return "redirect:/login";
+    }
+
+    @GetMapping("opmanager/register")
+    public String showOpManagerForm(@RequestParam("userId") int userId, Model model) {
+        model.addAttribute("userId", userId);
+        return "opmanager/opmanager";
+    }
+
+    @PostMapping("opmanager/register")
+    public String saveOpManager(@RequestParam("userId") int userId,
+                                @RequestParam("contactNumber") String contactNumber) {
+
+        OpManager opManager = new OpManager();
+        opManager.setUserId(userId);
+        opManager.setContactNumber(contactNumber);
+        opManagerDAO.save(opManager);
+
         return "redirect:/login";
     }
 

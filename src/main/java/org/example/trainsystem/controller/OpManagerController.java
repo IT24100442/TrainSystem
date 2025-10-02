@@ -1,10 +1,8 @@
 package org.example.trainsystem.controller;
 
-import org.example.trainsystem.entity.Driver;
-import org.example.trainsystem.entity.Message;
-import org.example.trainsystem.entity.Train;
-import org.example.trainsystem.entity.User;
+import org.example.trainsystem.entity.*;
 import org.example.trainsystem.repository.DriverDAO;
+import org.example.trainsystem.repository.OpManagerDAO;
 import org.example.trainsystem.repository.TrainDAO;
 import org.example.trainsystem.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +41,9 @@ public class OpManagerController {
 
     @Autowired
     private TrainDAO trainDAO;
+
+    @Autowired
+    private OpManagerDAO opManagerDAO;
 
     // Utility to get logged-in username
     private String getAuthenticatedUsername() {
@@ -166,4 +167,6 @@ public class OpManagerController {
         }
         return "redirect:/opmanager/assign-train?success";
     }
+
+
 }
