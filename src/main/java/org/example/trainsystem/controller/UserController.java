@@ -78,7 +78,7 @@ public class UserController {
             case "ItOfficer":
                 return "redirect:/it/register?userId=" + userId;
             case "TicketOfficer":
-                return "redirect:/it/ticket-officer/register?userId=" + userId;
+                return "redirect:/it/ticketOfficer/register?userId=" + userId;
             case "OpManager" :
                 return "redirect:/it/opmanager/register?userId=" + userId;
             case "Driver":

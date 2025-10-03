@@ -1,14 +1,8 @@
 package org.example.trainsystem.controller;
 
 import jakarta.servlet.http.HttpSession;
-import org.example.trainsystem.entity.Driver;
-import org.example.trainsystem.entity.ITOfficer;
-import org.example.trainsystem.entity.OpManager;
-import org.example.trainsystem.entity.User;
-import org.example.trainsystem.repository.DriverDAO;
-import org.example.trainsystem.repository.ITOfficerDAO;
-import org.example.trainsystem.repository.OpManagerDAO;
-import org.example.trainsystem.repository.UserDAO;
+import org.example.trainsystem.entity.*;
+import org.example.trainsystem.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +28,9 @@ public class ITOfficerController {
 
     @Autowired
     private OpManagerDAO opManagerDAO;
+
+    @Autowired
+    private TicketOfficerDAO ticketOfficerDAO;
 
     ITOfficer itOfficer = new ITOfficer();
 
@@ -97,7 +94,7 @@ public class ITOfficerController {
         driver.setLicense(license);
         driver.setTrainId(1); // Default train assignment
         driverDAO.save(driver);
-        return "redirect:/login";
+        return "redirect:/it/dashboard";
     }
 
     @GetMapping("opmanager/register")
@@ -115,8 +112,24 @@ public class ITOfficerController {
         opManager.setContactNumber(contactNumber);
         opManagerDAO.save(opManager);
 
-        return "redirect:/login";
+        return  "redirect:/it/dashboard";
     }
+
+    @GetMapping("ticketOfficer/register")
+    public String showTicketOfficerForm(@RequestParam("userId") int userId, Model model) {
+        model.addAttribute("userId", userId);
+        TicketOfficer ticketOfficer = new TicketOfficer();
+        ticketOfficer.setTrainId(1);
+        ticketOfficer.setUserId(userId);
+        ticketOfficer.setTrainId(1); // Default train assignment
+        ticketOfficerDAO.save(ticketOfficer);
+
+
+        return "redirect:/it/dashboard";
+    }
+
+
+
 
     @PostMapping("/delete-user/{id}")
     public String deleteUser(@PathVariable("id") int userId) {
