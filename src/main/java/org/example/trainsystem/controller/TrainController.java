@@ -1,21 +1,20 @@
 package org.example.trainsystem.controller;
 
 
-import org.example.trainsystem.entity.Route;
-import org.example.trainsystem.entity.Train;
-import org.example.trainsystem.entity.TrainRoute;
-import org.example.trainsystem.entity.TrainStatus;
-import org.example.trainsystem.repository.TrainDAO;
-import org.example.trainsystem.repository.TrainRouteDAO;
-import org.example.trainsystem.repository.TrainStatusDAO;
+import org.example.trainsystem.entity.*;
+import org.example.trainsystem.repository.*;
 import org.example.trainsystem.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -32,28 +31,67 @@ public class TrainController {
     @Autowired
     RouteService routeService;
 
+    @Autowired
+    OpManagerDAO opManagerDAO;
+
+    @Autowired
+    UserDAO userDAO;
+
+
+    private String getAuthenticatedUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) return null;
+
+        Object principal = auth.getPrincipal();
+        if (principal instanceof UserDetails userDetails) {
+            return userDetails.getUsername();
+        } else {
+            return principal.toString();
+        }
+    }
 
 
 
     @PostMapping("/add")
-    public String addTrain(@RequestParam("trainName") String trainName, Model model) {
+    public String addTrain(@RequestParam("trainName") String trainName, Model model, RedirectAttributes redirectAttributes) {
+
+//        String username = getAuthenticatedUsername();
+//        if (username == null) {
+//            return "redirect:/login";
+//        }
+//
+//        User user = userDAO.findByUsername(username);// logged in passenger
+//        if (user == null) {
+//            return "redirect:/login"; // Redirect to login if user not found
+//        }
+//
+//        OpManager opManager = user.getOpManager();
+//
+
         Train train = new Train();
         train.setName(trainName);
 
-        trainDAO.save(train);
+        int trainId = 0;
 
-        int trainId = trainDAO.getLastTrainId();
-        // Send success message back to the view
-        System.out.println("Train added successfully: " + trainId);
+        try{
+            trainDAO.save(train);
+            trainId = trainDAO.getLastTrainId();
+            System.out.println("Train added successfully: " + trainId);
+            model.addAttribute("successMessage", "Train added successfully");
+            return "redirect:/trains/addTrainRoute?trainId="+trainId;
+        }
+        catch (Exception e){
+            redirectAttributes.addAttribute("errorMessage", "Train already exists");
+            return "redirect:/opmanager/dashboard";
+        }
 
 
-        return "redirect:/trains/addTrainRoute?trainId="+trainId;
     }
 
     @GetMapping("/view")
     public String viewTrain(Model model) {
         model.addAttribute("trains", trainDAO.getAllTrains());
-        return "opmanager/view_trains";
+        return "redirect: /opmanager/view_trains";
     }
 
     @GetMapping("/addTrainRoute")
@@ -80,12 +118,21 @@ public class TrainController {
         trainRoute.setTrainId(trainId);
         trainRoute.setRouteId(routeId);
 
-        trainRouteDAO.save(trainRoute);
+
+        try{
+            trainRouteDAO.save(trainRoute);
+            model.addAttribute("success", "Train route assigned successfully");
+            return "redirect:/train-status/addStatus?trainRouteId="+trainRouteDAO.getLastInsertId();
+
+        }
+        catch (Exception e){
+            model.addAttribute("error", "Error saving train route. It might already exist.");
+            return "redirect:/trains/addTrainRoute?trainId="+trainId;
+        }
 
 
 
-        model.addAttribute("success", "Train route assigned successfully");
-        return "redirect:/train-status/addStatus?trainRouteId="+trainRouteDAO.getLastInsertId();
+
     }
 
 

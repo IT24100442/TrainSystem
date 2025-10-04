@@ -66,7 +66,7 @@ public class OpManagerController {
 
     // Dashboard page
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(@RequestParam(value="errorMessage", required=false)String errorMessage, @RequestParam(value="successMessage", required=false) String successMessage,Model model) {
         String username = getAuthenticatedUsername();
         if (username == null) return "redirect:/login";
 
@@ -86,7 +86,8 @@ public class OpManagerController {
                 msg.setDriverName(driver.getUser().getName());
             }
         }
-
+        if (errorMessage != null) model.addAttribute("errorMessage", errorMessage);
+        if(successMessage != null) model.addAttribute("successMessage", successMessage);
 
         model.addAttribute("driverMessages", driverMessages);
 

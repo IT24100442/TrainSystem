@@ -39,13 +39,11 @@ public class UserController {
     // Handle form submission
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") UserDTO user, Model model) {
-        // Validate passwords
-        if (!user.getPassword().equals(user.getConfirmPassword())) {
-            model.addAttribute("error", "Passwords do not match!");
-            return "register";
-        }
+
         User user2 = new User();
         user2.setUsername(user.getUsername());
+
+        System.out.println("register page works");
 
         String hashedPassword = pwEncoder.encode(user.getPassword()); // TODO: hash the password
         user2.setPassword(hashedPassword); // consider hashing later
@@ -53,9 +51,21 @@ public class UserController {
         user2.setEmail(user.getEmail());
         user2.setUserType(user.getUserType());
 
-        // Save to DB
-        userDAO.save(user2);
-        // Example: save user (you’d normally call a service here)
+        try{
+            userDAO.save(user2);
+
+        }
+        catch (Exception e){
+            System.out.println("Error saving user: " + e.getMessage());
+            if(user.getUserType().equals("Passenger")){
+                return "redirect:/registration";
+
+            }
+            model.addAttribute("error", "Error saving User.");
+            return "/register";
+        }
+
+
         System.out.println("New user registered: " + user);
         int userId = user2.getUserId();
 
@@ -86,7 +96,7 @@ public class UserController {
             case "CustomerService":
                 return "redirect:/it/customer-service/register?userId=" + userId;
             default:
-                return "redirect:/login";
+                return "/";
         }
     }
 }

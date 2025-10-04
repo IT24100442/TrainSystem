@@ -3,436 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operations Manager Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <title>Operations Manager Dashboard | TrackLink</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary: #1e40af; --primary-dark: #1e3a8a; --success: #10b981; --success-dark: #059669;
+            --danger: #ef4444; --warning: #f59e0b; --gray-50: #f9fafb; --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb; --gray-300: #d1d5db; --gray-500: #6b7280; --gray-600: #4b5563;
+            --gray-700: #374151; --gray-900: #111827; --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --border-radius: 12px; --transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
         }
-
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #2c3e50;
-        }
-
-        .container {
-            max-width: 1500px;
-            margin: auto;
-            padding: 0 20px;
-        }
-
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { height: 100%; margin: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--gray-50); color: var(--gray-900); line-height: 1.6; }
+        .container { max-width: 1440px; margin: 0 auto; padding: 2rem; }
+        /* Header */
         .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 1100; /* Higher than toast */
         }
-
-        h1 {
-            color: #2c3e50;
-            font-size: 2.2rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .header::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 10"><defs><pattern id="grain" width="100" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="10" fill="url(%23grain)"/></svg>');
         }
-
-        .dashboard-icon {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            padding: 12px;
-            border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        .header h1 { margin: 0; font-size: 1.75rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem; z-index: 1; }
+        .btn-logout { background: var(--danger); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 0.5rem; }
+        .btn-logout:hover { background: #dc2626; transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        /* Main Grid */
+        .main-content { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        @media (max-width: 1024px) { .main-content { grid-template-columns: 1fr; gap: 1.5rem; } .header { flex-direction: column; text-align: center; gap: 1rem; } }
+        /* Cards */
+        .card { background: white; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200); overflow: hidden; transition: var(--transition); }
+        .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+        .card-header { background: var(--gray-700); color: white; padding: 1.25rem 1.5rem; font-weight: 600; font-size: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+        .card-body { padding: 1.5rem; max-height: 500px; overflow-y: auto; }
+        .card-body::-webkit-scrollbar { width: 4px; }
+        .card-body::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 2px; }
+        /* Messages */
+        .communication-item { display: flex; gap: 1rem; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; background: var(--gray-100); border: 1px solid var(--gray-200); transition: var(--transition); }
+        .communication-item:hover { background: var(--gray-50); transform: translateX(4px); }
+        .message-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .message-header strong { font-weight: 600; color: var(--gray-700); }
+        .timestamp { font-size: 0.875rem; color: var(--gray-500); }
+        .message-text { color: var(--gray-600); }
+        /* Empty State */
+        .no-data { padding: 3rem 1.5rem; text-align: center; color: var(--gray-500); }
+        .no-data i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+        /* Forms */
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.875rem; color: var(--gray-700); }
+        input, select, textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 0.875rem; transition: var(--transition); background: white; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
+        textarea { resize: vertical; min-height: 100px; }
+        /* Buttons */
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition); text-decoration: none; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: var(--success-dark); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn-send { background: var(--success); color: white; width: 100%; justify-content: center; }
+        .btn-send:hover { background: var(--success-dark); }
+        .btn-warning { background: var(--warning); color: #fff; }
+        .btn-warning:hover { background: #d97706; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(245,158,11,0.3); }
+        /* Action buttons */
+        .action-buttons { display: flex; flex-direction: column; gap: 0.75rem; }
+        .action-buttons .btn { width: 100%; justify-content: center; }
+        /* Toast */
+        .toast { position: relative; margin-bottom: 0.5rem; padding: 1rem; border-radius: 8px; font-weight: 600; transition: var(--transition); }
+        .toast.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #16a34a; }
+        .toast.error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+        #toast-container {
+            position: fixed;
+            top: 100px;          /* slightly below header */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;       /* lower than header */
+            width: auto;
+            max-width: 500px;
         }
-
-        .btn-logout {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-logout:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-        }
-
-        @media (max-width: 1200px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .section {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, #34495e, #2c3e50);
-            color: white;
-            padding: 18px 22px;
-            font-weight: 600;
-            font-size: 1.15rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-header i {
-            font-size: 1.2rem;
-        }
-
-        .card-body {
-            padding: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .card-body::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .card-body::-webkit-scrollbar-thumb {
-            background: #bdc3c7;
-            border-radius: 10px;
-        }
-
-        .driver-item, .communication-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 18px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            background: rgba(245, 245, 245, 0.9);
-            border: 1px solid rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-
-        .driver-item:hover, .communication-item:hover {
-            background: rgba(236, 240, 241, 0.8);
-            transform: translateX(4px);
-        }
-
-        .driver-info strong {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 1rem;
-        }
-
-        .small {
-            font-size: 0.8rem;
-        }
-
-        .text-muted {
-            color: #7f8c8d;
-        }
-
-        .driver-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn {
-            padding: 8px 14px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-info {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            color: white;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #9b59b6, #8e44ad);
-            color: white;
-        }
-
-        .btn-send {
-            background: linear-gradient(135deg, #2980b9, #3498db);
-            color: white;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-        }
-
-        .no-data {
-            padding: 30px;
-            color: #7f8c8d;
-            text-align: center;
-            font-style: italic;
-            background: rgba(236, 240, 241, 0.7);
-            border-radius: 10px;
-        }
-
-        .no-data i {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            opacity: 0.5;
-            display: block;
-        }
-
-        select, textarea, input[type="text"] {
-            width: 100%;
-            padding: 10px 14px;
-            border-radius: 8px;
-            border: 1px solid #dfe6e9;
-            margin-bottom: 12px;
-            resize: vertical;
-            font-family: 'Inter', sans-serif;
-            background: rgba(255, 255, 255, 0.95);
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        select:focus, textarea:focus, input[type="text"]:focus {
-            border-color: #2980b9;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-            outline: none;
-        }
-
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        #messageStatus {
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 500;
-            text-align: center;
-            margin-top: 10px;
-        }
+        /* Animations */
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+        .loading { border:2px solid var(--gray-200); border-top:2px solid var(--success); border-radius:50%; width:16px; height:16px; animation:spin 1s linear infinite; margin-right:0.5rem; }
+        @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+        /* Search */
+        .search-input { margin-bottom:1rem; }
     </style>
 </head>
 <body>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
 <div class="container fade-in">
-    <div class="header">
-        <h1>
-            <div class="dashboard-icon">
-                <i class="fas fa-tachometer-alt"></i>
-            </div>
-            Operations Manager Dashboard
-        </h1>
-        <button class="btn-logout" onclick="location.href='/logout'">
+    <header class="header">
+        <h1><i class="fas fa-tachometer-alt"></i> Operations Manager Dashboard</h1>
+        <button class="btn btn-logout" onclick="location.href='/logout'" aria-label="Logout">
             <i class="fas fa-sign-out-alt"></i> Logout
         </button>
-    </div>
+    </header>
 
-    <div class="main-content">
-        <!-- Left Section: Messages and Drivers -->
-        <div class="section">
+    <main class="main-content">
+        <!-- Left: Communications -->
+        <section class="section">
             <!-- Messages -->
             <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-comments"></i>
-                    Driver Messages
-                </div>
+                <div class="card-header"><i class="fas fa-comments"></i> Driver Messages</div>
                 <div class="card-body">
+                    <input type="text" class="search-input" id="messageSearch" placeholder="Search messages..." />
                     <div th:if="${driverMessages != null and !driverMessages.isEmpty()}">
-                        <div th:each="msg : ${driverMessages}" class="communication-item">
+                        <div th:each="msg : ${driverMessages}" class="communication-item" th:data-search="${msg.msgText}">
                             <div class="message-content">
                                 <div class="message-header">
-                                    <strong th:text="${msg.receiverId}">A. Perera</strong>
-                                    <div class="message-meta">
-                                        <small class="timestamp" th:text="${#temporals.format(msg.msgTime, 'HH:mm')}">14:42</small>
-                                    </div>
+                                    <strong th:text="${msg.sender?.user?.name ?: msg.senderId}">Driver Name</strong>
+                                    <small class="timestamp" th:text="${#temporals.format(msg.msgTime, 'MMM dd, HH:mm')}">Oct 15, 14:42</small>
                                 </div>
-                                <div th:text="${msg.msgText}">Message content</div>
+                                <p class="message-text" th:text="${msg.msgText}">Sample message from driver.</p>
                             </div>
                         </div>
                     </div>
                     <div th:if="${driverMessages == null or #lists.isEmpty(driverMessages)}" class="no-data">
-                        <i class="fas fa-envelope-open"></i>
-                        No messages received
+                        <i class="fas fa-inbox"></i>
+                        <p>No messages received yet.</p>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Right Section: Actions -->
-        <div class="section">
             <!-- Send Message -->
             <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-paper-plane"></i>
-                    Send Message
-                </div>
+                <div class="card-header"><i class="fas fa-paper-plane"></i> Send Message to Driver</div>
                 <div class="card-body">
                     <form id="sendMessageForm">
-                        <input type="hidden" th:value="${opManager.userId}" id="senderId"/>
-                        <select id="driverSelect" required>
-                            <option value="">Select driver...</option>
-                            <option th:each="d : ${drivers}" th:value="${d.userId}" th:text="${d.user != null ? d.user.name : 'Unknown'}"></option>
-                        </select>
-                        <textarea id="messageText" placeholder="Type your message" required></textarea>
+                        <input type="hidden" th:value="${opManager.userId}" id="senderId" />
+                        <div class="form-group">
+                            <label for="driverSelect">Select Driver</label>
+                            <select id="driverSelect" required>
+                                <option value="">Choose a driver...</option>
+                                <option th:each="d : ${drivers}" th:value="${d.userId}" th:text="${d.user?.name ?: 'Unknown Driver'}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="messageText">Message</label>
+                            <textarea id="messageText" placeholder="Enter your message here..." required></textarea>
+                        </div>
                         <button type="submit" class="btn btn-send">
                             <i class="fas fa-paper-plane"></i> Send Message
                         </button>
-                        <div id="messageStatus"></div>
                     </form>
                 </div>
             </div>
+        </section>
 
+        <!-- Right: Actions -->
+        <aside class="section">
             <!-- Add Train -->
             <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-train"></i>
-                    Add Train
-                </div>
+                <div class="card-header"><i class="fas fa-train"></i> Add New Train</div>
                 <div class="card-body">
                     <form id="createTrainForm" th:action="@{/trains/add}" method="post">
-                        <div>
-                            <label for="trainName" class="form-label">Train Name</label>
-                            <input type="text"
-                                   id="trainName"
-                                   name="trainName"
-                                   class="form-control"
-                                   placeholder="Enter Train Name"
-                                   required />
+                        <div class="form-group">
+                            <label for="trainName">Train Name</label>
+                            <input type="text" id="trainName" name="trainName" placeholder="e.g., Express 101" required />
                         </div>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-plus"></i> Add Train
-                        </button>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add Train</button>
                     </form>
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button type="button" onclick="window.location.href='/routes/list'" class="btn btn-info">
-                    <i class="fas fa-route"></i> Manage Routes
-                </button>
-                <button type="button" onclick="window.location.href='/train-status/override'" class="btn btn-primary">
-                    <i class="fas fa-exchange-alt"></i> Override Operations
-                </button>
-                <button type="button" onclick="window.location.href='/opmanager/assign-train'" class="btn btn-success">
-                    <i class="fas fa-train"></i> Assign Train to Driver
-                </button>
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header"><i class="fas fa-bolt"></i> Quick Actions</div>
+                <div class="card-body">
+                    <div class="action-buttons">
+                        <a href="/routes/list" class="btn btn-primary"><i class="fas fa-route"></i> Manage Routes</a>
+                        <a href="/train-status/override" class="btn btn-warning"><i class="fas fa-cogs"></i> Override Operations</a>
+                        <a href="/opmanager/assign-train" class="btn btn-success"><i class="fas fa-user-tag"></i> Assign Train to Driver</a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header"><i class="fas fa-chart-bar"></i> Recent Activity</div>
+                <div class="card-body" style="padding:1rem;">
+                    <ul style="list-style:none; padding:0;">
+                        <li style="padding:0.5rem 0; border-bottom:1px solid var(--gray-200);"><small>Train Added: Express 101</small></li>
+                        <li style="padding:0.5rem 0;"><small>Message Sent to Driver A</small></li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+    </main>
 </div>
 
 <script>
+    function showToast(message, type='success', duration=3000){
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type} fade-in`;
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(() => { toast.remove(); }, duration);
+    }
+
+    // Send Message Form
     const form = document.getElementById('sendMessageForm');
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async e=>{
         e.preventDefault();
-        const senderId = document.getElementById('senderId').value;
-        const driverId = document.getElementById('driverSelect').value;
-        const messageText = document.getElementById('messageText').value;
-
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const originalContent = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<div class="loading"></div> Sending...';
-        submitBtn.disabled = true;
-
-        fetch('/opmanager/send-message', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ senderId, driverId, messageText })
-        }).then(res => res.json())
-            .then(data => {
-                const statusDiv = document.getElementById('messageStatus');
-                statusDiv.style.background = data.success ?
-                    'linear-gradient(135deg, #2ecc71, #27ae60)' :
-                    'linear-gradient(135deg, #e74c3c, #c0392b)';
-                statusDiv.style.color = 'white';
-                statusDiv.innerHTML = data.success ?
-                    '<i class="fas fa-check-circle"></i> Message sent successfully!' :
-                    '<i class="fas fa-exclamation-triangle"></i> ' + data.message;
-
-                if(data.success) {
-                    form.reset();
-                    setTimeout(() => {
-                        statusDiv.style.opacity = '0';
-                        setTimeout(() => statusDiv.innerHTML = '', 300);
-                    }, 3000);
-                }
-            }).catch(() => {
-            document.getElementById('messageStatus').innerHTML =
-                '<i class="fas fa-times-circle"></i> Error sending message';
-            document.getElementById('messageStatus').style.background =
-                'linear-gradient(135deg, #e74c3c, #c0392b)';
-            document.getElementById('messageStatus').style.color = 'white';
-        }).finally(() => {
-            submitBtn.innerHTML = originalContent;
-            submitBtn.disabled = false;
-        });
+        const senderId=document.getElementById('senderId').value;
+        const driverId=document.getElementById('driverSelect').value;
+        const messageText=document.getElementById('messageText').value;
+        const submitBtn=form.querySelector('button[type="submit"]');
+        const originalContent=submitBtn.innerHTML;
+        submitBtn.innerHTML='<div class="loading"></div> Sending...';
+        submitBtn.disabled=true;
+        try {
+            const res=await fetch('/opmanager/send-message',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({senderId,driverId,messageText})
+            });
+            const data=await res.json();
+            showToast(data.message|| (data.success?'Message sent successfully!':'Failed to send message'), data.success?'success':'error');
+            if(data.success){ form.reset(); location.reload(); }
+        } catch(err){
+            showToast('Network error. Please try again.', 'error');
+        } finally{
+            submitBtn.innerHTML=originalContent;
+            submitBtn.disabled=false;
+        }
     });
 
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
+    // Client-side message search
+    document.getElementById('messageSearch').addEventListener('input', e=>{
+        const items=document.querySelectorAll('.communication-item');
+        items.forEach(item=>{
+            const text=item.dataset.search.toLowerCase();
+            item.style.display=text.includes(e.target.value.toLowerCase())?'flex':'none';
         });
     });
 </script>
+
 </body>
 </html>

@@ -27,8 +27,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         // 🔹 Public pages first
-                        .requestMatchers("/", "/login", "/register-passenger", "/registration","/register", "/css/**", "/js/**").permitAll()
-
+                        .requestMatchers("/",  "/register-passenger", "/registration", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
 
                         // 🔹 only Admins can manage users/routes
                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -56,17 +55,11 @@ public class SecurityConfig {
 
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .successHandler(successHandler)
-                        .permitAll()
-                )
-
-                //validation
-                .formLogin(form -> form
-                        .loginPage("/login")
                         .failureUrl("/login?error=true")
                         .successHandler(successHandler)
                         .permitAll()
                 )
+
 
                 .logout(logout -> logout
                         .addLogoutHandler(new HeaderWriterLogoutHandler(new ClearSiteDataHeaderWriter(COOKIES)))
