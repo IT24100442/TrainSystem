@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 public class TicketOfficerDAO {
@@ -63,6 +64,7 @@ public class TicketOfficerDAO {
         }
     }
 
+
     public int save(TicketOfficer ticketOfficer) {
         String sql = "INSERT INTO TicketOfficer (userId, trainId) VALUES (?, ?)";
         return jdbcTemplate.update(sql, ticketOfficer.getUserId(), ticketOfficer.getTrainId());
@@ -85,6 +87,11 @@ public class TicketOfficerDAO {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public List<TicketOfficer> findAllTicketOfficers() {
+        String sql = "SELECT userId, trainId FROM TicketOfficer";
+        return jdbcTemplate.query(sql, new TicketOfficerRowMapper());
     }
 
     public TicketOfficer findByTrainId(int trainId) {

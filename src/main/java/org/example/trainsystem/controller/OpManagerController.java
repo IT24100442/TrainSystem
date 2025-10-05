@@ -3,6 +3,7 @@ package org.example.trainsystem.controller;
 import org.example.trainsystem.entity.*;
 import org.example.trainsystem.repository.DriverDAO;
 import org.example.trainsystem.repository.OpManagerDAO;
+import org.example.trainsystem.repository.TicketOfficerDAO;
 import org.example.trainsystem.repository.TrainDAO;
 import org.example.trainsystem.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ public class OpManagerController {
 
     @Autowired
     private OpManagerDAO opManagerDAO;
+
+    @Autowired
+    private TicketOfficerDAO ticketOfficerDAO;
 
     // Utility to get logged-in username
     private String getAuthenticatedUsername() {
@@ -151,7 +155,9 @@ public class OpManagerController {
     public String showAssignPage(Model model) {
         List<Driver> drivers = driverDAO.findAllDrivers();
         List<Train> trains = trainDAO.getAllTrains();
+        List<TicketOfficer> ticketOfficers = ticketOfficerDAO.findAllTicketOfficers();
 
+        model.addAttribute("ticketOfficers", ticketOfficers);
         model.addAttribute("drivers", drivers);
         model.addAttribute("trains", trains);
         return "opmanager/assign-train";
@@ -166,7 +172,20 @@ public class OpManagerController {
             driver.setTrainId(trainId);
             driverDAO.update(driver); // update license/trainId for driver
         }
-        return "redirect:/opmanager/assign-train?success";
+        return "redirect:/opmanager/assign-train?successDriver=True";
+    }
+
+    @PostMapping("/assign-train-ticket-officer")
+    public String assignTrainToTicketOfficer(
+            @RequestParam("ticketOfficerId") int ticketOfficerId,
+            @RequestParam("trainId") int trainId) {
+
+        TicketOfficer ticketOfficer = ticketOfficerDAO.findById(ticketOfficerId);
+        if (ticketOfficer != null) {
+            ticketOfficer.setTrainId(trainId);
+            ticketOfficerDAO.update(ticketOfficer); // update license/trainId for driver
+        }
+        return "redirect:/opmanager/assign-train?successOfficer=True";
     }
 
 

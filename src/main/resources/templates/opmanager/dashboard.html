@@ -89,9 +89,12 @@
             top: 100px;          /* slightly below header */
             left: 50%;
             transform: translateX(-50%);
-            z-index: 1000;       /* lower than header */
+            z-index: 1200;       /* lower than header */
             width: auto;
             max-width: 500px;
+
+
+
         }
         /* Animations */
         .fade-in { animation: fadeIn 0.5s ease-out; }
@@ -105,7 +108,10 @@
 <body>
 
 <!-- Toast Container -->
-<div id="toast-container"></div>
+<div id="toast-container">
+    <div th:if="${errorMessage}" class="toast error fade-in" th:text="${errorMessage}"></div>
+
+</div>
 
 <div class="container fade-in">
     <header class="header">
@@ -189,7 +195,7 @@
                     <div class="action-buttons">
                         <a href="/routes/list" class="btn btn-primary"><i class="fas fa-route"></i> Manage Routes</a>
                         <a href="/train-status/override" class="btn btn-warning"><i class="fas fa-cogs"></i> Override Operations</a>
-                        <a href="/opmanager/assign-train" class="btn btn-success"><i class="fas fa-user-tag"></i> Assign Train to Driver</a>
+                        <a href="/opmanager/assign-train" class="btn btn-success"><i class="fas fa-user-tag"></i> Assign Trains to Employees</a>
                     </div>
                 </div>
             </div>
@@ -252,6 +258,16 @@
         items.forEach(item=>{
             const text=item.dataset.search.toLowerCase();
             item.style.display=text.includes(e.target.value.toLowerCase())?'flex':'none';
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const toasts = document.querySelectorAll('#toast-container .toast');
+        toasts.forEach(toast => {
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500); // smooth fade-out
+            }, 3000); // 3 seconds
         });
     });
 </script>
