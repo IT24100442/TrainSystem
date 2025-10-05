@@ -94,4 +94,9 @@ public class StopDAO {
         String sql = "SELECT stopId, routeId, stopName, stopOrder FROM Stops";
         return jdbcTemplate.query(sql, new StopRowMapper());
     }
+
+    public int deleteByRouteId(int routeId) {
+        String sql = "DELETE FROM Stops WHERE routeId = ?";
+        return jdbcTemplate.update(sql, routeId);
+    }
 }

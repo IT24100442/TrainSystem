@@ -91,12 +91,11 @@ public class RouteDAO {
     }
 
     public int update(Route route) {
-        String sql = "UPDATE Route SET routeName = ?, durationMinutes = ?, driverId = ? , routeName, availableTime where routeId = ?";
+        String sql = "UPDATE Route SET routeName = ?, durationMinutes = ?, driverId = ? ,availableTime = ? where routeId = ?";
         return jdbcTemplate.update(sql,
                 route.getRouteName(),
                 route.getDurationMinutes(),
                 route.getDriverId(),
-                route.getRouteName(),
                 route.getAvailableTime(),
                 route.getRouteId());
     }
@@ -104,6 +103,11 @@ public class RouteDAO {
     public int delete(int rid) {
         String sql = "DELETE FROM Route WHERE routeId = ?";
         return jdbcTemplate.update(sql, rid);
+    }
+
+    public Route getRouteById(int rid) {
+        String sql = "SELECT routeId, routeName, durationMinutes,driverId, availableTime FROM Route WHERE routeId = ?";
+        return jdbcTemplate.queryForObject(sql, new RouteRowMapper(), rid);
     }
 
     public List<Stop> getStopsByRouteId(Integer rid) {

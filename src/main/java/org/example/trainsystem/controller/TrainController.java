@@ -91,7 +91,7 @@ public class TrainController {
     @GetMapping("/view")
     public String viewTrain(Model model) {
         model.addAttribute("trains", trainDAO.getAllTrains());
-        return "redirect: /opmanager/view_trains";
+        return "/opmanager/view_trains";
     }
 
     @GetMapping("/addTrainRoute")
@@ -133,6 +133,18 @@ public class TrainController {
 
 
 
+    }
+
+    @PostMapping("/delete")
+    public String deleteTrain(@RequestParam("trainId") Integer trainId, RedirectAttributes redirectAttributes) {
+        try {
+            trainDAO.deleteTrain(trainId);
+            redirectAttributes.addFlashAttribute("successMessage", "Train deleted successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting train: " + e.getMessage());
+            System.out.println("Error deleting train: " + e.getMessage());
+        }
+        return "redirect:/trains/view";
     }
 
 
