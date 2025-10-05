@@ -181,6 +181,10 @@
   </style>
 </head>
 <body>
+
+<div th:if="${errorMessage}" class="alert alert-danger">
+    <p th:text="${errorMessage}"></p>
+</div>
 <div class="container fade-in">
   <div class="header">
     <h1>
@@ -196,7 +200,7 @@
 
   <div class="card">
     <div class="card-body">
-      <form th:action="@{/routes/add}" th:object="${route}" method="post">
+      <form id="routeForm"  th:action="@{/routes/add}" th:object="${route}" method="post">
         <!-- Route Name -->
         <div>
           <label for="routeName">Route Name:</label>
@@ -209,6 +213,17 @@
           <input type="number" id="duration" th:field="*{durationMinutes}" placeholder="Enter duration" required />
         </div>
 
+
+          <!-- Available Time -->
+          <div>
+              <label for="availableTime">Available Time (AM/PM):</label>
+              <input type="text" id="availableTime" th:field="*{availableTime}"
+                     placeholder="e.g. 8:00 AM"
+                     pattern="^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM|am|pm)$"
+                     title="Enter a valid time (e.g. 8:00 AM or 12:30 pm)"
+                     required />
+          </div>
+
         <!-- Assign Driver -->
         <div>
           <label for="driver">Assign Driver:</label>
@@ -220,6 +235,9 @@
             </option>
           </select>
         </div>
+
+
+
 
         <!-- Stops -->
         <div class="stops-section">
@@ -239,5 +257,33 @@
     </div>
   </div>
 </div>
+
+<script>
+    document.getElementById("routeForm").addEventListener("submit", function(e) {
+        let timeInput = document.getElementById("availableTime");
+        if(timeInput.value){
+            timeInput.value = timeInput.value.trim().replace(/\s?(am|pm)$/i, function(match){
+                return match.toUpperCase();
+            });
+        }
+
+        // Validate duration > 0
+        let durationInput = document.getElementById("duration");
+        if(!durationInput.value || Number(durationInput.value) <= 0){
+            alert("Duration must be greater than 0.");
+            e.preventDefault();
+            return;
+        }
+
+        // Check at least 2 stops
+        let stopInputs = document.querySelectorAll("input[name^='stops']");
+        let filledStops = Array.from(stopInputs).filter(input => input.value.trim() !== "");
+        if(filledStops.length < 2){
+            alert("Please enter at least 2 stops.");
+            e.preventDefault(); // prevent form submission
+        }
+    });
+</script>
+
 </body>
 </html>

@@ -247,6 +247,7 @@
                     <th>Route ID</th>
                     <th>Name</th>
                     <th>Duration (min)</th>
+                    <th>Available Time</th>
                     <th>Driver</th>
                     <th>Stops</th>
                     <th>Actions</th>
@@ -257,6 +258,7 @@
                     <td th:text="${route.routeId}"></td>
                     <td th:text="${route.routeName}"></td>
                     <td th:text="${route.durationMinutes}"></td>
+                    <td th:text ="${route.availableTime}"> </td>
                     <td th:text="${route.driverId != null ? route.driverId : 'Unassigned'}"></td>
                     <td>
                         <ul>

@@ -29,12 +29,13 @@ public class RouteDAO {
             route.setRouteName(rs.getString("routeName"));
             route.setDurationMinutes(rs.getInt("durationMinutes"));
             route.setDriverId(rs.getInt("driverId"));
+            route.setAvailableTime(rs.getString("availableTime"));
             return route;
         }
     }
 
     public Route findById(int rid) {
-        String sql = "SELECT routeId, routeName, durationMinutes, driverId FROM Route WHERE routeId = ?";
+        String sql = "SELECT routeId, routeName, availableTime,durationMinutes, driverId FROM Route WHERE routeId = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new RouteRowMapper(), rid);
         } catch (Exception e) {
@@ -43,7 +44,7 @@ public class RouteDAO {
     }
 
     public Route findByDriverId(int driverId) {
-        String sql = "SELECT TOP 1 routeId, routeName, durationMinutes, driverId FROM Route WHERE driverId = ? ";
+        String sql = "SELECT TOP 1 routeId, routeName, availableTime, durationMinutes, driverId FROM Route WHERE driverId = ? ";
         try {
             System.out.println(driverId);
             return jdbcTemplate.queryForObject(sql, new RouteRowMapper(), driverId);
@@ -66,13 +67,13 @@ public class RouteDAO {
 
 
     public List<Route> findAll() {
-        String sql = "SELECT routeId, routeName, durationMinutes, driverId FROM Route";
+        String sql = "SELECT routeId, routeName, durationMinutes, driverId, availableTime FROM Route";
         return jdbcTemplate.query(sql, new RouteRowMapper());
     }
 
     // Insert with auto-generated rid
     public int save(Route route) {
-        String sql = "INSERT INTO Route (routeName, durationMinutes, driverId) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Route (routeName, durationMinutes, driverId, availableTime) VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -80,6 +81,7 @@ public class RouteDAO {
             ps.setString(1, route.getRouteName());
             ps.setInt(2, route.getDurationMinutes());
             ps.setInt(3, route.getDriverId());
+            ps.setString(4, route.getAvailableTime());
             return ps;
         }, keyHolder);
 
@@ -89,12 +91,14 @@ public class RouteDAO {
     }
 
     public int update(Route route) {
-        String sql = "UPDATE Route SET routeName = ?, durationMinutes = ?, driverId = ? WHERE routeId = ?";
+        String sql = "UPDATE Route SET routeName = ?, durationMinutes = ?, driverId = ? , routeName, availableTime where routeId = ?";
         return jdbcTemplate.update(sql,
                 route.getRouteName(),
                 route.getDurationMinutes(),
                 route.getDriverId(),
-                route.getRouteName());
+                route.getRouteName(),
+                route.getAvailableTime(),
+                route.getRouteId());
     }
 
     public int delete(int rid) {

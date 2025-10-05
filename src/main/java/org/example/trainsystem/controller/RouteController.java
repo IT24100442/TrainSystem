@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -52,9 +53,19 @@ public class RouteController {
 
     //  Save route and stops to DB
     @PostMapping("/add")
-    public String addRouteWithStops(@ModelAttribute Route route) {
-        // 1️⃣ Save route
-        routeDAO.save(route);
+    public String addRouteWithStops(@ModelAttribute Route route,  RedirectAttributes redirectAttributes) {
+
+
+        try{
+            routeDAO.save(route);
+        }
+        catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error saving route: " + e.getMessage());
+            System.out.println("Error saving route: " + e.getMessage());
+            return "redirect:/routes/add";
+        }
+
+
 
         // 2️⃣ Get generated routeId
         Route savedRoute = routeDAO.findByName(route.getRouteName());
