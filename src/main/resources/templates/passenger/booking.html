@@ -138,9 +138,9 @@
             <label for="classType" class="form-label">Select Class</label>
             <select id="classType" name="classType" class="form-select" required>
                 <option value="">-- Select Class --</option>
-                <option value="A">First Class (Rs. 2500)</option>
-                <option value="B">Second Class (Rs. 1500)</option>
-                <option value="C">Third Class (Rs. 800)</option>
+                <option value="First">First Class (Rs. 2500)</option>
+                <option value="Second">Second Class (Rs. 1500)</option>
+                <option value="Third">Third Class (Rs. 800)</option>
             </select>
         </div>
 
@@ -151,6 +151,12 @@
             <label for="travelDate" class="form-label">Travel Date</label>
             <input type="date" id="travelDate" name="travelDate" class="form-control" required>
         </div>
+
+        <div class="mb-4">
+            <label for="numSeats" class="form-label">Number of Seats</label>
+            <input type="number" id="numSeats" name="numSeats" class="form-control" min="1" max="10" value="1" required>
+        </div>
+
 
         <!-- Price Display -->
         <div class="mb-4">
@@ -184,10 +190,17 @@
     });
 
     // Update price when class is selected
-    $('#classType').on('change', function() {
-        const selectedClass = $(this).val();
-        $('#price').val(selectedClass ? `Rs. ${CLASS_PRICES[selectedClass].toLocaleString()}` : '');
+    $('#classType, #numSeats').on('change', function() {
+        const selectedClass = $('#classType').val();
+        const numSeats = parseInt($('#numSeats').val()) || 1;
+        if(selectedClass) {
+            const totalPrice = CLASS_PRICES[selectedClass] * numSeats;
+            $('#price').val(`Rs. ${totalPrice.toLocaleString()}`);
+        } else {
+            $('#price').val('');
+        }
     });
+
 </script>
 
 </body>
