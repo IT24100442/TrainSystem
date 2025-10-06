@@ -86,6 +86,7 @@
         <p><strong>Train ID:</strong> <span th:text="${booking.trainId}"></span></p>
         <p><strong>Passenger ID:</strong> <span th:text="${booking.passengerId}"></span></p>
         <p><strong>Class:</strong> <span th:text="${booking.bookingClass}"></span></p>
+        <p><strong>Number of Seats:</strong> <span th:text="${booking.numberOfSeats}"></span></p>
         <p><strong>Travel Date:</strong> <span th:text="${booking.bookingDate}"></span></p>
     </div>
 
@@ -96,9 +97,12 @@
         <input type="hidden" name="bookingId" th:value="${booking.bookingId}" />
         <input type="hidden" name="bookingClass" th:value="${booking.bookingClass}" />
 
+        <!-- Automatically calculated total amount -->
+        <input type="hidden" name="amount" th:value="${totalAmount}" />
+
         <div class="mb-4">
-            <label for="amount" class="form-label">Amount</label>
-            <input type="number" step="0.01" id="amount" name="amount" class="form-control" required>
+            <label for="amountDisplay" class="form-label">Amount to Pay</label>
+            <input type="text" id="amountDisplay" class="form-control" th:value="${totalAmount}" readonly>
         </div>
 
         <div class="mb-4">

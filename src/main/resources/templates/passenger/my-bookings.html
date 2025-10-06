@@ -111,18 +111,24 @@
         <tr>
             <th>Booking ID</th>
             <th>Train ID</th>
-            <th>Seat</th>
+            <th>Number of Seats</th>
             <th>Class</th>
             <th>Booking Date</th>
+            <th>Ticket</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="booking : ${bookings}">
             <td data-label="Booking ID" th:text="${booking.bookingId}"></td>
             <td data-label="Train ID" th:text="${booking.trainId}"></td>
-            <td data-label="Seat" th:text="${booking.seatNumber}"></td>
+            <td data-label="Seat" th:text="${booking.numberOfSeats}"></td>
             <td data-label="Class" th:text="${booking.bookingClass}"></td>
             <td data-label="Booking Date" th:text="${booking.bookingDate}"></td>
+            <td data-label="Ticket">
+                <a th:href="@{/bookingTicket(bookingId=${booking.bookingId})}" class="btn btn-sm btn-primary">
+                    View Ticket
+                </a>
+            </td>
         </tr>
         </tbody>
     </table>

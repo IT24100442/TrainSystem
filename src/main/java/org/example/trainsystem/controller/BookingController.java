@@ -109,6 +109,7 @@ public class BookingController {
 
     @PostMapping("/create")
     public String createBooking(@RequestParam String classType,
+                                @RequestParam(defaultValue = "1") int numSeats,
                                 @RequestParam int trainId,
                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate travelDate,
                                 RedirectAttributes redirectAttributes) {
@@ -123,6 +124,7 @@ public class BookingController {
         booking.setTrainId(trainId);
         booking.setBookingDate(travelDate);
         booking.setBookingClass(classType);
+        booking.setNumberOfSeats(numSeats);
 
 
         try{
