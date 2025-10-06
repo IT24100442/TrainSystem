@@ -24,15 +24,11 @@
                 </select>
             </div>
 
-            <!-- Train Dropdown -->
+            <!-- Train Dropdown (dynamic) -->
             <div class="mb-3">
                 <label for="trainId" class="form-label">Select Train</label>
                 <select id="trainId" name="trainId" class="form-select" required>
-                    <option value="">-- Select Train --</option>
-                    <option th:each="train : ${trains}"
-                            th:value="${train.tid}"
-                            th:text="${train.name}">
-                    </option>
+                    <option value="">-- Select a Route First --</option>
                 </select>
             </div>
 
@@ -47,6 +43,60 @@
         </form>
     </div>
 </div>
+
+<!-- ✅ Add script for dynamic behavior -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const routeDropdown = document.getElementById("routeId");
+        const trainDropdown = document.getElementById("trainId");
+
+        routeDropdown.addEventListener("change", function() {
+            const routeId = this.value;
+            trainDropdown.innerHTML = ""; // Clear existing options
+
+            if (routeId) {
+                fetch(`/booking/trains/byRoute?routeId=${routeId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.json();
+                    })
+                    .then(trains => {
+                        if (trains.length === 0) {
+                            const opt = document.createElement("option");
+                            opt.text = "No trains available for this route";
+                            opt.disabled = true;
+                            trainDropdown.appendChild(opt);
+                        } else {
+                            const defaultOpt = document.createElement("option");
+                            defaultOpt.text = "-- Select Train --";
+                            defaultOpt.value = "";
+                            trainDropdown.appendChild(defaultOpt);
+
+                            trains.forEach(train => {
+                                const option = document.createElement("option");
+                                option.value = train.tid; // trainId
+                                option.text = train.name; // trainName
+                                trainDropdown.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching trains:", error);
+                        const opt = document.createElement("option");
+                        opt.text = "Error loading trains";
+                        opt.disabled = true;
+                        trainDropdown.appendChild(opt);
+                    });
+            } else {
+                const opt = document.createElement("option");
+                opt.text = "-- Select a Route First --";
+                trainDropdown.appendChild(opt);
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

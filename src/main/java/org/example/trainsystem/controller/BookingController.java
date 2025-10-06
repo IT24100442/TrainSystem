@@ -1,6 +1,7 @@
 package org.example.trainsystem.controller;
 
 import org.example.trainsystem.entity.Booking;
+import org.example.trainsystem.entity.Train;
 import org.example.trainsystem.entity.TrainRoute;
 import org.example.trainsystem.entity.User;
 import org.example.trainsystem.repository.*;
@@ -75,8 +76,14 @@ public class BookingController {
     public String showTrainBookingForm(Model model){
 
         model.addAttribute("routes", routeDAO.findAll());
-        model.addAttribute("trains", trainDAO.getAllTrains());
-        return "passenger/booking"; // Thymeleaf template to display bookings
+//        model.addAttribute("trains", trainDAO.getAllTrains());
+        return "passenger/booking";
+    }
+
+    @GetMapping("/trains/byRoute")
+    @ResponseBody
+    public List<Train> getTrainsByRoute(@RequestParam("routeId") int routeId) {
+        return trainDAO.getTrainsByRouteId(routeId);
     }
 
 
