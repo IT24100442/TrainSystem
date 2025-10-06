@@ -1,9 +1,6 @@
 package org.example.trainsystem.controller;
 
-import org.example.trainsystem.entity.Booking;
-import org.example.trainsystem.entity.Train;
-import org.example.trainsystem.entity.TrainRoute;
-import org.example.trainsystem.entity.User;
+import org.example.trainsystem.entity.*;
 import org.example.trainsystem.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,7 +15,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/booking")
@@ -86,12 +85,32 @@ public class BookingController {
         return trainDAO.getTrainsByRouteId(routeId);
     }
 
+    @GetMapping("/getTrainsAndTime")
+    @ResponseBody
+    public Map<String, Object> getTrainsAndTime(@RequestParam("routeId") int routeId) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Fetch route to get available time
+            Route route = routeDAO.getRouteById(routeId);
+
+            // Fetch trains for this route
+            List<Train> trains = trainDAO.getTrainsByRouteId(routeId);
+
+            response.put("availableTime", route.getAvailableTime());
+            response.put("trains", trains);
+        } catch (Exception e) {
+            response.put("error", "Could not fetch data for routeId: " + routeId);
+        }
+        return response;
+    }
+
+
 
 
     @PostMapping("/create")
-    public String createBooking(@RequestParam int routeId,
+    public String createBooking(@RequestParam String classType,
                                 @RequestParam int trainId,
-                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime travelDate,
+                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate travelDate,
                                 RedirectAttributes redirectAttributes) {
         String username = getAuthenticatedUsername();
         if (username == null) {
@@ -100,15 +119,20 @@ public class BookingController {
 
         int userId = userDAO.findByUsername(username).getUserId();// logged in passenger
         Booking booking = new Booking();
-        booking.setStatus("Booked");
         booking.setPassengerId(userId);
         booking.setTrainId(trainId);
-        booking.setBookingDate(LocalDate.from(travelDate));
-        booking.setBookingClass("Economy");
-        booking.setSeatNumber("A1");
+        booking.setBookingDate(travelDate);
+        booking.setBookingClass(classType);
 
 
-        bookingDAO.save(booking);
+        try{
+            bookingDAO.save(booking);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Booking creation failed: " + e.getMessage());
+            return "redirect:/booking/train";
+        }
 
         int bookingId = bookingDAO.getLatestBookingId();
         System.out.println("Booking created with ID: " + bookingId);

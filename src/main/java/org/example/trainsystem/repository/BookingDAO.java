@@ -58,8 +58,8 @@ public class BookingDAO {
         }
     }
     public int save(Booking booking) {
-        String sql = "INSERT INTO Booking(passengerId, trainId, bookingStatus, class, bookingDate,seat) VALUES (?, ?, ?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, booking.getPassengerId(), booking.getTrainId(), booking.getBookingStatus(), booking.getBookingClass(), Timestamp.valueOf(booking.getBookingDate().atStartOfDay()),booking.getSeatNumber());
+        String sql = "INSERT INTO Booking(passengerId, trainId, class, bookingDate,seat) VALUES (?, ?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, booking.getPassengerId(), booking.getTrainId(), booking.getBookingClass(), Timestamp.valueOf(booking.getBookingDate().atStartOfDay()),booking.getSeatNumber());
     }
     public int update(Booking booking) {
         String sql = "UPDATE Booking SET passengerId = ?, trainId = ?, bookingStatus = ?, class = ?, bookingDate = ?, seat = ? WHERE bookingId = ?";

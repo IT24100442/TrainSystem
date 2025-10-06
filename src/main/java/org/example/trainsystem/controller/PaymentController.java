@@ -24,10 +24,6 @@ public class PaymentController {
 
     @GetMapping("/add")
     public String showAddPaymentForm(@ModelAttribute("booking") Booking booking , Model model) {
-
-
-
-
         return "passenger/payment-add"; // create this Thymeleaf page
     }
 
@@ -41,13 +37,13 @@ public class PaymentController {
         double minAmount;
         switch (bookingClass.toLowerCase()) {
             case "first":
-                minAmount = 1000.0;
+                minAmount = 2500.0;
                 break;
             case "second":
-                minAmount = 750.0;
+                minAmount = 1500.0;
                 break;
             case "economy":
-                minAmount = 500.0;
+                minAmount = 800.0;
                 break;
             default:
                 redirectAttributes.addFlashAttribute("error", "Invalid booking class.");
@@ -65,7 +61,13 @@ public class PaymentController {
         payment.setAmount(amount);
         payment.setPaymentDate(LocalDateTime.now()); // Set payment date automatically
 
-        paymentDAO.save(payment);
+        try{
+            paymentDAO.save(payment);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());;
+            redirectAttributes.addFlashAttribute("error", "Error processing payment. Please try again.");
+            return "redirect:/payment/add?bookingId=" + bookingId;
+        }
 
         redirectAttributes.addFlashAttribute("success", "Payment completed successfully!");
         return "redirect:/booking/list-my-bookings"; // Redirect after successful payment
