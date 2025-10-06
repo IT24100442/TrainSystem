@@ -129,12 +129,14 @@
     </style>
 </head>
 <body>
+
+<div class="text-center mb-6">
+    <a href="/passenger/dashboard" class="dashboard-button">Back to Dashboard</a>
+</div>
 <div class="bookings-container">
     <h2 class="bookings-title">My Bookings</h2>
 
-    <div class="text-center mb-6">
-        <a href="/passenger/dashboard" class="dashboard-button">Back to Dashboard</a>
-    </div>
+
 
     <div th:if="${bookings.size() == 0}" class="no-bookings">
         No bookings found.

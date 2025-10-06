@@ -93,6 +93,21 @@
             color: #6c757d;
         }
 
+        .btn-outline-teal {
+            color: #008080;
+            border-color: #008080;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 8px 20px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-outline-teal:hover {
+            background-color: #008080;
+            color: #fff;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .ticket-section {
@@ -107,7 +122,11 @@
     </style>
 </head>
 <body>
-
+<div class="text-center my-3">
+    <a href="/booking/list-my-bookings" class="btn btn-outline-teal">
+        ← Back to My Bookings
+    </a>
+</div>
 <div class="ticket-card">
     <div class="ticket-header" style="background-color: #008080; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
         Train Ticket
