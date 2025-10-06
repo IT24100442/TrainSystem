@@ -1,10 +1,7 @@
 package org.example.trainsystem.controller;
 
 import org.example.trainsystem.entity.*;
-import org.example.trainsystem.repository.DriverDAO;
-import org.example.trainsystem.repository.OpManagerDAO;
-import org.example.trainsystem.repository.TicketOfficerDAO;
-import org.example.trainsystem.repository.TrainDAO;
+import org.example.trainsystem.repository.*;
 import org.example.trainsystem.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,6 +45,15 @@ public class OpManagerController {
 
     @Autowired
     private TicketOfficerDAO ticketOfficerDAO;
+
+    @Autowired
+    PassengerDAO passengerDAO;
+
+
+    @Autowired
+    private ViolationReportDAO violationReportDAO;
+    @Autowired
+    private UserDAO userDAO;
 
     // Utility to get logged-in username
     private String getAuthenticatedUsername() {
@@ -188,5 +194,35 @@ public class OpManagerController {
         return "redirect:/opmanager/assign-train?successOfficer=True";
     }
 
+    @GetMapping("/violation-reports")
+    public String viewViolationReports(Model model) {
+        List<ViolationReport> reports = violationReportDAO.findAll();
+        if (reports == null) {
+            reports = new ArrayList<>();
+        }
 
+        for (ViolationReport report : reports) {
+            // Fetch passenger name
+            User passenger = userDAO.findById(report.getPassengerId());
+            if (passenger != null) {
+                report.setPassengerName(passenger.getName());
+            } else {
+                report.setPassengerName("Unknown");
+            }
+
+            // Fetch train name
+            Train train = trainDAO.getTrainById(report.getTrainId());
+            if (train != null) {
+                report.setTrainName(train.getName());
+            } else {
+                report.setTrainName("Unknown");
+            }
+        }
+
+
+        model.addAttribute("reports", reports);
+
+        return "opmanager/violation-reports";
+
+    }
 }
