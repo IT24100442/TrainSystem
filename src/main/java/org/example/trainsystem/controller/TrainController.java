@@ -55,18 +55,6 @@ public class TrainController {
     @PostMapping("/add")
     public String addTrain(@RequestParam("trainName") String trainName, Model model, RedirectAttributes redirectAttributes) {
 
-//        String username = getAuthenticatedUsername();
-//        if (username == null) {
-//            return "redirect:/login";
-//        }
-//
-//        User user = userDAO.findByUsername(username);// logged in passenger
-//        if (user == null) {
-//            return "redirect:/login"; // Redirect to login if user not found
-//        }
-//
-//        OpManager opManager = user.getOpManager();
-//
 
         Train train = new Train();
         train.setName(trainName);

@@ -27,6 +27,8 @@ public class TrainDAO {
         }
     }
 
+
+
     public void save(Train train) {
         String sql = "INSERT INTO Train (trainName) VALUES (?)";
         jdbcTemplate.update(sql, train.getName());
@@ -57,6 +59,15 @@ public class TrainDAO {
         String sql = "DELETE FROM Train WHERE trainId = ?";
         return jdbcTemplate.update(sql, trainId);
     }
+
+    public List<Train> getTrainsByRouteId(int routeId) {
+        String sql = "SELECT t.trainId, t.trainName " +
+                "FROM Train t " +
+                "JOIN TrainRoute tr ON t.trainId = tr.trainId " +
+                "WHERE tr.routeId = ?";
+        return jdbcTemplate.query(sql, new TrainRowMapper(), routeId);
+    }
+
 }
 
 
