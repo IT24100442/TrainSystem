@@ -87,4 +87,33 @@ public class TrainStatusController {
         model.addAttribute("success", "Status added successfully");
         return "redirect:/train-status/override";
     }
+
+    @GetMapping("/passenger-view")
+    public String passengerViewStatus(Model model) {
+        model.addAttribute("routes", routeRepo.findAll());
+        model.addAttribute("stops", stopRepo.findAll());
+        model.addAttribute("trainRoutes", trainRouteDAO.findAll());
+        List<TrainStatus> statuses = statusrepo.findAllWithDetails();
+
+        for (TrainStatus status : statuses) {
+            System.out.println("TrainStatus ID: " + status.getStatusId() + ", TrainRouteId: " + status.getTrainRouteId());
+            TrainRoute trainRoute = trainRouteDAO.findById(status.getTrainRouteId());
+            if (trainRoute != null) {
+                System.out.println("Found TrainRoute: " + trainRoute.getTrainRouteId() + ", RouteId: " + trainRoute.getRouteId());
+                Route route = routeRepo.findById(trainRoute.getRouteId());
+                if (route != null) {
+                    status.setRouteName(route.getRouteName());
+                } else {
+                    System.out.println("Route not found for RouteId: " + trainRoute.getRouteId());
+                    status.setRouteName("Unknown");
+                }
+            } else {
+                System.out.println("TrainRoute not found for TrainRouteId: " + status.getTrainRouteId());
+                status.setRouteName("Unknown");
+            }
+        }
+
+        model.addAttribute("statuses", statuses);
+        return "passenger/train-status";
+    }
 }
