@@ -93,11 +93,9 @@
     <div class="section-divider"></div>
 
     <!-- Payment Form -->
-    <form th:action="@{/payment/add}" method="post">
+    <form th:action="@{/payment/add}" method="post" id="paymentForm">
         <input type="hidden" name="bookingId" th:value="${booking.bookingId}" />
         <input type="hidden" name="bookingClass" th:value="${booking.bookingClass}" />
-
-        <!-- Automatically calculated total amount -->
         <input type="hidden" name="amount" th:value="${totalAmount}" />
 
         <div class="mb-4">
@@ -109,16 +107,103 @@
             <label for="paymentMethod" class="form-label">Payment Method</label>
             <select id="paymentMethod" name="paymentMethod" class="form-select" required>
                 <option value="">-- Select Method --</option>
-                <option value="CREDIT_CARD">Credit Card</option>
-                <option value="DEBIT_CARD">Debit Card</option>
-                <option value="BANK_TRANSFER">Bank Transfer</option>
-                <option value="MOBILE_PAYMENT">Mobile Payment</option>
+                <option value="CARD">Credit Card</option>
+                <option value="CARD">Debit Card</option>
+                <option value="MOBILE">Mobile Payment</option>
             </select>
+        </div>
+
+        <!-- Card Payment Fields -->
+        <div id="cardDetails" style="display: none;">
+            <div class="mb-3">
+                <label for="cardNumber" class="form-label">Card Number</label>
+                <input type="text" id="cardNumber" name="cardNumber" class="form-control" maxlength="16" placeholder="Enter 16-digit card number">
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="expiryDate" class="form-label">Expiry Date</label>
+                    <input type="text" id="expiryDate" name="expiryDate" class="form-control" placeholder="MM/YY">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="cvv" class="form-label">CVV</label>
+                    <input type="text" id="cvv" name="cvv" class="form-control" maxlength="3" placeholder="3-digit code">
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Payment Field -->
+        <div id="mobileDetails" style="display: none;">
+            <div class="mb-3">
+                <label for="mobileNumber" class="form-label">Mobile Number</label>
+                <input type="text" id="mobileNumber" name="mobileNumber" class="form-control" maxlength="10" placeholder="Enter your mobile number">
+            </div>
         </div>
 
         <button type="submit" class="btn btn-success w-100">Pay Now</button>
     </form>
 </div>
+
+<script>
+    const paymentMethod = document.getElementById('paymentMethod');
+    const cardDetails = document.getElementById('cardDetails');
+    const mobileDetails = document.getElementById('mobileDetails');
+    const form = document.getElementById('paymentForm');
+
+    // Show/Hide payment fields dynamically
+    paymentMethod.addEventListener('change', function() {
+        if (this.value === 'CARD') {
+            cardDetails.style.display = 'block';
+            mobileDetails.style.display = 'none';
+        } else if (this.value === 'MOBILE') {
+            mobileDetails.style.display = 'block';
+            cardDetails.style.display = 'none';
+        } else {
+            cardDetails.style.display = 'none';
+            mobileDetails.style.display = 'none';
+        }
+    });
+
+    // Client-side validation before submitting
+    form.addEventListener('submit', function(event) {
+        const method = paymentMethod.value;
+
+        if (method === 'CARD') {
+            const cardNumber = document.getElementById('cardNumber').value.trim();
+            const expiryDate = document.getElementById('expiryDate').value.trim();
+            const cvv = document.getElementById('cvv').value.trim();
+
+            if (!/^\d{16}$/.test(cardNumber)) {
+                alert("Please enter a valid 16-digit card number.");
+                event.preventDefault();
+                return;
+            }
+
+            if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate)) {
+                alert("Please enter a valid expiry date in MM/YY format.");
+                event.preventDefault();
+                return;
+            }
+
+            if (!/^\d{3}$/.test(cvv)) {
+                alert("Please enter a valid 3-digit CVV.");
+                event.preventDefault();
+                return;
+            }
+
+        } else if (method === 'MOBILE') {
+            const mobileNumber = document.getElementById('mobileNumber').value.trim();
+
+            if (!/^\d{10}$/.test(mobileNumber)) {
+                alert("Please enter a valid 10-digit mobile number.");
+                event.preventDefault();
+                return;
+            }
+        } else {
+            alert("Please select a payment method.");
+            event.preventDefault();
+        }
+    });
+</script>
 
 </body>
 </html>

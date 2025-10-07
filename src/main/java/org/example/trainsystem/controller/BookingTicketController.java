@@ -45,7 +45,12 @@ public class BookingTicketController {
         Booking booking = bookingDAO.findById(bookingId);
         if (booking == null) {
             model.addAttribute("error", "Booking not found!");
-            return "error-page"; // create a generic error page
+            return "error-page";
+        }
+
+        if (booking.getBookingStatus().equals("Pending")) {
+            model.addAttribute("error", "Booking is still pending. Please complete payment to view the ticket.");
+            return "error-page";
         }
 
         // Fetch train info
