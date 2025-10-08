@@ -132,7 +132,6 @@
             margin-top: 30px;
             text-align: center;
         }
-
     </style>
 </head>
 <body>
@@ -146,9 +145,11 @@
             </button>
         </form>
     </header>
+
     <div th:if="${message}" class="alert alert-success">
         <span th:text="${message}">Violation report saved successfully!</span>
     </div>
+
     <section class="bookings-section">
         <h2>Bookings for Your Train</h2>
 
@@ -174,48 +175,13 @@
                 <td>
                     <input type="checkbox" name="tickOff" th:value="${booking.bookingId}">
                 </td>
-
-                <!-- Report Button column -->
                 <td>
                     <a th:href="@{/Ticket_Officer/violation-report(
                         passengerId=${booking.passengerId},
                         bookingId=${booking.bookingId},
                         trainNumber=${booking.trainId},
                         seatNumber=${booking.seatNumber}
-                    )}"
-                       class="btn-report">
-                        🚨 Generate Report
-                    </a>
-                </td>
-            </tr>
-
-            <!-- Sample data for preview -->
-            <tr>
-                <td>#BK12346</td>
-                <td>P-5679</td>
-                <td>B5</td>
-                <td>2025-09-30 15:45</td>
-                <td>Economy</td>
-                <td>
-                    <input type="checkbox" name="tickOff" value="12346">
-                </td>
-                <td>
-                    <a href="#" class="btn-report">
-                        🚨 Generate Report
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td>#BK12347</td>
-                <td>P-5680</td>
-                <td>C3</td>
-                <td>2025-09-30 16:20</td>
-                <td>First Class</td>
-                <td>
-                    <input type="checkbox" name="tickOff" value="12347">
-                </td>
-                <td>
-                    <a href="#" class="btn-report">
+                    )}" class="btn-report">
                         🚨 Generate Report
                     </a>
                 </td>
