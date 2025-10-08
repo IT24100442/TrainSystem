@@ -91,13 +91,55 @@
             font-weight: 500;
         }
 
+        .btn-report {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-report:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-violations {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-violations:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .view-violations-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
 <div class="dashboard-container">
     <header>
         <h1>Ticket Officer Dashboard</h1>
-        <p>Welcome, Officer <span th:text="${userId}"></span></p>
+        <p>Welcome, Officer <span th:text="${userId}">OFC-123</span></p>
         <form action="/logout" method="post" style="display:inline;">
             <button type="submit" class="btn" style="padding:8px 16px;font-size:14px; background:#d11b0b; border:none; color:#fff; border-radius:6px; cursor:pointer;">
                 Logout
@@ -105,7 +147,7 @@
         </form>
     </header>
     <div th:if="${message}" class="alert alert-success">
-        <span th:text="${message}"></span>
+        <span th:text="${message}">Violation report saved successfully!</span>
     </div>
     <section class="bookings-section">
         <h2>Bookings for Your Train</h2>
@@ -124,11 +166,11 @@
             </thead>
             <tbody>
             <tr th:each="booking : ${bookings}">
-                <td th:text="${booking.bookingId}"></td>
-                <td th:text="${booking.passengerId}"></td>
-                <td th:text="${booking.seatNumber}"></td>
-                <td th:text="${#temporals.format(booking.bookingDate, 'yyyy-MM-dd HH:mm')}"></td>
-                <td th:text="${booking.bookingClass}"></td>
+                <td th:text="${booking.bookingId}">#BK12345</td>
+                <td th:text="${booking.passengerId}">P-5678</td>
+                <td th:text="${booking.seatNumber}">A2</td>
+                <td th:text="${#temporals.format(booking.bookingDate, 'yyyy-MM-dd HH:mm')}">2025-09-30 14:30</td>
+                <td th:text="${booking.bookingClass}">First Class</td>
                 <td>
                     <input type="checkbox" name="tickOff" th:value="${booking.bookingId}">
                 </td>
@@ -136,21 +178,61 @@
                 <!-- Report Button column -->
                 <td>
                     <a th:href="@{/Ticket_Officer/violation-report(
-        passengerId=${booking.passengerId},
-        bookingId=${booking.bookingId},
-        trainNumber=${booking.trainId},
-        seatNumber=${booking.seatNumber}
-    )}"
-                       class="btn btn-sm btn-primary">
-                        Generate Report
+                        passengerId=${booking.passengerId},
+                        bookingId=${booking.bookingId},
+                        trainNumber=${booking.trainId},
+                        seatNumber=${booking.seatNumber}
+                    )}"
+                       class="btn-report">
+                        🚨 Generate Report
                     </a>
                 </td>
             </tr>
+
+            <!-- Sample data for preview -->
+            <tr>
+                <td>#BK12346</td>
+                <td>P-5679</td>
+                <td>B5</td>
+                <td>2025-09-30 15:45</td>
+                <td>Economy</td>
+                <td>
+                    <input type="checkbox" name="tickOff" value="12346">
+                </td>
+                <td>
+                    <a href="#" class="btn-report">
+                        🚨 Generate Report
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>#BK12347</td>
+                <td>P-5680</td>
+                <td>C3</td>
+                <td>2025-09-30 16:20</td>
+                <td>First Class</td>
+                <td>
+                    <input type="checkbox" name="tickOff" value="12347">
+                </td>
+                <td>
+                    <a href="#" class="btn-report">
+                        🚨 Generate Report
+                    </a>
+                </td>
+            </tr>
+
             <tr th:if="${#lists.isEmpty(bookings)}">
                 <td colspan="7">No bookings available.</td>
             </tr>
             </tbody>
         </table>
+
+        <div class="view-violations-section">
+            <h3 style="color: #2d3748; margin-bottom: 15px;">📋 Violation Management</h3>
+            <a th:href="@{/violation/summary}" class="btn-violations">
+                🚨 View All Violations
+            </a>
+        </div>
     </section>
 </div>
 </body>

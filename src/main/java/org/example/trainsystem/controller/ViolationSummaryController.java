@@ -19,7 +19,7 @@ public class ViolationSummaryController {
     @Autowired
     private ViolationReportDAO violationReportDAO;
 
-    @GetMapping("/summary")
+    @GetMapping("violation/summary")
     public String showViolationSummary(Model model) {
 
         // Fetch all violations

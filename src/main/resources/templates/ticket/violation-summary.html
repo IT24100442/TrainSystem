@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Violation Summary</title>
+
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        header p {
+            margin-top: 10px;
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .back-button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 2rem;
+            color: #ff6b6b;
+        }
+
+        .stat-card p {
+            margin: 5px 0 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .violations-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .violations-section h2 {
+            margin-top: 0;
+            color: #004080;
+            font-size: 1.6rem;
+            border-bottom: 3px solid #ff6b6b;
+            padding-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table thead {
+            background: #004080;
+            color: white;
+        }
+
+        table th, table td {
+            padding: 14px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        table tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        table tbody tr:hover {
+            background: #e6f0ff;
+        }
+
+        .no-violations {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.85rem;
+            }
+
+            table th, table td {
+                padding: 10px;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <a href="javascript:history.back()" class="back-button">← Back to Dashboard</a>
+
+    <header>
+        <h1>🚨 Violation Summary Dashboard</h1>
+        <p>View and manage all reported violations</p>
+    </header>
+
+    <section class="violations-section">
+        <h2>Reported Violations</h2>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Passenger ID</th>
+                <th>Seat</th>
+                <th>Booking Date</th>
+                <th>Class</th>
+                <th>Violation Type</th>
+                <th>Reported Time</th>
+                <th>Reported By</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="violation : ${violations}">
+                <td th:text="${violation.bookingId}">#BK12345</td>
+                <td th:text="${violation.passengerId}">P-5678</td>
+                <td th:text="${violation.seatNumber}">A2</td>
+                <td th:text="${#temporals.format(violation.bookingDate, 'yyyy-MM-dd HH:mm')}">2025-09-30 14:30</td>
+                <td th:text="${violation.bookingClass}">First Class</td>
+                <td th:text="${violation.violationType}">no-ticket</td>
+                <td th:text="${#temporals.format(violation.reportedDate, 'yyyy-MM-dd HH:mm')}">2025-09-30 15:45</td>
+                <td th:text="${violation.ticketOfficerId}">Officer-123</td>
+            </tr>
+
+            <!-- Sample data for preview -->
+            <tr>
+                <td>#BK12345</td>
+                <td>P-5678</td>
+                <td>A2</td>
+                <td>2025-09-30 14:30</td>
+                <td>First Class</td>
+                <td>no-ticket</td>
+                <td>2025-09-30 15:45</td>
+                <td>Officer-123</td>
+            </tr>
+            <tr>
+                <td>#BK12346</td>
+                <td>P-5679</td>
+                <td>B5</td>
+                <td>2025-09-30 15:00</td>
+                <td>Economy</td>
+                <td>wrong-seat</td>
+                <td>2025-09-30 16:20</td>
+                <td>Officer-456</td>
+            </tr>
+            <tr>
+                <td>#BK12347</td>
+                <td>P-5680</td>
+                <td>C3</td>
+                <td>2025-09-30 16:15</td>
+                <td>First Class</td>
+                <td>misconduct</td>
+                <td>2025-09-30 17:00</td>
+                <td>Officer-789</td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(violations)}">
+                <td colspan="8">
+                    <div class="no-violations">
+                        No violations reported yet.
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+</body>
+</html>
