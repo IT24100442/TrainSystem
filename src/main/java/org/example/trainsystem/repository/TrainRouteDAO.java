@@ -1,6 +1,7 @@
 // Java
 package org.example.trainsystem.repository;
 
+import org.example.trainsystem.entity.Train;
 import org.example.trainsystem.entity.TrainRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -76,4 +77,6 @@ public class TrainRouteDAO {
         Integer lastId = jdbcTemplate.queryForObject(sql, Integer.class);
         return lastId != null ? lastId : 0;
     }
+
+
 }

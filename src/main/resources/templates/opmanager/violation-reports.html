@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Violation Reports | TrainLink</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: #f5f7fa;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .reports-card {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 15px;
+            background: #ffffff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .reports-card h2 {
+            font-weight: 700;
+            color: #a20000; /* dark red for header */
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .btn-dashboard {
+            margin-bottom: 20px;
+            background-color: #a20000; /* dark red */
+            color: #fff;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-dashboard:hover {
+            background-color: #d10000; /* slightly brighter red on hover */
+            color: #fff;
+        }
+
+        table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        thead.table-dark th {
+            background-color: #a20000; /* dark red table header */
+            color: #ffffff;
+            border: none;
+        }
+
+        tbody tr:hover {
+            background-color: #ffe6e6; /* light red hover */
+        }
+
+        tbody td {
+            vertical-align: middle;
+            color: #555555;
+        }
+
+        .text-muted {
+            text-align: center;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead tr {
+                display: none;
+            }
+            tbody tr {
+                margin-bottom: 15px;
+                border-bottom: 1px solid #ddd;
+                padding: 10px 0;
+            }
+            tbody td {
+                display: flex;
+                justify-content: space-between;
+                padding: 5px 0;
+            }
+            tbody td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #333;
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="reports-card">
+    <h2>All Violation Reports</h2>
+
+    <div class="text-center">
+        <a href="/opmanager/dashboard" class="btn btn-dashboard">Back to Dashboard</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(reports)}">
+        <p class="text-muted">No violation reports found.</p>
+    </div>
+
+
+    <table class="table table-striped table-hover align-middle" th:if="${reports.size() > 0}">
+        <thead class="table-dark">
+        <tr>
+            <th>Report ID</th>
+            <th>Ticket Officer ID</th>
+            <th>Train ID</th>
+            <th>Passenger ID</th>
+            <th>Passenger Name</th>
+            <th>Train Name</th>
+            <th>Violation Type</th>
+            <th>Report Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="report : ${reports}">
+            <td data-label="Report ID" th:text="${report.reportId}"></td>
+            <td data-label="Ticket Officer ID" th:text="${report.ticketOfficerId}"></td>
+            <td data-label="Train ID" th:text="${report.trainId}"></td>
+            <td data-label="Passenger ID" th:text="${report.passengerId}"></td>
+            <td data-label="Passenger Name" th:text="${report.passengerName}"></td>
+            <td data-label="Train Name" th:text="${report.trainName}"></td>
+            <td data-label="Violation Type" th:text="${report.violationType}"></td>
+            <td data-label="Report Date" th:text="${#temporals.format(report.reportDate, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

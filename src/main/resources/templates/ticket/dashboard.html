@@ -98,6 +98,11 @@
     <header>
         <h1>Ticket Officer Dashboard</h1>
         <p>Welcome, Officer <span th:text="${userId}"></span></p>
+        <form action="/logout" method="post" style="display:inline;">
+            <button type="submit" class="btn" style="padding:8px 16px;font-size:14px; background:#d11b0b; border:none; color:#fff; border-radius:6px; cursor:pointer;">
+                Logout
+            </button>
+        </form>
     </header>
     <div th:if="${message}" class="alert alert-success">
         <span th:text="${message}"></span>

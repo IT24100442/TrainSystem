@@ -1,9 +1,7 @@
 package org.example.trainsystem.controller;
 
 import org.example.trainsystem.entity.*;
-import org.example.trainsystem.repository.DriverDAO;
-import org.example.trainsystem.repository.OpManagerDAO;
-import org.example.trainsystem.repository.TrainDAO;
+import org.example.trainsystem.repository.*;
 import org.example.trainsystem.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +43,18 @@ public class OpManagerController {
     @Autowired
     private OpManagerDAO opManagerDAO;
 
+    @Autowired
+    private TicketOfficerDAO ticketOfficerDAO;
+
+    @Autowired
+    PassengerDAO passengerDAO;
+
+
+    @Autowired
+    private ViolationReportDAO violationReportDAO;
+    @Autowired
+    private UserDAO userDAO;
+
     // Utility to get logged-in username
     private String getAuthenticatedUsername() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -66,7 +76,7 @@ public class OpManagerController {
 
     // Dashboard page
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(@RequestParam(value="errorMessage", required=false)String errorMessage, @RequestParam(value="successMessage", required=false) String successMessage,Model model) {
         String username = getAuthenticatedUsername();
         if (username == null) return "redirect:/login";
 
@@ -86,7 +96,8 @@ public class OpManagerController {
                 msg.setDriverName(driver.getUser().getName());
             }
         }
-
+        if (errorMessage != null) model.addAttribute("errorMessage", errorMessage);
+        if(successMessage != null) model.addAttribute("successMessage", successMessage);
 
         model.addAttribute("driverMessages", driverMessages);
 
@@ -150,7 +161,9 @@ public class OpManagerController {
     public String showAssignPage(Model model) {
         List<Driver> drivers = driverDAO.findAllDrivers();
         List<Train> trains = trainDAO.getAllTrains();
+        List<TicketOfficer> ticketOfficers = ticketOfficerDAO.findAllTicketOfficers();
 
+        model.addAttribute("ticketOfficers", ticketOfficers);
         model.addAttribute("drivers", drivers);
         model.addAttribute("trains", trains);
         return "opmanager/assign-train";
@@ -165,8 +178,51 @@ public class OpManagerController {
             driver.setTrainId(trainId);
             driverDAO.update(driver); // update license/trainId for driver
         }
-        return "redirect:/opmanager/assign-train?success";
+        return "redirect:/opmanager/assign-train?successDriver=True";
     }
 
+    @PostMapping("/assign-train-ticket-officer")
+    public String assignTrainToTicketOfficer(
+            @RequestParam("ticketOfficerId") int ticketOfficerId,
+            @RequestParam("trainId") int trainId) {
 
+        TicketOfficer ticketOfficer = ticketOfficerDAO.findById(ticketOfficerId);
+        if (ticketOfficer != null) {
+            ticketOfficer.setTrainId(trainId);
+            ticketOfficerDAO.update(ticketOfficer); // update license/trainId for driver
+        }
+        return "redirect:/opmanager/assign-train?successOfficer=True";
+    }
+
+    @GetMapping("/violation-reports")
+    public String viewViolationReports(Model model) {
+        List<ViolationReport> reports = violationReportDAO.findAll();
+        if (reports == null) {
+            reports = new ArrayList<>();
+        }
+
+        for (ViolationReport report : reports) {
+            // Fetch passenger name
+            User passenger = userDAO.findById(report.getPassengerId());
+            if (passenger != null) {
+                report.setPassengerName(passenger.getName());
+            } else {
+                report.setPassengerName("Unknown");
+            }
+
+            // Fetch train name
+            Train train = trainDAO.getTrainById(report.getTrainId());
+            if (train != null) {
+                report.setTrainName(train.getName());
+            } else {
+                report.setTrainName("Unknown");
+            }
+        }
+
+
+        model.addAttribute("reports", reports);
+
+        return "opmanager/violation-reports";
+
+    }
 }

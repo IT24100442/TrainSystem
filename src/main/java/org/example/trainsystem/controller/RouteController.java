@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class RouteController {
     @GetMapping("/add")
     public String showAddRouteForm(Model model) {
         Route route = new Route();
-        // Initialize 5 stops for the form
+        // Initialize 10 stops for the form
         for (int i = 0; i < 10; i++) {
             route.getStops().add(new Stop());
         }
@@ -52,16 +53,26 @@ public class RouteController {
 
     //  Save route and stops to DB
     @PostMapping("/add")
-    public String addRouteWithStops(@ModelAttribute Route route) {
-        // 1️⃣ Save route
-        routeDAO.save(route);
+    public String addRouteWithStops(@ModelAttribute Route route,  RedirectAttributes redirectAttributes) {
 
-        // 2️⃣ Get generated routeId
+
+        try{
+            routeDAO.save(route);
+        }
+        catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error saving route: " + e.getMessage());
+            System.out.println("Error saving route: " + e.getMessage());
+            return "redirect:/routes/add";
+        }
+
+
+
+        //  Get generated routeId
         Route savedRoute = routeDAO.findByName(route.getRouteName());
         if (savedRoute == null) return "redirect:/routes/list"; // safety check
         int routeId = savedRoute.getRouteId();
 
-        // 3️⃣ Save stops
+        //Save stops
         int order = 1;
         for (Stop stop : route.getStops()) {
             if (stop.getStopName() != null && !stop.getStopName().isEmpty()) {
@@ -79,4 +90,66 @@ public class RouteController {
         routeService.deleteRoute(id); // call service/DAO to delete
         return "redirect:/routes/list";    // redirect back to the routes list
     }
+
+    @GetMapping("/edit/{id}")
+    public String showEditRouteForm(@PathVariable("id") int id, Model model) {
+        Route newRoute = new Route();
+        newRoute.setRouteId(id);
+        // Initialize 10 stops for the form
+        for (int i = 0; i < 10; i++) {
+            newRoute.getStops().add(new Stop());
+        }
+        model.addAttribute("newRoute", newRoute);
+        model.addAttribute("drivers", driverService.getAllDrivers());
+        return "opmanager/editRouteWithStops"; // create this Thymeleaf page
+
+    }
+
+    @PostMapping("/edit")
+    public String editRouteWithStops(@ModelAttribute Route newRoute, RedirectAttributes redirectAttributes) {
+        Route existingRoute = routeDAO.findById(newRoute.getRouteId());
+        System.out.println("Editing route: "+newRoute.getRouteId()+" name: "+newRoute.getRouteName());
+        if (existingRoute == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Route not found");
+            return "redirect:/routes/edit/"+newRoute.getRouteId();
+        }
+        try{
+            try{
+                stopsDAO.deleteByRouteId(newRoute.getRouteId());
+
+            }
+            catch (Exception e) {
+                System.out.println("Error deleting existing stops: "+e.getMessage());
+                return "redirect:/routes/edit/"+newRoute.getRouteId();
+
+            }
+
+
+            routeDAO.update(newRoute);
+            int order = 1;
+            for (Stop stop : newRoute.getStops()) {
+                if (stop.getStopName() != null && !stop.getStopName().isEmpty()) {
+                    stop.setRouteId(newRoute.getRouteId());
+                    stop.setStopOrder(order++);
+                    stopsDAO.save(stop);
+                }
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Error updating route: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating route: " + e.getMessage());
+            return "redirect:/routes/edit/"+newRoute.getRouteId();
+        }
+
+
+
+
+       return "redirect:/routes/list";
+
+
+    }
+
+
+
+
 }

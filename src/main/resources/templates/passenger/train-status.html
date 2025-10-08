@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Routes</title>
+    <title>Override Train Status</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -38,17 +38,6 @@
             margin-bottom: 30px;
         }
 
-        .header-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .header-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
         h1 {
             color: #2c3e50;
             font-size: 2.2rem;
@@ -66,41 +55,11 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
-        .btn-add {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-back {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .btn-add:hover, .btn-back:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
         }
 
         .card {
@@ -169,47 +128,70 @@
             color: #2c3e50;
         }
 
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        ul li {
-            padding: 4px 0;
-            font-size: 0.85rem;
-        }
-
-        .actions a {
-            text-decoration: none;
-            padding: 8px 14px;
+        select {
+            padding: 8px 12px;
             border-radius: 8px;
+            border: 1px solid #dfe6e9;
+            font-family: 'Inter', sans-serif;
+            background: rgba(255, 255, 255, 0.95);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            border-color: #2980b9;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
             font-weight: 500;
             font-size: 0.85rem;
-            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-        }
-
-        .btn-edit {
+            transition: all 0.3s ease;
             background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
-            margin-right: 8px;
         }
 
-        .btn-delete {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-        }
-
-        .btn-edit:hover, .btn-delete:hover {
+        .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #2980b9, #3498db);
         }
 
         .fade-in {
             animation: fadeIn 0.5s ease-in-out;
+        }
+        .btn-back {
+            background: linear-gradient(135deg, #3498db, #2980b9); /* Blue gradient to distinguish from other buttons */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
         }
 
         @keyframes fadeIn {
@@ -221,59 +203,35 @@
 <body>
 <div class="container fade-in">
     <div class="header">
-        <div class="header-content">
-            <h1>
-                <div class="dashboard-icon">
-                    <i class="fas fa-route"></i>
-                </div>
-                All Routes
-            </h1>
-        </div>
-        <div class="header-buttons">
-            <a th:href="@{/opmanager/dashboard}" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
-            </a>
-            <a th:href="@{/routes/add}" class="btn-add">
-                <i class="fas fa-plus"></i> Add New Route
-            </a>
-        </div>
+        <h1>
+            <div class="dashboard-icon">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            Train Statuses
+        </h1>
+        <a th:href="@{/passenger/dashboard}" class="btn btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
     </div>
 
     <div class="card">
         <div class="card-body">
+            <h2>Latest Train Status Updates</h2>
             <table>
                 <thead>
                 <tr>
-                    <th>Route ID</th>
-                    <th>Name</th>
-                    <th>Duration (min)</th>
-                    <th>Available Time</th>
-                    <th>Driver</th>
-                    <th>Stops</th>
-                    <th>Actions</th>
+                    <th>Train Route</th>
+                    <th>Stop</th>
+                    <th>Status</th>
+
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="route : ${routes}">
-                    <td th:text="${route.routeId}"></td>
-                    <td th:text="${route.routeName}"></td>
-                    <td th:text="${route.durationMinutes}"></td>
-                    <td th:text ="${route.availableTime}"> </td>
-                    <td th:text="${route.driverId != null ? route.driverId : 'Unassigned'}"></td>
-                    <td>
-                        <ul>
-                            <li th:each="stop : ${route.stops}" th:text="${stop.stopName}"></li>
-                        </ul>
-                    </td>
-                    <td class="actions">
-                        <a th:href="@{/routes/edit/{id}(id=${route.routeId})}" class="btn-edit">
-                            <i class="fas fa-edit"></i> Edit
-                        </a>
-                        <a th:href="@{/routes/delete/{id}(id=${route.routeId})}"
-                           onclick="return confirm('Are you sure?')" class="btn-delete">
-                            <i class="fas fa-trash"></i> Delete
-                        </a>
-                    </td>
+                <tr th:each="status : ${statuses}">
+                    <td th:text="${status.routeName}"></td>
+                    <td th:text="${status.stopName}"></td>
+                    <td th:text="${status.status}"></td>
+
                 </tr>
                 </tbody>
             </table>

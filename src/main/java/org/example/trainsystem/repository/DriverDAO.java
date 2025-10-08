@@ -80,8 +80,8 @@ public class DriverDAO {
     }
 
     public int update(Driver driver) {
-        String sql = "UPDATE Driver SET license = ? WHERE userId = ?";
-        return jdbcTemplate.update(sql, driver.getLicense(), driver.getUserId());
+        String sql = "UPDATE Driver SET license = ? ,trainId = ?  WHERE userId = ?";
+        return jdbcTemplate.update(sql, driver.getLicense(), driver.getTrainId(), driver.getUserId());
     }
 
     public int delete(int userId) {
@@ -95,7 +95,7 @@ public class DriverDAO {
         return jdbcTemplate.query(sql, new DriverRowMapper());
     }
     public Driver findDriverById(int userId) {
-        String sql = "SELECT userId, name, license FROM Driver WHERE userId = ?";
+        String sql = "SELECT userId, trainId, license FROM Driver WHERE userId = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new DriverRowMapper(), userId);
         } catch (Exception e) {

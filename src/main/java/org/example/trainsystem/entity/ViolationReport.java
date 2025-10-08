@@ -15,6 +15,25 @@ public class ViolationReport {
     private TicketOfficer ticketOfficer; // Relationship with officer
     private String status;
 
+    private String passengerName;
+    private String trainName;
+
+    public String getPassengerName() {
+        return passengerName;
+    }
+
+    public void setPassengerName(String passengerName) {
+        this.passengerName = passengerName;
+    }
+
+    public String getTrainName() {
+        return trainName;
+    }
+
+    public void setTrainName(String trainName) {
+        this.trainName = trainName;
+    }
+
     // Constructors
     public ViolationReport() {
     }
