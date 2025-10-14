@@ -62,4 +62,30 @@ public class PassengerDAO {
         return jdbcTemplate.query(sql, new PassengerRowMapper());
     }
 
+    // Find by Username
+    public Passenger findByUsername(String username) {
+        String sql = "SELECT p.userId, p.passengerAddress, u.username, u.email, u.name, u.password, u.userType " +
+                "FROM Passenger p " +
+                "JOIN Users u ON p.userId = u.userId " +
+                "WHERE u.username = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new PassengerRowMapper(), username);
+        } catch (Exception e) {
+            return null; // Return null if no passenger found
+        }
+    }
+
+    // Find by Email
+    public Passenger findByEmail(String email) {
+        String sql = "SELECT p.userId, p.passengerAddress, u.username, u.email, u.name, u.password, u.userType " +
+                "FROM Passenger p " +
+                "JOIN Users u ON p.userId = u.userId " +
+                "WHERE u.email = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new PassengerRowMapper(), email);
+        } catch (Exception e) {
+            return null; // Return null if no passenger found
+        }
+    }
+
 }
