@@ -1,19 +1,17 @@
 package org.example.trainsystem.controller;
 
 import jakarta.servlet.http.HttpSession;
-import org.example.trainsystem.entity.ITOfficer;
-import org.example.trainsystem.repository.ITOfficerDAO;
-import org.example.trainsystem.repository.UserDAO;
+import org.example.trainsystem.entity.*;
+import org.example.trainsystem.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/it")
@@ -21,6 +19,18 @@ public class ITOfficerController {
 
     @Autowired
     private ITOfficerDAO itOfficerDAO;
+
+    @Autowired
+    private UserDAO userDAO;
+
+    @Autowired
+    private DriverDAO driverDAO;
+
+    @Autowired
+    private OpManagerDAO opManagerDAO;
+
+    @Autowired
+    private TicketOfficerDAO ticketOfficerDAO;
 
     ITOfficer itOfficer = new ITOfficer();
 
@@ -46,6 +56,10 @@ public class ITOfficerController {
         }
 
         model.addAttribute("username", username);
+        List<User> users = userDAO.findAll();
+
+        model.addAttribute("users", users);
+
         return "it/dashboard"; // Thymeleaf template
     }
 
@@ -63,6 +77,68 @@ public class ITOfficerController {
         itOfficer.setAccessLevel(accessLevel);
         itOfficerDAO.save(itOfficer);
         return "redirect:/login";
+    }
+
+    @GetMapping("driver/register")
+    public String showDriverForm(@RequestParam("userId") int userId, Model model) {
+        model.addAttribute("userId", userId);
+        return "driver/driver";
+    }
+
+    @PostMapping("driver/register")
+    public String saveDriver(@RequestParam("userId") int userId,
+                                @RequestParam("license") String license) {
+
+        Driver driver = new Driver();
+        driver.setUserId(userId);
+        driver.setLicense(license);
+        driver.setTrainId(1); // Default train assignment
+        driverDAO.save(driver);
+        return "redirect:/it/dashboard";
+    }
+
+    @GetMapping("opmanager/register")
+    public String showOpManagerForm(@RequestParam("userId") int userId, Model model) {
+        model.addAttribute("userId", userId);
+        return "opmanager/opmanager";
+    }
+
+    @PostMapping("opmanager/register")
+    public String saveOpManager(@RequestParam("userId") int userId,
+                                @RequestParam("contactNumber") String contactNumber) {
+
+        OpManager opManager = new OpManager();
+        opManager.setUserId(userId);
+        opManager.setContactNumber(contactNumber);
+        opManagerDAO.save(opManager);
+
+        return  "redirect:/it/dashboard";
+    }
+
+    @GetMapping("ticketOfficer/register")
+    public String showTicketOfficerForm(@RequestParam("userId") int userId, Model model) {
+        model.addAttribute("userId", userId);
+        TicketOfficer ticketOfficer = new TicketOfficer();
+        ticketOfficer.setTrainId(1);
+        ticketOfficer.setUserId(userId);
+        ticketOfficer.setTrainId(1); // Default train assignment
+        ticketOfficerDAO.save(ticketOfficer);
+
+
+        return "redirect:/it/dashboard";
+    }
+
+
+
+
+    @PostMapping("/delete-user/{id}")
+    public String deleteUser(@PathVariable("id") int userId) {
+        userDAO.delete(userId);
+        if(userId == itOfficer.getUserId()){
+            SecurityContextHolder.clearContext();
+            return "redirect:/login?logout";
+        }
+        return "redirect:/it/dashboard";
     }
 
 }

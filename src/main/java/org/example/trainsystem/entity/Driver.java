@@ -3,7 +3,7 @@ package org.example.trainsystem.entity;
 
 
 
-public class Driver {
+public class Driver extends User implements Employee{
     private int userId;
     private String license;
     private User user; // For joined data

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Violation Report</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        /* Back button */
+        .back-button {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Main content */
+        .main-content {
+            padding: 40px;
+        }
+
+        /* Passenger info section */
+        .passenger-info {
+            background: #fff5f5;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #ff6b6b;
+        }
+
+        .passenger-info h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #2d3748;
+            font-size: 16px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Violation form */
+        .violation-form {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 30px;
+            border: 2px solid #e3e8ff;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .violation-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .violation-type {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .violation-type:hover {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+
+        .violation-type input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.3);
+            accent-color: #ff6b6b;
+        }
+
+        .violation-type label {
+            cursor: pointer;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .violation-type.selected {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+
+        .violation-type.selected label {
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(113, 128, 150, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }</style>
+
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <a href="javascript:history.back()" class="back-button">← Back to Verification</a>
+        <h1>🚨 Violation Report</h1>
+        <p>Report passenger violations and misconduct</p>
+    </div>
+
+
+    <div class="main-content">
+        <!-- Passenger Information -->
+        <div class="passenger-info">
+            <h3>👤 Passenger Information</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Booking ID</span>
+                    <span class="info-value" th:text="${bookingId}">#BK12345</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Train Number</span>
+                    <span class="info-value" th:text="${trainNumber}">T-101</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Seat Assignment</span>
+                    <span class="info-value" th:text="${seatNumber}">A2</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Date</span>
+                    <span class="info-value" th:text="${currentDate}">2025-09-18 14:30</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Violation Form -->
+        <form class="violation-form" id="violationForm" th:action="@{/violation/submit}" method="post">
+            <!-- Hidden inputs to send passenger info -->
+
+            <input type="hidden" name="bookingId" th:value="${bookingId}">
+            <input type="hidden" name="trainNumber" th:value="${trainNumber}">
+            <input type="hidden" name="seatNumber" th:value="${seatNumber}">
+
+            <input type="hidden" name="passengerId" th:value="${passengerId}">
+
+            <div class="form-section">
+                <h3>⚠️ Violation Type</h3>
+                <div class="violation-types">
+                    <div class="violation-type" onclick="selectViolationType(this, 'no-ticket')">
+                        <input type="radio" name="violationType" value="no-ticket" id="no-ticket">
+                        <label for="no-ticket">Traveling without valid ticket</label>
+                    </div>
+                    <div class="violation-type" onclick="selectViolationType(this, 'wrong-seat')">
+                        <input type="radio" name="violationType" value="wrong-seat" id="wrong-seat">
+                        <label for="wrong-seat">Occupying wrong seat/class</label>
+                    </div>
+                    <div class="violation-type" onclick="selectViolationType(this, 'expired-ticket')">
+                        <input type="radio" name="violationType" value="expired-ticket" id="expired-ticket">
+                        <label for="expired-ticket">Using expired ticket</label>
+                    </div>
+                    <div class="violation-type" onclick="selectViolationType(this, 'fake-ticket')">
+                        <input type="radio" name="violationType" value="fake-ticket" id="fake-ticket">
+                        <label for="fake-ticket">Fraudulent/fake ticket</label>
+                    </div>
+                    <div class="violation-type" onclick="selectViolationType(this, 'misconduct')">
+                        <input type="radio" name="violationType" value="misconduct" id="misconduct">
+                        <label for="misconduct">Disruptive behavior</label>
+                    </div>
+                    <div class="violation-type" onclick="selectViolationType(this, 'other')">
+                        <input type="radio" name="violationType" value="other" id="other">
+                        <label for="other">Other violation</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit">🚨 Submit Violation Report</button>
+        </form>
+    </div>
+</div>
+
+
+</body>
+</html>

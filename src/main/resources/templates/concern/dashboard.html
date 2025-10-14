@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Service Executive Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            padding: 20px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 70%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            float: left;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background: #2c3e50;
+            color: white;
+        }
+        .reply-section {
+            width: 28%;
+            float: right;
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .reply-section h3 {
+            margin-top: 0;
+        }
+        .btn-reply {
+            background: #27ae60;
+            color: white;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-reply:hover {
+            background: #219150;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Customer Service Executive Dashboard</h2>
+<!-- Show message if available -->
+<div th:if="${message}" style="color: green; font-weight: bold;">
+    <p th:text="${message}"></p>
+</div>
+
+<div th:if="${errorMessage}" style="color: red; font-weight: bold;">
+    <p th:text="${errorMessage}"></p>
+</div>
+
+<!-- Table with all concerns -->
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Customer Name</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Submitted At</th>
+        <th>Reply</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="concern : ${concerns}">
+        <td th:text="${concern.concernId}"></td>
+        <td th:text="${concern.passengerId}"></td>
+        <td th:text="${concern.description}"></td>
+        <td th:text="${concern.status}"></td>
+        <td th:text="${concern.date_submitted}"></td>
+        <td>
+            <form th:action="@{/concernExecutive/reply}" method="post">
+                <input type="hidden" name="concernId" th:value="${concern.concernId}">
+
+                <textarea name="replyMessage" placeholder="Type reply..." required></textarea>
+                <button type="submit" class="btn-reply">Reply</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+
+</body>
+</html>

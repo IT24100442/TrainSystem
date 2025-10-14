@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Violation Summary</title>
+
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        header p {
+            margin-top: 10px;
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .back-button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 2rem;
+            color: #ff6b6b;
+        }
+
+        .stat-card p {
+            margin: 5px 0 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .violations-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .violations-section h2 {
+            margin-top: 0;
+            color: #004080;
+            font-size: 1.6rem;
+            border-bottom: 3px solid #ff6b6b;
+            padding-bottom: 10px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar select, .filter-bar input {
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .filter-bar select:focus, .filter-bar input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table thead {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+
+        table th, table td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        table tbody tr:nth-child(even) {
+            background: #fff5f5;
+        }
+
+        table tbody tr:hover {
+            background: #ffe6e6;
+            cursor: pointer;
+        }
+
+        .violation-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-no-ticket {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .badge-wrong-seat {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+
+        .badge-expired-ticket {
+            background: #fef3c7;
+            color: #78350f;
+        }
+
+        .badge-fake-ticket {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        .badge-misconduct {
+            background: #ddd6fe;
+            color: #5b21b6;
+        }
+
+        .badge-other {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .action-btn {
+            background: #004080;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn:hover {
+            background: #003060;
+            transform: translateY(-2px);
+        }
+
+        .alert-info {
+            background: #e0f2fe;
+            color: #0c4a6e;
+            border: 1px solid #7dd3fc;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .no-violations {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.85rem;
+            }
+
+            table th, table td {
+                padding: 10px;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+            }
+
+            .filter-bar select, .filter-bar input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <a href="javascript:history.back()" class="back-button">← Back to Dashboard</a>
+
+    <header>
+        <h1>🚨 Violation Summary Dashboard</h1>
+        <p>View and manage all reported violations</p>
+    </header>
+
+    <!-- Statistics Cards -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3 th:text="${totalViolations}">127</h3>
+            <p>Total Violations</p>
+        </div>
+        <div class="stat-card">
+            <h3 th:text="${todayViolations}">15</h3>
+            <p>Today's Violations</p>
+        </div>
+        <div class="stat-card">
+            <h3 th:text="${pendingViolations}">42</h3>
+            <p>Pending Review</p>
+        </div>
+        <div class="stat-card">
+            <h3 th:text="${resolvedViolations}">85</h3>
+            <p>Resolved</p>
+        </div>
+    </div>
+
+    <div th:if="${message}" class="alert-info">
+        <span th:text="${message}"></span>
+    </div>
+
+    <section class="violations-section">
+        <h2>Reported Violations</h2>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <select id="violationTypeFilter">
+                <option value="">All Violation Types</option>
+                <option value="no-ticket">No Ticket</option>
+                <option value="wrong-seat">Wrong Seat</option>
+                <option value="expired-ticket">Expired Ticket</option>
+                <option value="fake-ticket">Fake Ticket</option>
+                <option value="misconduct">Misconduct</option>
+                <option value="other">Other</option>
+            </select>
+
+            <select id="trainFilter">
+                <option value="">All Trains</option>
+                <option th:each="train : ${trains}" th:value="${train}" th:text="${train}"></option>
+            </select>
+
+            <input type="date" id="dateFilter" placeholder="Filter by date">
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Violation ID</th>
+                <th>Booking ID</th>
+                <th>Passenger ID</th>
+                <th>Train Number</th>
+                <th>Seat</th>
+                <th>Violation Type</th>
+                <th>Reported Date</th>
+                <th>Reported By</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="violation : ${violations}">
+                <td th:text="${violation.violationId}">#V1001</td>
+                <td th:text="${violation.bookingId}">#BK12345</td>
+                <td th:text="${violation.passengerId}">P-5678</td>
+                <td th:text="${violation.trainNumber}">T-101</td>
+                <td th:text="${violation.seatNumber}">A2</td>
+                <td>
+                    <span class="violation-badge"
+                          th:classappend="${'badge-' + violation.violationType}"
+                          th:text="${violation.violationTypeDisplay}">
+                        No Ticket
+                    </span>
+                </td>
+                <td th:text="${#temporals.format(violation.reportedDate, 'yyyy-MM-dd HH:mm')}">2025-09-30 14:30</td>
+                <td th:text="${violation.reportedBy}">Officer-123</td>
+                <td th:text="${violation.status}">Pending</td>
+                <td>
+                    <a th:href="@{/violation/details(violationId=${violation.violationId})}"
+                       class="action-btn">
+                        View Details
+                    </a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(violations)}">
+                <td colspan="10">
+                    <div class="no-violations">
+                        No violations reported yet.
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+
+<script>
+    // Filter functionality
+    document.getElementById('violationTypeFilter').addEventListener('change', filterTable);
+    document.getElementById('trainFilter').addEventListener('change', filterTable);
+    document.getElementById('dateFilter').addEventListener('change', filterTable);
+
+    function filterTable() {
+        const typeFilter = document.getElementById('violationTypeFilter').value.toLowerCase();
+        const trainFilter = document.getElementById('trainFilter').value.toLowerCase();
+        const dateFilter = document.getElementById('dateFilter').value;
+
+        const rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            if (row.cells.length < 2) return; // Skip empty state row
+
+            const type = row.cells[5].textContent.toLowerCase();
+            const train = row.cells[3].textContent.toLowerCase();
+            const date = row.cells[6].textContent;
+
+            const typeMatch = !typeFilter || type.includes(typeFilter);
+            const trainMatch = !trainFilter || train.includes(trainFilter);
+            const dateMatch = !dateFilter || date.includes(dateFilter);
+
+            row.style.display = (typeMatch && trainMatch && dateMatch) ? '' : 'none';
+        });
+    }
+</script>
+</body>
+</html>

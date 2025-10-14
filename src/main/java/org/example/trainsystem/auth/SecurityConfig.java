@@ -26,6 +26,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
+                        // 🔹 Public pages first
+                        .requestMatchers("/",  "/register-passenger", "/registration", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+
                         // 🔹 only Admins can manage users/routes
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
@@ -35,6 +38,8 @@ public class SecurityConfig {
                         // 🔹 Drivers dashboard & routes
                         .requestMatchers("/driver/**").hasRole("DRIVER")
 
+                        // ticket officer dashboard
+                        .requestMatchers("/ticket/**").hasRole("TICKETOFFICER")
 
                         //🔹 IT Officer dashboard & routes
                          .requestMatchers("/it/**").hasRole("ITOFFICER")
@@ -43,19 +48,18 @@ public class SecurityConfig {
                         .requestMatchers("/passenger/**").hasRole("PASSENGER")
 
 
-                        // 🔹 Public pages like login/register
-                        .requestMatchers("/", "/login", "/register", "/css/**", "/js/**").permitAll()
-
                         // everything else requires login
                         .anyRequest().authenticated()
                 )
-                .csrf(csrf -> csrf.disable()) // ❗ disable CSRF for now (you can enable later)
+                .csrf(csrf -> csrf.disable())
 
                 .formLogin(form -> form
-                        .loginPage("/login") // your Thymeleaf login.html
+                        .loginPage("/login")
+                        .failureUrl("/login?error=true")
                         .successHandler(successHandler)
                         .permitAll()
                 )
+
 
                 .logout(logout -> logout
                         .addLogoutHandler(new HeaderWriterLogoutHandler(new ClearSiteDataHeaderWriter(COOKIES)))

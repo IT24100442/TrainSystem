@@ -1,5 +1,6 @@
 package org.example.trainsystem.controller;
 
+import org.example.trainsystem.repository.DriverDAO;
 import org.example.trainsystem.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,8 @@ public class DriverController {
 
     @Autowired
     StatusUpdateService statusUpdateService;
+    @Autowired
+    private DriverDAO driverDAO;
 
     // Utility method to get the authenticated username
     private String getAuthenticatedUsername() {
@@ -85,12 +88,21 @@ public class DriverController {
     @PostMapping("/update-location")
     @ResponseBody
     public Map<String, Object> updateLocation(@RequestBody Map<String, String> payload) {
+
+        String username = getAuthenticatedUsername();
+
+
+        // Fetch driver info using username
+        Driver driver = driverService.getDriverWithUser(username);
+        System.out.println(driver.getTrainId());
+
         String currentStop = payload.get("currentStop");
         Integer routeId = Integer.valueOf(payload.get("routeId"));
-
+        System.out.println("Received location update: " + currentStop + " for routeId: " + routeId);
         String nextStop = trainStatusService.getNextStop(routeId, currentStop);
-        trainStatusService.updateStop(routeId, nextStop, LocalDateTime.now());
+        trainStatusService.updateStop(routeId, driver.getTrainId(), nextStop, LocalDateTime.now());
 
+        System.out.println("Current Stop: " + currentStop + ", Next Stop: " + nextStop);
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
@@ -193,4 +205,6 @@ public class DriverController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
 }

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<form th:action="@{/it/opmanager/register}" method="post">
+    <!-- Hidden field to carry userId -->
+    <input type="hidden" name="userId" th:value="${userId}"/>
+
+
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Contact Number</label>
+        <input type="text" name="contactNumber" class="form-control" placeholder="Enter Contact Number" required>
+    </div>
+
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>
