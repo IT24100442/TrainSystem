@@ -41,7 +41,6 @@
       min-height: 100vh;
     }
 
-    /* === SIDEBAR === */
     .sidebar {
       background: var(--darker-blue);
       color: var(--light-blue);
@@ -114,7 +113,6 @@
       color: #fff;
     }
 
-    /* === MAIN CONTENT === */
     .main-content {
       margin-left: 260px;
       padding: 0;
@@ -122,7 +120,6 @@
       transition: var(--transition);
     }
 
-    /* === TOPBAR === */
     .topbar {
       background: var(--dark-blue);
       color: #fff;
@@ -180,7 +177,6 @@
       background: #b91c1c;
     }
 
-    /* === MOBILE MENU === */
     .mobile-menu-btn {
       display: none;
       background: transparent;
@@ -190,14 +186,12 @@
       cursor: pointer;
     }
 
-    /* === CONTENT AREA === */
     .content-wrapper {
       padding: 32px;
       max-width: 900px;
       margin: 0 auto;
     }
 
-    /* === MESSAGE BAR === */
     .message {
       padding: 16px 20px;
       border-radius: var(--radius);
@@ -219,7 +213,6 @@
       color: #dc2626;
     }
 
-    /* === PROFILE HEADER === */
     .profile-header {
       background: linear-gradient(135deg, var(--primary) 0%, #1e88ff 100%);
       color: #fff;
@@ -255,7 +248,6 @@
       font-size: 1rem;
     }
 
-    /* === FORM SECTIONS === */
     .form-section {
       background: var(--bg-white);
       border-radius: var(--radius);
@@ -324,7 +316,6 @@
       min-height: 100px;
     }
 
-    /* === BUTTONS === */
     .form-actions {
       display: flex;
       gap: 12px;
@@ -362,7 +353,6 @@
       background: #b91c1c;
     }
 
-    /* === DANGER ZONE === */
     .danger-zone {
       background: #fef2f2;
       border: 2px solid #fecaca;
@@ -384,7 +374,6 @@
       margin: 0 0 16px;
     }
 
-    /* === RESPONSIVE === */
     @media (max-width: 968px) {
       .mobile-menu-btn {
         display: block;
@@ -440,13 +429,12 @@
 
 <body>
 <div class="container">
-  <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <h2><i class="fas fa-train"></i> TrackLink</h2>
     </div>
     <ul class="nav-list">
-      <li><a href="/dashboard/home"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="/passenger/dashboard"><i class="fas fa-home"></i> Home</a></li>
       <li><a href="/booking/train"><i class="fas fa-ticket-alt"></i> Book a Ticket</a></li>
       <li><a href="/booking/list-my-bookings"><i class="fas fa-list"></i> My Bookings</a></li>
       <li><a href="/concern/form"><i class="fas fa-exclamation-circle"></i> Submit Concerns</a></li>
@@ -455,7 +443,6 @@
     </ul>
   </aside>
 
-  <!-- Main Content -->
   <main class="main-content">
     <header class="topbar">
       <div style="display: flex; align-items: center; gap: 16px;">
@@ -465,86 +452,74 @@
         <h1><i class="fas fa-user-cog"></i> Account Settings</h1>
       </div>
       <div class="topbar-actions">
-        <button class="btn btn-logout" onclick="location.href='/logout'">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
+        <form th:action="@{/logout}" method="post" style="margin: 0;">
+          <button type="submit" class="btn btn-logout">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </form>
       </div>
     </header>
 
     <div class="content-wrapper">
-      <!-- Message Bar -->
-      <div th:if="${errorMessage != null}" class="message error" th:text="${errorMessage}">
-        Error updating profile
-      </div>
-      <div th:if="${message != null}" class="message success" th:text="${message}">
-        Profile updated successfully!
-      </div>
+      <div th:if="${errorMessage}" class="message error" th:text="${errorMessage}"></div>
+      <div th:if="${message}" class="message success" th:text="${message}"></div>
 
-      <!-- Profile Header -->
       <div class="profile-header">
         <div class="profile-avatar">
           <i class="fas fa-user"></i>
         </div>
-        <h2 class="profile-name" th:text="${passenger?.name ?: 'John Doe'}">John Doe</h2>
-        <p class="profile-email" th:text="${passenger?.email ?: 'john.doe@example.com'}">john.doe@example.com</p>
+        <h2 class="profile-name" th:text="${passenger != null ? passenger.name : 'User'}">User Name</h2>
+        <p class="profile-email" th:text="${passenger != null ? passenger.email : 'email@example.com'}">email@example.com</p>
       </div>
 
-      <!-- Personal Information Form -->
-      <div class="form-section">
-        <h3 class="section-title">
-          <i class="fas fa-user"></i>
-          Personal Information
-        </h3>
-        <div class="form-grid">
-          <div class="form-group full-width">
-            <label for="name">Full Name</label>
-            <input type="text" id="name" name="name"
-                   th:value="${passenger?.name}"
-                   placeholder="Enter full name" required />
-          </div>
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username"
-                   th:value="${passenger?.username}"
-                   placeholder="Username" disabled
-                   style="background: #f3f4f6; cursor: not-allowed;" />
-            <small style="color: var(--text-muted); font-size: 0.85rem;">
-              Username cannot be changed
-            </small>
-          </div>
-          <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email"
-                   th:value="${passenger?.email}"
-                   placeholder="your.email@example.com" required />
-          </div>
-          <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" name="phone"
-                   th:value="${passenger?.phone}"
-                   placeholder="+94 77 123 4567" />
-          </div>
-          <div class="form-group full-width">
-            <label for="address">Address</label>
-            <textarea id="address" name="address"
-                      th:text="${passenger?.address}"
-                      placeholder="Enter your full address"></textarea>
+      <form th:action="@{/account/update}" method="post">
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="fas fa-user"></i>
+            Personal Information
+          </h3>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name"
+                     th:value="${passenger != null ? passenger.name : ''}"
+                     placeholder="Enter full name" required />
+            </div>
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="username"
+                     th:value="${passenger != null ? passenger.username : ''}"
+                     placeholder="Username" disabled
+                     style="background: #f3f4f6; cursor: not-allowed;" />
+              <small style="color: var(--text-muted); font-size: 0.85rem;">
+                Username cannot be changed
+              </small>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email"
+                     th:value="${passenger != null ? passenger.email : ''}"
+                     placeholder="your.email@example.com" required />
+            </div>
+            <div class="form-group full-width">
+              <label for="address">Address</label>
+              <textarea id="address" name="address"
+                        th:text="${passenger != null ? passenger.address : ''}"
+                        placeholder="Enter your full address"></textarea>
+            </div>
           </div>
         </div>
-      </div>
-
 
         <div class="form-actions">
-          <button type="button" class="btn btn-secondary" onclick="location.href='/dashboard/home'">
+          <a href="/passenger/dashboard" class="btn btn-secondary">
             <i class="fas fa-times"></i> Cancel
-          </button>
+          </a>
           <button type="submit" class="btn btn-primary">
             <i class="fas fa-save"></i> Save Changes
           </button>
         </div>
       </form>
 
-      <!-- Change Password Section -->
       <div class="form-section">
         <h3 class="section-title">
           <i class="fas fa-lock"></i>
@@ -576,13 +551,14 @@
         </form>
       </div>
 
-      <!-- Danger Zone -->
       <div class="danger-zone">
         <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
         <p>Once you delete your account, there is no going back. Please be certain.</p>
-        <button type="button" class="btn btn-danger" onclick="confirmDelete()">
-          <i class="fas fa-trash-alt"></i> Delete Account
-        </button>
+        <form th:action="@{/account/delete}" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+          <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash-alt"></i> Delete Account
+          </button>
+        </form>
       </div>
     </div>
   </main>
@@ -593,7 +569,6 @@
     document.getElementById("sidebar").classList.toggle("active");
   }
 
-  // Close sidebar on mobile when clicking outside
   document.addEventListener('click', function(event) {
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -602,24 +577,6 @@
       if (!sidebar.contains(event.target) && !menuBtn.contains(event.target)) {
         sidebar.classList.remove('active');
       }
-    }
-  });
-
-  function confirmDelete() {
-    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      // Handle account deletion
-      window.location.href = '/account/delete';
-    }
-  }
-
-  // Password validation
-  document.querySelector('form[action*="change-password"]')?.addEventListener('submit', function(e) {
-    const newPassword = document.getElementById('newPassword').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-
-    if (newPassword !== confirmPassword) {
-      e.preventDefault();
-      alert('New passwords do not match!');
     }
   });
 </script>
