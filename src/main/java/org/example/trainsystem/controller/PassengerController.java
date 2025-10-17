@@ -60,6 +60,7 @@ public class PassengerController {
                                 RedirectAttributes redirectAttributes,
                                 Principal principal) {
         try {
+            // Update User fields (name, email) and Passenger fields (address)
             passengerService.updatePassenger(principal.getName(), name, email, address);
             redirectAttributes.addFlashAttribute("message",
                     "Profile updated successfully!");

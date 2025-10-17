@@ -18,20 +18,20 @@ public class PassengerService {
     private PasswordEncoder passwordEncoder;
 
 
-     /// Find passenger by username
+    /// Find passenger by username
     public Passenger findByUsername(String username) {
         return passengerDAO.findByUsername(username);
     }
 
 
-     /// Find passenger by email
+    /// Find passenger by email
     public Passenger findByEmail(String email) {
         return passengerDAO.findByEmail(email);
     }
 
     /**
      * Update passenger information
-     * Users fields: name, email, username
+     * Users fields: name, email
      * Passenger field: address
      */
     public void updatePassenger(String username, String name, String email,
@@ -48,21 +48,12 @@ public class PassengerService {
             throw new RuntimeException("Email already in use");
         }
 
-        // Update fields from Users class (using inherited setters)
-        passenger.setName(name);
-        passenger.setEmail(email);
-
-        // Update field from Passenger class
-        passenger.setAddress(address);
-
-        // If you have a phone field in Passenger entity, update it
-        // passenger.setPhone(phone);
-
-        passengerDAO.update(passenger);
+        // Update both User fields (name, email) and Passenger fields (address) in one call
+        passengerDAO.updatePassengerWithUser(passenger.getUserId(), name, email, address);
     }
 
 
-     /// Change passenger password
+    /// Change passenger password
     public void changePassword(String username, String currentPassword, String newPassword) {
         Passenger passenger = findByUsername(username);
 
@@ -76,17 +67,16 @@ public class PassengerService {
         }
 
         // Validate new password strength
-        if (newPassword.length() < 8) {
+        if (newPassword.length() < 5) {
             throw new RuntimeException("New password must be at least 8 characters long");
         }
 
-        // Update password (using inherited setter)
-        passenger.setPassword(passwordEncoder.encode(newPassword));
-        passengerDAO.update(passenger);
+        // Update password in Users table
+        passengerDAO.updatePassword(passenger.getUserId(), passwordEncoder.encode(newPassword));
     }
 
 
-     /// Delete passenger account
+    /// Delete passenger account
     public void deleteAccount(String username) {
         Passenger passenger = findByUsername(username);
 
