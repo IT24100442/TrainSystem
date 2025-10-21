@@ -31,6 +31,26 @@ public class PassengerController {
         return "register-passenger";
     }
 
+    @PostMapping("/registration")
+    public String registerPassenger(@ModelAttribute("user") UserDTO userDTO,
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            // Register the passenger using your service
+            passengerService.registerPassenger(userDTO);
+
+            // Add success message (optional)
+            redirectAttributes.addFlashAttribute("message", "Registration successful! Please log in.");
+
+            // Redirect to login page
+            return "redirect:/login";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error during registration: " + e.getMessage());
+            return "redirect:/registration";
+        }
+    }
+
+
     @GetMapping("/passenger/dashboard")
     public String showPassengerDashboard(Model model, Principal principal) {
         // Get the logged-in passenger

@@ -18,6 +18,29 @@ public class PassengerService {
     private PasswordEncoder passwordEncoder;
 
 
+    /// register new passenger
+    public void registerPassenger(org.example.trainsystem.dto.UserDTO userDTO) {
+        // Check if username or email already exists
+        if (findByUsername(userDTO.getUsername()) != null) {
+            throw new RuntimeException("Username already exists");
+        }
+        if (findByEmail(userDTO.getEmail()) != null) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        // Create a new Passenger entity
+        Passenger passenger = new Passenger();
+        passenger.setName(userDTO.getName());
+        passenger.setUsername(userDTO.getUsername());
+        passenger.setEmail(userDTO.getEmail());
+        passenger.setAddress(userDTO.getAddress());
+        passenger.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        // Save to database
+        passengerDAO.save(passenger);
+    }
+
+
     /// Find passenger by username
     public Passenger findByUsername(String username) {
         return passengerDAO.findByUsername(username);
