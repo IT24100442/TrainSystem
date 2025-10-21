@@ -19,7 +19,7 @@ public class ViolationSummaryController {
     @Autowired
     private ViolationReportDAO violationReportDAO;
 
-    @GetMapping("/summary")
+    @GetMapping({"/summary", "violation/summary"})
     public String showViolationSummary(Model model) {
 
         // Fetch all violations
@@ -62,7 +62,7 @@ public class ViolationSummaryController {
         model.addAttribute("resolvedViolations", resolvedViolations);
         model.addAttribute("trains", trains);
 
-        return "violation-summary";
+        return "ticket/violation-summary";
     }
 
     @GetMapping("/details")
