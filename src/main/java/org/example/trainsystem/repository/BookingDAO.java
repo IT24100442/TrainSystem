@@ -27,6 +27,7 @@ public class BookingDAO {
             booking.setPassengerId(rs.getInt("passengerId"));
             booking.setTrainId(rs.getInt("trainId"));
             booking.setBookingStatus(rs.getString("bookingStatus"));
+            booking.setNumberOfSeats(rs.getInt("numSeats"));
             booking.setSeatNumber(rs.getString("seat"));
             booking.setBookingClass(rs.getString("class"));
 
@@ -58,8 +59,8 @@ public class BookingDAO {
         }
     }
     public int save(Booking booking) {
-        String sql = "INSERT INTO Booking(passengerId, trainId, bookingStatus, class, bookingDate,seat) VALUES (?, ?, ?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, booking.getPassengerId(), booking.getTrainId(), booking.getBookingStatus(), booking.getBookingClass(), Timestamp.valueOf(booking.getBookingDate().atStartOfDay()),booking.getSeatNumber());
+        String sql = "INSERT INTO Booking(passengerId, trainId, class, bookingDate,seat,numSeats) VALUES (?, ?, ?, ?, ?,?)";
+        return jdbcTemplate.update(sql, booking.getPassengerId(), booking.getTrainId(), booking.getBookingClass(), Timestamp.valueOf(booking.getBookingDate().atStartOfDay()),booking.getSeatNumber(), booking.getNumberOfSeats());
     }
     public int update(Booking booking) {
         String sql = "UPDATE Booking SET passengerId = ?, trainId = ?, bookingStatus = ?, class = ?, bookingDate = ?, seat = ? WHERE bookingId = ?";

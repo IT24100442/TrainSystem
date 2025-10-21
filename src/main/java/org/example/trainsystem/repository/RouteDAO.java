@@ -100,6 +100,14 @@ public class RouteDAO {
                 route.getRouteId());
     }
 
+    public Route getRouteByTrainId(int tid) {
+        String sql = "SELECT r.routeId, r.routeName, r.durationMinutes, r.driverId, r.availableTime " +
+                "FROM Route r " +
+                "JOIN TrainRoute tr ON r.routeId = tr.routeId " +
+                "WHERE tr.trainId = ?";
+        return jdbcTemplate.queryForObject(sql, new RouteRowMapper(), tid);
+    }
+
     public int delete(int rid) {
         String sql = "DELETE FROM Route WHERE routeId = ?";
         return jdbcTemplate.update(sql, rid);

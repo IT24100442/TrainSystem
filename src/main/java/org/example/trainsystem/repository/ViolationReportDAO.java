@@ -20,7 +20,11 @@ public class ViolationReportDAO {
     private JdbcTemplate jdbcTemplate;
 
     public List<ViolationReport> findAll() {
-        return null;
+
+        String sql = "SELECT * FROM ViolationReport";
+        return jdbcTemplate.query(sql, new ViolationReportRowMapper());
+
+
     }
 
 
