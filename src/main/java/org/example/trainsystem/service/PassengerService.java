@@ -98,6 +98,26 @@ public class PassengerService {
         passengerDAO.updatePassword(passenger.getUserId(), passwordEncoder.encode(newPassword));
     }
 
+    public boolean usernameExists(String username) {
+        try {
+            Passenger passenger = passengerDAO.findByUsername(username);
+            return passenger != null;
+        } catch (Exception e) {
+            System.err.println("Error in usernameExists: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean emailExists(String email) {
+        try {
+            // Check if email exists in User or Passenger entity
+            Passenger passenger = passengerDAO.findByEmail(email);
+            return passenger != null;
+        } catch (Exception e) {
+            System.err.println("Error in emailExists: " + e.getMessage());
+            return false;
+        }
+    }
 
     /// Delete passenger account
     public void deleteAccount(String username) {
