@@ -94,7 +94,8 @@ public class UserController {
             case "Driver":
                 return "redirect:/it/driver/register?userId=" + userId;
             case "CustomerService":
-                return "redirect:/it/customer-service/register?userId=" + userId;
+                System.out.println("Customer Service");
+                return "redirect:/it/concern/register?userId=" + userId;
             default:
                 return "/";
         }
