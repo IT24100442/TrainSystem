@@ -34,6 +34,9 @@ public class ITOfficerController {
 
     ITOfficer itOfficer = new ITOfficer();
 
+    @Autowired
+    private CustomerConcernExecutiveDAO customerConcernExecutiveDAO;
+
 
 
     private String getAuthenticatedUsername() {
@@ -112,6 +115,23 @@ public class ITOfficerController {
         opManager.setContactNumber(contactNumber);
         opManagerDAO.save(opManager);
 
+        return  "redirect:/it/dashboard";
+    }
+
+    @GetMapping("concern/register")
+    public String showConcernManagerForm(@RequestParam("userId") int userId, Model model) {
+        model.addAttribute("userId", userId);
+        return "concern/concernExecutive";
+    }
+
+    @PostMapping("concern/register")
+    public String saveConcernManager(@RequestParam("userId") int userId,
+                                     @RequestParam("contactNumber") String contactNumber){
+        CustomerServiceExecutive customerServiceExecutive = new CustomerServiceExecutive();
+        customerServiceExecutive.setUserId(userId);
+        customerServiceExecutive.setContactNum(contactNumber);
+
+        customerConcernExecutiveDAO.save(customerServiceExecutive);
         return  "redirect:/it/dashboard";
     }
 

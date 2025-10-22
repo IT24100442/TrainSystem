@@ -12,4 +12,9 @@ public class HomeController {
 
         return "index";
     }
+
+    @GetMapping("/chatbot")
+    public String showChatbotPage() {
+        return "passenger/chatbot";
+    }
 }
