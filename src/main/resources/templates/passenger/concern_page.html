@@ -5,6 +5,7 @@
     <title>Customer Concern Form | TrackLink Support</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
     <style>
         body {
@@ -21,14 +22,14 @@
         }
 
         .btn-primary {
-            background-color: #0d6efd;
+            background-color: #385e97;
             border: none;
             font-weight: 600;
             transition: 0.3s;
         }
 
         .btn-primary:hover {
-            background-color: #0b5ed7;
+            background-color: #385e97;
             transform: translateY(-1px);
             box-shadow: 0 4px 10px rgba(13,110,253,0.3);
         }
@@ -56,7 +57,7 @@
         }
 
         .reply-item strong {
-            color: #0d6efd;
+            color: #385e97;
             font-weight: 600;
         }
 
@@ -85,12 +86,76 @@
 
         .form-control:focus {
             box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-            border-color: #0d6efd;
+            border-color: #153565;
         }
 
         @media (max-width: 992px) {
             .row {
                 flex-direction: column;
+            }
+        }
+
+        /* === CHATBOT FLOATING BUTTON === */
+        .chatbot-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.8rem;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            text-decoration: none;
+            border: none;
+        }
+
+        .chatbot-float:hover {
+            transform: scale(1.1) translateY(-4px);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
+            color: #fff;
+        }
+
+        .chatbot-float:active {
+            transform: scale(0.95);
+        }
+
+        .chatbot-float::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: inherit;
+            animation: pulse 2s ease-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.4);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chatbot-float {
+                width: 56px;
+                height: 56px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 1.6rem;
             }
         }
     </style>
@@ -150,6 +215,11 @@
         </a>
     </div>
 </div>
+
+<!-- Floating Chatbot Button -->
+<a th:href="@{/chatbot}" class="chatbot-float" title="Chat with us">
+    <i class="fas fa-comment-dots"></i>
+</a>
 
 </body>
 </html>
