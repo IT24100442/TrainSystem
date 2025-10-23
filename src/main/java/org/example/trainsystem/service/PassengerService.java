@@ -18,6 +18,29 @@ public class PassengerService {
     private PasswordEncoder passwordEncoder;
 
 
+    /// register new passenger
+    public void registerPassenger(org.example.trainsystem.dto.UserDTO userDTO) {
+        // Check if username or email already exists
+        if (findByUsername(userDTO.getUsername()) != null) {
+            throw new RuntimeException("Username already exists");
+        }
+        if (findByEmail(userDTO.getEmail()) != null) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        // Create a new Passenger entity
+        Passenger passenger = new Passenger();
+        passenger.setName(userDTO.getName());
+        passenger.setUsername(userDTO.getUsername());
+        passenger.setEmail(userDTO.getEmail());
+        passenger.setAddress(userDTO.getAddress());
+        passenger.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        // Save to database
+        passengerDAO.save(passenger);
+    }
+
+
     /// Find passenger by username
     public Passenger findByUsername(String username) {
         return passengerDAO.findByUsername(username);
@@ -75,6 +98,26 @@ public class PassengerService {
         passengerDAO.updatePassword(passenger.getUserId(), passwordEncoder.encode(newPassword));
     }
 
+    public boolean usernameExists(String username) {
+        try {
+            Passenger passenger = passengerDAO.findByUsername(username);
+            return passenger != null;
+        } catch (Exception e) {
+            System.err.println("Error in usernameExists: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean emailExists(String email) {
+        try {
+            // Check if email exists in User or Passenger entity
+            Passenger passenger = passengerDAO.findByEmail(email);
+            return passenger != null;
+        } catch (Exception e) {
+            System.err.println("Error in emailExists: " + e.getMessage());
+            return false;
+        }
+    }
 
     /// Delete passenger account
     public void deleteAccount(String username) {

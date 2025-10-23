@@ -406,6 +406,59 @@
             font-weight: 700;
         }
 
+        /* === CHATBOT FLOATING BUTTON === */
+        .chatbot-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.8rem;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 1001;
+            text-decoration: none;
+            border: none;
+        }
+
+        .chatbot-float:hover {
+            transform: scale(1.1) translateY(-4px);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
+        }
+
+        .chatbot-float:active {
+            transform: scale(0.95);
+        }
+
+        .chatbot-float::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: inherit;
+            animation: pulse 2s ease-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.4);
+                opacity: 0;
+            }
+        }
+
         /* === MOBILE MENU === */
         .mobile-menu-btn {
             display: none;
@@ -446,6 +499,14 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+
+            .chatbot-float {
+                width: 56px;
+                height: 56px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 1.6rem;
+            }
         }
 
         @keyframes slideDown {
@@ -475,10 +536,6 @@
             <li><a href="/concern/form"><i class="fas fa-exclamation-circle"></i> Submit Concerns</a></li>
             <li><a href="/train-status/passenger-view"><i class="fas fa-clock"></i> Train Status</a></li>
             <li><a href="/account/edit"><i class="fas fa-user-edit"></i> Edit Profile</a></li>
-            <li> <a th:href="@{/chatbot}" class="nav-link">
-                💬 Chat Support
-            </a></li>
-
         </ul>
     </aside>
 
@@ -599,6 +656,11 @@
         </div>
     </main>
 </div>
+
+<!-- Floating Chatbot Button -->
+<a th:href="@{/chatbot}" class="chatbot-float" title="Chat with us">
+    <i class="fas fa-comment-dots"></i>
+</a>
 
 <script>
     function toggleSidebar() {

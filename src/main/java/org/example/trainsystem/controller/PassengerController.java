@@ -11,6 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.ResponseBody;
+import java.util.Collections;
+import java.util.Map;
 
 import java.security.Principal;
 
@@ -30,6 +33,43 @@ public class PassengerController {
         model.addAttribute("user", user);
         return "register-passenger";
     }
+
+    @PostMapping("/registration")
+    public String registerPassenger(@ModelAttribute("user") UserDTO userDTO,
+                                    RedirectAttributes redirectAttributes,
+                                    Model model) {
+        try {
+            // Check if username already exists
+            if (passengerService.usernameExists(userDTO.getUsername())) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Username already exists! Please choose a different username.");
+                model.addAttribute("user", userDTO);
+                return "redirect:/registration";
+            }
+
+            // Check if email already exists
+            if (passengerService.emailExists(userDTO.getEmail())) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Email already registered! Please use a different email or log in.");
+                model.addAttribute("user", userDTO);
+                return "redirect:/registration";
+            }
+
+            // Register the passenger using your service
+            passengerService.registerPassenger(userDTO);
+
+            // Add success message
+            redirectAttributes.addFlashAttribute("message", "Registration successful! Please log in.");
+
+            // Redirect to login page
+            return "redirect:/login";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error during registration: " + e.getMessage());
+            return "redirect:/registration";
+        }
+    }
+
 
     @GetMapping("/passenger/dashboard")
     public String showPassengerDashboard(Model model, Principal principal) {
@@ -110,5 +150,19 @@ public class PassengerController {
                     "Error deleting account: " + e.getMessage());
             return "redirect:/account/edit";
         }
+    }
+
+    @GetMapping("/api/check-username")
+    @ResponseBody
+    public Map<String, Boolean> checkUsername(@RequestParam String username) {
+        boolean exists = passengerService.usernameExists(username);
+        return Collections.singletonMap("exists", exists);
+    }
+
+    @GetMapping("/api/check-email")
+    @ResponseBody
+    public Map<String, Boolean> checkEmail(@RequestParam String email) {
+        boolean exists = passengerService.emailExists(email);
+        return Collections.singletonMap("exists", exists);
     }
 }
